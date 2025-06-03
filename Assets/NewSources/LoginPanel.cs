@@ -1,0 +1,75 @@
+using System.Text.RegularExpressions;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+
+public class LoginPanel : MonoBehaviour
+{
+	[SerializeField]
+	TMP_InputField _nickNameInputField;
+	[SerializeField]
+	UILoginServiceLocatorSO _uisl;
+	SaveDataLoader _sdl;
+
+	private void Start()
+	{
+		_nickNameInputField.onValueChanged.AddListener(OnNickNameValueChanged);
+		_nickNameInputField.onSubmit.AddListener(OnSubmit);
+
+		_sdl = FindAnyObjectByType<SaveDataLoader>();
+		if (_sdl != null)
+		{
+			_nickNameInputField.text = _sdl.SaveData.nickName;
+		}
+
+		_uisl.SetLoginPanelObject(this);
+	}
+
+	public void OnEnter()
+	{
+		if (_nickNameInputField.text.Length < 2)
+		{
+			_uisl.NoticeOnTop("´Ð³×ÀÓÀº 2±ÛÀÚ ÀÌ»ó ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			return;
+		}
+
+		print("OnEnter() called input text: " + _nickNameInputField.text);
+		_sdl.SaveData.nickName = _nickNameInputField.text;
+		_sdl.WriteSaveDataAsync().ContinueWith(task =>
+		{
+			if (task.IsFaulted)
+			{
+				Debug.LogError("Failed to write save data: " + task.Exception);
+			}
+			else
+			{
+				Debug.Log("Save data written successfully.");
+			}
+		});
+
+		_uisl.NoticeOnTop($"ÀÔ·ÂµÈ ´Ð³×ÀÓ: {_nickNameInputField.text}");
+	}
+
+	void OnNickNameValueChanged(string value)
+	{
+		print("OnNickNameValueChanged() called with value: " + value);
+		FilteringNickName(value);
+	}
+
+	void OnSubmit(string value)
+	{
+		print("OnSubmit() called with value: " + value);
+		FilteringNickName(value);
+	}
+
+	void FilteringNickName(string value)
+	{
+		string filtered = Regex.Replace(value, @"[^0-9a-zA-Z°¡-ÆR¤¡-¤¾¤¿-¤Ó]", "");
+		if (_nickNameInputField.text != filtered)
+		{
+			_nickNameInputField.text = filtered;
+			//_nickNameInputField.
+			//_nickNameInputField.caretPosition = filtered.Length;
+		}
+	}
+}
