@@ -12,8 +12,6 @@ public class SaveData
 
 public class SaveDataLoader : MonoBehaviour
 {
-	[SerializeField]
-	UILoginServiceLocatorSO _uisl;
 	string _saveFilePath;
 	SaveData _SDOrigin = new SaveData();
 	SaveData _SDCached = new SaveData();

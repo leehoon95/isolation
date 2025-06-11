@@ -2,52 +2,72 @@ using System.Text.RegularExpressions;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class LoginPanel : MonoBehaviour
 {
 	[SerializeField]
 	TMP_InputField _nickNameInputField;
 	[SerializeField]
-	UILoginServiceLocatorSO _uisl;
-	SaveDataLoader _sdl;
-
+	UILogin _uil;
+	[SerializeField]
+	Button _enterButton;
+	[SerializeField]
+	Button _disconnectButton;
 	private void Start()
 	{
 		_nickNameInputField.onValueChanged.AddListener(OnNickNameValueChanged);
-		_nickNameInputField.onSubmit.AddListener(OnSubmit);
+		//_nickNameInputField.onSubmit.AddListener(OnSubmit);
 
-		_sdl = FindAnyObjectByType<SaveDataLoader>();
-		if (_sdl != null)
-		{
-			_nickNameInputField.text = _sdl.SaveData.nickName;
-		}
+		//_sdl = FindAnyObjectByType<SaveDataLoader>();
+		//if (_sdl != null)
+		//{
+		//	_nickNameInputField.text = _sdl.SaveData.nickName;
+		//}
 
-		_uisl.SetLoginPanelObject(this);
+		_enterButton.onClick.AddListener(OnEnter);
+		_disconnectButton.onClick.AddListener(OnDisconnect);
+
+		_uil.SetLoginPanelObject(this);
+	}
+
+	public void SetNickname(string nickname)
+	{
+		_nickNameInputField.text = nickname;
 	}
 
 	public void OnEnter()
 	{
 		if (_nickNameInputField.text.Length < 2)
 		{
-			_uisl.NoticeOnTop("닉네임은 2글자 이상 입력해주세요.");
+			_uil.NoticeOnTop("닉네임은 2글자 이상 입력해주세요.");
 			return;
 		}
 
-		print("OnEnter() called input text: " + _nickNameInputField.text);
-		_sdl.SaveData.nickName = _nickNameInputField.text;
-		_sdl.WriteSaveDataAsync().ContinueWith(task =>
-		{
-			if (task.IsFaulted)
-			{
-				Debug.LogError("Failed to write save data: " + task.Exception);
-			}
-			else
-			{
-				Debug.Log("Save data written successfully.");
-			}
-		});
+		//print("OnEnter() called input text: " + _nickNameInputField.text);
+		//_sdl.SaveData.nickName = _nickNameInputField.text;
+		//_sdl.WriteSaveDataAsync().ContinueWith(task =>
+		//{
+		//	if (task.IsFaulted)
+		//	{
+		//		Debug.LogError("Failed to write save data: " + task.Exception);
+		//	}
+		//	else
+		//	{
+		//		Debug.Log("Save data written successfully.");
+		//	}
+		//});
 
-		_uisl.NoticeOnTop($"입력된 닉네임: {_nickNameInputField.text}");
+		_uil.RaiseOnLoginEnter(_nickNameInputField.text);
+
+		_uil.NoticeOnTop($"입력된 닉네임: {_nickNameInputField.text}");
+	}
+
+	public void OnDisconnect()
+	{
+		print("Disconnect From the server.");
+		_uil.RaiseOnDisconnect();
 	}
 
 	void OnNickNameValueChanged(string value)
@@ -56,11 +76,11 @@ public class LoginPanel : MonoBehaviour
 		FilteringNickName(value);
 	}
 
-	void OnSubmit(string value)
-	{
-		print("OnSubmit() called with value: " + value);
-		FilteringNickName(value);
-	}
+	//void OnSubmit(string value)
+	//{
+	//	print("OnSubmit() called with value: " + value);
+	//	FilteringNickName(value);
+	//}
 
 	void FilteringNickName(string value)
 	{

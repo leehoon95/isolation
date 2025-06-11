@@ -1,6 +1,9 @@
+using Google.Protobuf.WellKnownTypes;
 using System;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -28,7 +31,7 @@ public class NetworkSynchronizer : MonoBehaviour
 
 			_cancelToken = new CancellationTokenSource();
 
-			await Task.Run(ReceiveLoop);
+			_ = Task.Run(ReceiveLoop);
 
 			Debug.Log("Connected to server!");
 
@@ -59,9 +62,6 @@ public class NetworkSynchronizer : MonoBehaviour
 				}
 				
 				string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-
-				//serverEventSO.RaiseServerMessageReceived($"Server:{message}");
 			}
 			catch (OperationCanceledException)
 			{
@@ -77,6 +77,35 @@ public class NetworkSynchronizer : MonoBehaviour
 		}
 	}
 
+	public void WriteAsync(MessageType type, byte[] data)
+	{
+		_ = WriteByteImpl(type, data);
+	}
+
+	public void WriteAsync(MessageType type, string str)
+	{
+		_ = WriteByteImpl(type, Encoding.UTF8.GetBytes(str));
+	}
+
+	async Task WriteByteImpl(MessageType type, byte[] data)
+	{
+		if (_tcpClient != null && _tcpClient.Connected)
+		{
+			int length = data.Length + 12;
+			int typeInteger = Convert.ToInt32(type);
+
+			byte[] buffer = new byte[data.Length + 12];
+
+			var prot = Encoding.ASCII.GetBytes("prot");
+
+			prot.CopyTo(buffer.AsSpan(0));
+			MemoryMarshal.Write(buffer.AsSpan(4), ref length);
+			MemoryMarshal.Write(buffer.AsSpan(8), ref typeInteger);
+			data.CopyTo(buffer.AsSpan(12));
+
+			await _networkStream.WriteAsync(buffer, 0, length);
+		}
+	}
 
 	void CloseConnection()
 	{

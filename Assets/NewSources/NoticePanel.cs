@@ -13,13 +13,13 @@ public class NoticePanel : MonoBehaviour
 	[SerializeField]
 	TMP_Text _noticeContent;
 	[SerializeField]
-	UILoginServiceLocatorSO _uisl;
+	UILogin _uil;
 	IEnumerator _cachedCoroutin;
 	bool _processing;
 
 	void Start()
 	{
-		_uisl.SetNoticePanelObejct(this);
+		_uil.SetNoticePanelObejct(this);
 	}
 
 	public void ShowNotice(string content)

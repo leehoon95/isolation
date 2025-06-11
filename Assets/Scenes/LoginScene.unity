@@ -119,6 +119,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &170511359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 170511361}
+  - component: {fileID: 170511360}
+  m_Layer: 0
+  m_Name: '[Main Thread Dispatcher]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &170511360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170511359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a575b28fde341a14e9282187217b89f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &170511361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170511359}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 794.3709, y: 393.20584, z: -3.0965123}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &196883691
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +174,7 @@ GameObject:
   - component: {fileID: 196883694}
   - component: {fileID: 196883693}
   m_Layer: 0
-  m_Name: Save Data Loader
+  m_Name: '[Save Data Loader]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,7 +192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60be7b39c97480f448492db2c31c1336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uisl: {fileID: 0}
 --- !u!4 &196883694
 Transform:
   m_ObjectHideFlags: 0
@@ -383,7 +426,55 @@ MonoBehaviour:
   _obj: {fileID: 1665966687}
   _animator: {fileID: 1665966692}
   _noticeContent: {fileID: 1355239254}
-  _uisl: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
+  _uil: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
+--- !u!1 &428959302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 428959304}
+  - component: {fileID: 428959303}
+  m_Layer: 0
+  m_Name: '[Game Manager]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &428959303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428959302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 332a128623d5e2446912d148cb7c436c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ns: {fileID: 1253051921}
+  _uiso: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
+  _mtd: {fileID: 170511360}
+  _sdl: {fileID: 196883693}
+--- !u!4 &428959304
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428959302}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 794.3709, y: 393.20584, z: -3.0965123}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &604938121
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,7 +1404,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nickNameInputField: {fileID: 804446415}
-  _uisl: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
+  _uil: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
+  _enterButton: {fileID: 1532228995}
 --- !u!1 &1253051920
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,7 +1417,7 @@ GameObject:
   - component: {fileID: 1253051922}
   - component: {fileID: 1253051921}
   m_Layer: 0
-  m_Name: Network Synchronizer
+  m_Name: '[Network Synchronizer]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1681,19 +1773,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1532228996}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1065385006}
-        m_TargetAssemblyTypeName: LoginPannel, Assembly-CSharp
-        m_MethodName: OnEnter
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: "\u3139\u3139"
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1532228996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2148,3 +2228,5 @@ SceneRoots:
   - {fileID: 1049948442}
   - {fileID: 1253051922}
   - {fileID: 196883694}
+  - {fileID: 428959304}
+  - {fileID: 170511361}
