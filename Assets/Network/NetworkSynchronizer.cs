@@ -13,6 +13,9 @@ public class NetworkSynchronizer : MonoBehaviour
 	TcpClient _tcpClient;
 	NetworkStream _networkStream;
 	CancellationTokenSource _cancelToken;
+
+	public event Action<byte[], int> OnReceived;
+
 	public async Task<bool> ConnectToServer(string adress = "127.0.0.1", int port = 51010)
 	{
 		try
@@ -22,6 +25,7 @@ public class NetworkSynchronizer : MonoBehaviour
 				Debug.Log("Already connected to server");
 				return true;
 			}
+
 			_tcpClient = new TcpClient();
 			await _tcpClient.ConnectAsync(adress, port);
 
@@ -46,7 +50,7 @@ public class NetworkSynchronizer : MonoBehaviour
 
 	async Task ReceiveLoop()
 	{
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[4096];
 
 		while (!_cancelToken.Token.IsCancellationRequested)
 		{
@@ -60,8 +64,18 @@ public class NetworkSynchronizer : MonoBehaviour
 
 					break; // Connection closed
 				}
+
+				string header = System.Text.Encoding.UTF8.GetString(buffer, 0, 4);
+
+				if (header != "prot")
+				{
+					print("Received a invalid message from server...");
+					continue;
+				}
 				
-				string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+				OnReceived?.Invoke(buffer, bytesRead);
+
+				//string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
 			}
 			catch (OperationCanceledException)
 			{
@@ -75,19 +89,21 @@ public class NetworkSynchronizer : MonoBehaviour
 				break; // Exit the loop on error
 			}
 		}
+
+		print("ReceiveLoop has canceled.");
 	}
 
-	public void WriteAsync(MessageType type, byte[] data)
+	public void WriteAsync(PROTO_MessageType type, byte[] data)
 	{
 		_ = WriteByteImpl(type, data);
 	}
 
-	public void WriteAsync(MessageType type, string str)
+	public void WriteAsync(PROTO_MessageType type, string str)
 	{
 		_ = WriteByteImpl(type, Encoding.UTF8.GetBytes(str));
 	}
 
-	async Task WriteByteImpl(MessageType type, byte[] data)
+	async Task WriteByteImpl(PROTO_MessageType type, byte[] data)
 	{
 		if (_tcpClient != null && _tcpClient.Connected)
 		{
@@ -98,16 +114,17 @@ public class NetworkSynchronizer : MonoBehaviour
 
 			var prot = Encoding.ASCII.GetBytes("prot");
 
+			// |prot|type|length|data|
 			prot.CopyTo(buffer.AsSpan(0));
-			MemoryMarshal.Write(buffer.AsSpan(4), ref length);
-			MemoryMarshal.Write(buffer.AsSpan(8), ref typeInteger);
+			MemoryMarshal.Write(buffer.AsSpan(4), ref typeInteger);
+			MemoryMarshal.Write(buffer.AsSpan(8), ref length);
 			data.CopyTo(buffer.AsSpan(12));
 
 			await _networkStream.WriteAsync(buffer, 0, length);
 		}
 	}
 
-	void CloseConnection()
+	public void CloseConnection()
 	{
 		print("CloseConnection()");
 
@@ -125,7 +142,7 @@ public class NetworkSynchronizer : MonoBehaviour
 			_tcpClient?.Close();
 			_tcpClient = null;
 
-			//serverEventSO.RaiseServerDisconnected("Disconnected from server!");
+			print("Disconnected from the server.");
 		}
 		catch (System.Exception ex)
 		{

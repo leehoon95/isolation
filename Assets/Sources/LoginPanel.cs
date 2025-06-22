@@ -72,7 +72,7 @@ public class LoginPanel : MonoBehaviour
 
 	void OnNickNameValueChanged(string value)
 	{
-		print("OnNickNameValueChanged() called with value: " + value);
+		//print("OnNickNameValueChanged() called with value: " + value);
 		FilteringNickName(value);
 	}
 
