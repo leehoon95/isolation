@@ -15,6 +15,9 @@ public class LoginPanel : MonoBehaviour
 	Button _enterButton;
 	[SerializeField]
 	Button _disconnectButton;
+	[SerializeField]
+	Button _sendUDPDataButton;
+
 	private void Start()
 	{
 		_nickNameInputField.onValueChanged.AddListener(OnNickNameValueChanged);
@@ -28,6 +31,9 @@ public class LoginPanel : MonoBehaviour
 
 		_enterButton.onClick.AddListener(OnEnter);
 		_disconnectButton.onClick.AddListener(OnDisconnect);
+		_sendUDPDataButton.onClick.AddListener(() => {
+			_uil.RaiseSendUDPData();
+		});
 
 		_uil.SetLoginPanelObject(this);
 	}
@@ -41,7 +47,7 @@ public class LoginPanel : MonoBehaviour
 	{
 		if (_nickNameInputField.text.Length < 2)
 		{
-			_uil.NoticeOnTop("닉네임은 2글자 이상 입력해주세요.");
+			_uil.ShowNoticeOnTop("닉네임은 2글자 이상 입력해주세요.");
 			return;
 		}
 
@@ -60,8 +66,6 @@ public class LoginPanel : MonoBehaviour
 		//});
 
 		_uil.RaiseOnLoginEnter(_nickNameInputField.text);
-
-		_uil.NoticeOnTop($"입력된 닉네임: {_nickNameInputField.text}");
 	}
 
 	public void OnDisconnect()

@@ -11,7 +11,8 @@ public class UILogin : ScriptableObject
 
 	public event Action<string> OnLoginEnter;
 	public event Action OnDisconnect;
-	
+	public event Action OnSendUDPData;
+
 	// UI Event service
 	public void RaiseOnLoginEnter(string nickName)
 	{
@@ -22,9 +23,14 @@ public class UILogin : ScriptableObject
 	{
 		OnDisconnect?.Invoke();
 	}
+
+	public void RaiseSendUDPData()
+	{
+		OnSendUDPData?.Invoke();
+	}
 	
 	// Notice service
-	public void NoticeOnTop(string text)
+	public void ShowNoticeOnTop(string text)
 	{
 		_noticePanel?.ShowNotice(text);
 	}

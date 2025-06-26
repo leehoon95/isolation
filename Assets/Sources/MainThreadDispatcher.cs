@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 
 public class MainThreadDispatcher : MonoBehaviour
 {
-	private static MainThreadDispatcher _main;
+	//private static MainThreadDispatcher _main;
 	private static readonly ConcurrentQueue<Action> _executionQueue = new ConcurrentQueue<Action>();
 
 	public static void Enqueue(Action action)

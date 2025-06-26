@@ -1,5 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -14,7 +15,13 @@ public class NetworkSynchronizer : MonoBehaviour
 	NetworkStream _networkStream;
 	CancellationTokenSource _cancelToken;
 
-	public event Action<byte[], int> OnReceived;
+	UdpClient _udpClient;
+	IPEndPoint _udpEndPoint;
+
+	public event Action<byte[], int> OnReceivedTCP;
+	public event Action<byte[]> OnReceivedUDP;
+
+	public bool Connected => _tcpClient != null && _tcpClient.Connected;
 
 	public async Task<bool> ConnectToServer(string adress = "127.0.0.1", int port = 51010)
 	{
@@ -72,8 +79,8 @@ public class NetworkSynchronizer : MonoBehaviour
 					print("Received a invalid message from server...");
 					continue;
 				}
-				
-				OnReceived?.Invoke(buffer, bytesRead);
+
+				OnReceivedTCP?.Invoke(buffer, bytesRead);
 
 				//string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
 			}
@@ -93,17 +100,18 @@ public class NetworkSynchronizer : MonoBehaviour
 		print("ReceiveLoop has canceled.");
 	}
 
-	public void WriteAsync(PROTO_MessageType type, byte[] data)
+	//public void WriteAsync(PROTO_MessageType type, byte[] data)
+	//{
+	//	_ = WriteByteImpl(type, data);
+	//}
+
+	// use for debug.
+	public async Task WriteStringAsync(PROTO_MessageType type, string str)
 	{
-		_ = WriteByteImpl(type, data);
+		await WriteByteAsync(type, Encoding.UTF8.GetBytes(str));
 	}
 
-	public void WriteAsync(PROTO_MessageType type, string str)
-	{
-		_ = WriteByteImpl(type, Encoding.UTF8.GetBytes(str));
-	}
-
-	async Task WriteByteImpl(PROTO_MessageType type, byte[] data)
+	public async Task WriteByteAsync(PROTO_MessageType type, byte[] data)
 	{
 		if (_tcpClient != null && _tcpClient.Connected)
 		{
@@ -162,6 +170,53 @@ public class NetworkSynchronizer : MonoBehaviour
 		else
 		{
 			DontDestroyOnLoad(gameObject);
+		}
+	}
+
+	void Start()
+	{
+		if (_udpClient == null)
+		{
+			_udpClient = new UdpClient();
+			_udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+			_udpEndPoint = new IPEndPoint(IPAddress.Parse("172.23.12.33"), 51022);
+			//_udpClient.Client.Bind(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 51020));
+			//_ = ReceiveUDPData();
+		}
+		
+	}
+
+	async Task ReceiveUDPData()
+	{
+		while (true)
+		{
+			try
+			{
+				
+				print("Waiting for UDP data...");
+				var result = await _udpClient.ReceiveAsync();
+				print($"UDP received {result.RemoteEndPoint.Address.ToString()}:{result.RemoteEndPoint.Port}");
+				OnReceivedUDP?.Invoke(result.Buffer);
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError("ReceiveUDPData() Exception: " + ex.Message);
+				//break; // Exit the loop on error
+			}
+		}
+
+		print("ReceiveUDPData() has stopped.");
+	}
+	public async Task SendUDPDataAsync(byte[] data)
+	{
+		try
+		{
+			int res = await _udpClient.SendAsync(data, data.Length, _udpEndPoint);
+			print($"UDP Send res: {res}");
+		}
+		catch (Exception ex)
+		{
+			Debug.LogError("SendUDPDataAsync() Exception: " + ex.Message);
 		}
 	}
 }
