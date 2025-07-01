@@ -1,64 +1,59 @@
 using Google.Protobuf;
-using JetBrains.Annotations;
 using System;
 using System.Collections;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LoginGameManager : MonoBehaviour
 {
-    [SerializeField]
-    NetworkSynchronizer _ns;
-    [SerializeField]
-    UILogin _uiLogin;
-    [SerializeField]
-    SaveDataLoader _sdl;
-    [SerializeField]
-    PlayerInfoSO _pinfo;
+	//[SerializeField]
+	//NetworkSynchronizer _ns;
+	[SerializeField] TCPClientSO _tcpClient;
+	[SerializeField] UILoginSO _uiLogin;
+	[SerializeField] SaveDataLoader _sdl;
+	[SerializeField] PlayerInfoSO _pinfo;
 
-    Scene _syncScene;
-    PhysicsScene2D _syncPS;
+	Scene _syncScene;
+	PhysicsScene2D _syncPS;
 
 	void Start()
 	{
-        _uiLogin.OnLoginEnter += OnLoginEnter;
+		_uiLogin.OnLoginEnter += OnLoginEnter;
 		_uiLogin.OnDisconnect += OnDisconnect;
-		_uiLogin.OnSendUDPData += OnSendUDPData;
 
-		
-
-        _ns.OnReceivedTCP += OnDataReceivedFromServer;
-		_ns.OnReceivedUDP += OnDataReceivedFromServerUDP;
+		//_ns.OnReceivedTCP += OnDataReceivedFromServer;
+		_tcpClient.AddReceiveListner(OnTCPDataReceived);
+		_ = _tcpClient.ConnectToServer("172.23.12.33", 51010);
 
 		StartCoroutine(CheckNetworkState("172.23.12.33", 51010)); // 172.23.12.33: wsl2 ¼­¹ö
-
-		//CreateSceneParameters csp = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
-		//_syncScene = SceneManager.CreateScene("syncScene", csp);
-		//_syncPS = _syncScene.GetPhysicsScene2D();
-
-
 	}
 
-    IEnumerator CheckNetworkState(string server, int port)
-    {
-        yield return new WaitForSeconds(1f);
+	IEnumerator CheckNetworkState(string server, int port)
+	{
+		yield return new WaitForSeconds(1f);
 
-        while (true)
-        {
-            if (_ns.Connected)
-            {
-                yield return new WaitForSeconds(10f);
-                continue; // Already connected, wait for next check
+		while (true)
+		{
+			if (_tcpClient.Connnected)
+			{
+				yield return new WaitForSeconds(10f);
+				continue;
 			}
 
-            var res = _ns.ConnectToServer(server, port);
-            
-            while (res.Status != TaskStatus.RanToCompletion)
-            {
-                yield return new WaitForSeconds(1f);
-            }
+			var res = _tcpClient.ConnectToServer(server, port);
+			//         if (_ns.Connected)
+			//         {
+			//             yield return new WaitForSeconds(10f);
+			//             continue; // Already connected, wait for next check
+			//}
+
+			//         var res = _ns.ConnectToServer(server, port);
+
+			while (res.Status != TaskStatus.RanToCompletion)
+			{
+				yield return new WaitForSeconds(1f);
+			}
 
 			if (res.Result)
 			{
@@ -66,13 +61,13 @@ public class LoginGameManager : MonoBehaviour
 				_uiLogin.ShowNoticeOnTop("Connected to the server.");
 				//var p = new Ping(server);
 
-    //            if (p.isDone)
-    //            {
-    //                print($"ping: {p.time} ms");
-    //                yield return new WaitForSeconds(5f);
-    //            }
-    //            else
-    //            {
+				//            if (p.isDone)
+				//            {
+				//                print($"ping: {p.time} ms");
+				//                yield return new WaitForSeconds(5f);
+				//            }
+				//            else
+				//            {
 				//	yield return new WaitForSeconds(0.1f);
 				//}
 
@@ -80,80 +75,77 @@ public class LoginGameManager : MonoBehaviour
 			}
 			else
 			{
-                print("Trying to connect to server...");
+				print("Trying to connect to server...");
 				_uiLogin.ShowNoticeOnTop("Trying to connect to server...");
 				yield return new WaitForSeconds(3f);
 			}
-        }
-    }
-
-	void OnLoginEnter(string nickname)
-    {
-		_pinfo.SetNickname(nickname);
-
-		PROTO_RequestLogin msg = new PROTO_RequestLogin();
-        msg.Nickname = nickname;
-
-        var data = msg.ToByteArray();
-       
-        _ = _ns.WriteByteAsync(PROTO_MessageType.RequestLogin, data);
-    }
-
-    void OnDisconnect()
-    {
-        _ns.CloseConnection();
-
+		}
 	}
 
-    void OnDataReceivedFromServer(byte[] buffer, int length)
-    {
+	void OnLoginEnter(string nickname)
+	{
+		_pinfo.Nickname = nickname;
+
+		PROTO_RequestLogin msg = new PROTO_RequestLogin();
+		msg.Nickname = nickname;
+
+		var data = msg.ToByteArray();
+
+		//_ = _ns.SendTCPDataAsync(PROTO_MessageType.RequestLogin, data);
+		_ = _tcpClient.SendDataAsync(PROTO_MessageType.RequestLogin, data);
+	}
+
+	void OnDisconnect()
+	{
+		//_ns.CloseConnection();
+		_tcpClient.CloseConnection();
+	}
+
+	void OnTCPDataReceived(byte[] buffer, int length)
+	{
 		PROTO_MessageType type = (PROTO_MessageType)BitConverter.ToInt32(buffer, 4);
 
 		print($"OnDataReceivecFromServer({type}, data, {length}");
-		
+
 		if (type == PROTO_MessageType.LoginResult)
-        {
-			
+		{
+
 			PROTO_LoginResult msg = PROTO_LoginResult.Parser.ParseFrom(buffer, 12, length - 12);
 			if (msg == null)
-            {
-                print("Failed to parse LoginResult.");
-                return;
-            }
+			{
+				print("Failed to parse LoginResult.");
+				return;
+			}
 
-            if (msg.Result)
-            {
-                print("Allowed login request.");
+			if (msg.ClientIndex > 0)
+			{
+				print("Allowed login request.");
 
-                MainThreadDispatcher.Enqueue(() =>
-                {
-                    _ns.OnReceivedTCP -= OnDataReceivedFromServer;
+				_pinfo.ClientIndex = msg.ClientIndex;
+
+				print($"client index : {_pinfo.ClientIndex}");
+
+				MainThreadDispatcher.Enqueue(() =>
+				{
+					//_ns.OnReceivedTCP -= OnDataReceivedFromServer;
+					_tcpClient.RemoveReceiveListner(OnTCPDataReceived);
 					_ = SceneManager.LoadSceneAsync("TestScene");
 				});
-            }
-            else
-            {
-                MainThreadDispatcher.Enqueue(() =>
-                {
-                    _uiLogin.ShowNoticeOnTop("Login failed. Please try again.");
-                });
+			}
+			else
+			{
+				MainThreadDispatcher.Enqueue(() =>
+				{
+					_uiLogin.ShowNoticeOnTop("Login failed. Please try again.");
+				});
 				print("Denied login request.");
-            }
+			}
 
-        }
-    }
-
-    void OnDataReceivedFromServerUDP(byte[] buffer)
-    {
-        string msg = new string(System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length));
-
-		print($"OnDataReceivedFromServerUDP: {msg}");
+		}
 	}
 
-    void OnSendUDPData()
-    {
-        print("OnSendUDPData() called");
-		_ = _ns.SendUDPDataAsync(Encoding.UTF8.GetBytes("hello from client!----"));
-
+	void OnDisconnectedTCP()
+	{
+		_uiLogin.RaiseOnDisconnect();
 	}
 }

@@ -3,15 +3,28 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerInfoSO", menuName = "Scriptable Objects/PlayerInfoSO")]
 public class PlayerInfoSO : ScriptableObject
 {
-    string _nickname;
-
-    public void SetNickname(string nickname)
+    public string Nickname
     {
-        _nickname = nickname;
+        get; set;
     }
 
-    public string GetNickname()
+    public int ClientIndex
     {
-        return _nickname;
+        get; set;
     }
+
+    public int roomIndex
+    {
+		get; set;
+	}
+
+    //public void SetNickname(string nickname)
+    //{
+    //    _nickname = nickname;
+    //}
+
+    //public string GetNickname()
+    //{
+    //    return _nickname;
+    //}
 }

@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "UILogin", menuName = "Scriptable Objects/UILogin")]
-public class UILogin : ScriptableObject
+[CreateAssetMenu(fileName = "UILoginSO", menuName = "Scriptable Objects/UILoginSO")]
+public class UILoginSO : ScriptableObject
 {
 	LoginPanel _loginPanel;
 	NoticePanel _noticePanel;

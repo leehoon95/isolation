@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ServerEvent", menuName = "Scriptable Objects/ServerEvent")]
+[CreateAssetMenu(fileName = "ServerEventSO", menuName = "Scriptable Objects/ServerEventSO")]
 public class ServerEventSO : ScriptableObject
 {
     public event Action<string> OnServerConnected;

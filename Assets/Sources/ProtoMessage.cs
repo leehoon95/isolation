@@ -22,28 +22,30 @@ public static partial class ProtoMessageReflection {
   static ProtoMessageReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChNwcm90b19tZXNzYWdlLnByb3RvIk8KFVBST1RPX09iamVjdFRyYW5zZm9y",
-          "bRIKCgJpZBgBIAEoBRIJCgF4GAIgASgCEgkKAXkYAyABKAISCQoBehgEIAEo",
-          "AhIJCgFyGAUgASgCIiYKElBST1RPX1JlcXVlc3RMb2dpbhIQCghuaWNrbmFt",
-          "ZRgBIAEoCSIzChFQUk9UT19Mb2dpblJlc3VsdBIOCgZyZXN1bHQYASABKAgS",
-          "DgoGcmVhc29uGAIgASgJIiUKEVBST1RPX1JlcXVlc3RTeW5jEhAKCG5pY2tu",
-          "YW1lGAEgASgJIiUKF1BST1RPX1JlcXVlc3RTeW5jUmVzdWx0EgoKAmlkGAEg",
-          "ASgFIkkKHFBST1RPX1JlcG9ydENoYXJhY3RlclBoeXNpY3MSKQoJdHJhbnNm",
-          "b3JtGAEgASgLMhYuUFJPVE9fT2JqZWN0VHJhbnNmb3JtIkcKGlBST1RPX1N5",
-          "bmNDaGFyYWN0ZXJQaHlzaWNzEikKCXRyYW5zZm9tcxgBIAMoCzIWLlBST1RP",
-          "X09iamVjdFRyYW5zZm9ybSqSAQoRUFJPVE9fTWVzc2FnZVR5cGUSDwoLVU5T",
-          "UEVDSUZJRUQQABIRCg1SRVFVRVNUX0xPR0lOEAESEAoMTE9HSU5fUkVTVUxU",
-          "EAISEAoMUkVRVUVTVF9TWU5DEAMSFwoTUkVRVUVTVF9TWU5DX1JFU1VMVBAE",
-          "EhwKGFJFUE9SVF9DSEFSQUNURVJfUEhZU0lDUxAFYghlZGl0aW9uc3DoBw=="));
+          "ChNwcm90b19tZXNzYWdlLnByb3RvIlgKFVBST1RPX09iamVjdFRyYW5zZm9y",
+          "bRITCgtjbGllbnRJbmRleBgBIAEoBRIJCgF4GAIgASgCEgkKAXkYAyABKAIS",
+          "CQoBehgEIAEoAhIJCgFyGAUgASgCIiYKElBST1RPX1JlcXVlc3RMb2dpbhIQ",
+          "CghuaWNrbmFtZRgBIAEoCSI4ChFQUk9UT19Mb2dpblJlc3VsdBITCgtjbGll",
+          "bnRJbmRleBgBIAEoBRIOCgZyZWFzb24YAiABKAkiKAoRUFJPVE9fUmVxdWVz",
+          "dFN5bmMSEwoLY2xpZW50SW5kZXgYASABKAUiLAoXUFJPVE9fUmVxdWVzdFN5",
+          "bmNSZXN1bHQSEQoJcm9vbUluZGV4GAEgASgFIlwKHFBST1RPX1JlcG9ydENo",
+          "YXJhY3RlclBoeXNpY3MSEQoJcm9vbUluZGV4GAEgASgFEikKCXRyYW5zZm9y",
+          "bRgCIAEoCzIWLlBST1RPX09iamVjdFRyYW5zZm9ybSJHChpQUk9UT19TeW5j",
+          "Q2hhcmFjdGVyUGh5c2ljcxIpCgl0cmFuc2ZvbXMYASADKAsyFi5QUk9UT19P",
+          "YmplY3RUcmFuc2Zvcm0qrgEKEVBST1RPX01lc3NhZ2VUeXBlEg8KC1VOU1BF",
+          "Q0lGSUVEEAASEQoNUkVRVUVTVF9MT0dJThABEhAKDExPR0lOX1JFU1VMVBAC",
+          "EhAKDFJFUVVFU1RfU1lOQxADEhcKE1JFUVVFU1RfU1lOQ19SRVNVTFQQBBIc",
+          "ChhSRVBPUlRfQ0hBUkFDVEVSX1BIWVNJQ1MQBRIaChZTWU5DX0NIQVJBQ1RF",
+          "Ul9QSFlTSUNTEAZiCGVkaXRpb25zcOgH"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::PROTO_MessageType), }, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_ObjectTransform), global::PROTO_ObjectTransform.Parser, new[]{ "Id", "X", "Y", "Z", "R" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_ObjectTransform), global::PROTO_ObjectTransform.Parser, new[]{ "ClientIndex", "X", "Y", "Z", "R" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_RequestLogin), global::PROTO_RequestLogin.Parser, new[]{ "Nickname" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_LoginResult), global::PROTO_LoginResult.Parser, new[]{ "Result", "Reason" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_RequestSync), global::PROTO_RequestSync.Parser, new[]{ "Nickname" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_RequestSyncResult), global::PROTO_RequestSyncResult.Parser, new[]{ "Id" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_ReportCharacterPhysics), global::PROTO_ReportCharacterPhysics.Parser, new[]{ "Transform" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_LoginResult), global::PROTO_LoginResult.Parser, new[]{ "ClientIndex", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_RequestSync), global::PROTO_RequestSync.Parser, new[]{ "ClientIndex" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_RequestSyncResult), global::PROTO_RequestSyncResult.Parser, new[]{ "RoomIndex" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_ReportCharacterPhysics), global::PROTO_ReportCharacterPhysics.Parser, new[]{ "RoomIndex", "Transform" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PROTO_SyncCharacterPhysics), global::PROTO_SyncCharacterPhysics.Parser, new[]{ "Transfoms" }, null, null, null, null)
         }));
   }
@@ -58,6 +60,7 @@ public enum PROTO_MessageType {
   [pbr::OriginalName("REQUEST_SYNC")] RequestSync = 3,
   [pbr::OriginalName("REQUEST_SYNC_RESULT")] RequestSyncResult = 4,
   [pbr::OriginalName("REPORT_CHARACTER_PHYSICS")] ReportCharacterPhysics = 5,
+  [pbr::OriginalName("SYNC_CHARACTER_PHYSICS")] SyncCharacterPhysics = 6,
 }
 
 #endregion
@@ -100,7 +103,7 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public PROTO_ObjectTransform(PROTO_ObjectTransform other) : this() {
     _hasBits0 = other._hasBits0;
-    id_ = other.id_;
+    clientIndex_ = other.clientIndex_;
     x_ = other.x_;
     y_ = other.y_;
     z_ = other.z_;
@@ -114,30 +117,30 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
     return new PROTO_ObjectTransform(this);
   }
 
-  /// <summary>Field number for the "id" field.</summary>
-  public const int IdFieldNumber = 1;
-  private readonly static int IdDefaultValue = 0;
+  /// <summary>Field number for the "clientIndex" field.</summary>
+  public const int ClientIndexFieldNumber = 1;
+  private readonly static int ClientIndexDefaultValue = 0;
 
-  private int id_;
+  private int clientIndex_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int Id {
-    get { if ((_hasBits0 & 1) != 0) { return id_; } else { return IdDefaultValue; } }
+  public int ClientIndex {
+    get { if ((_hasBits0 & 1) != 0) { return clientIndex_; } else { return ClientIndexDefaultValue; } }
     set {
       _hasBits0 |= 1;
-      id_ = value;
+      clientIndex_ = value;
     }
   }
-  /// <summary>Gets whether the "id" field is set</summary>
+  /// <summary>Gets whether the "clientIndex" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasId {
+  public bool HasClientIndex {
     get { return (_hasBits0 & 1) != 0; }
   }
-  /// <summary>Clears the value of the "id" field</summary>
+  /// <summary>Clears the value of the "clientIndex" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearId() {
+  public void ClearClientIndex() {
     _hasBits0 &= ~1;
   }
 
@@ -264,7 +267,7 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Id != other.Id) return false;
+    if (ClientIndex != other.ClientIndex) return false;
     if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X, other.X)) return false;
     if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y, other.Y)) return false;
     if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Z, other.Z)) return false;
@@ -276,7 +279,7 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasId) hash ^= Id.GetHashCode();
+    if (HasClientIndex) hash ^= ClientIndex.GetHashCode();
     if (HasX) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X);
     if (HasY) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y);
     if (HasZ) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Z);
@@ -299,9 +302,9 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasId) {
+    if (HasClientIndex) {
       output.WriteRawTag(8);
-      output.WriteInt32(Id);
+      output.WriteInt32(ClientIndex);
     }
     if (HasX) {
       output.WriteRawTag(21);
@@ -329,9 +332,9 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasId) {
+    if (HasClientIndex) {
       output.WriteRawTag(8);
-      output.WriteInt32(Id);
+      output.WriteInt32(ClientIndex);
     }
     if (HasX) {
       output.WriteRawTag(21);
@@ -359,8 +362,8 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasId) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+    if (HasClientIndex) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientIndex);
     }
     if (HasX) {
       size += 1 + 4;
@@ -386,8 +389,8 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
     if (other == null) {
       return;
     }
-    if (other.HasId) {
-      Id = other.Id;
+    if (other.HasClientIndex) {
+      ClientIndex = other.ClientIndex;
     }
     if (other.HasX) {
       X = other.X;
@@ -421,7 +424,7 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
         case 8: {
-          Id = input.ReadInt32();
+          ClientIndex = input.ReadInt32();
           break;
         }
         case 21: {
@@ -460,7 +463,7 @@ public sealed partial class PROTO_ObjectTransform : pb::IMessage<PROTO_ObjectTra
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
         case 8: {
-          Id = input.ReadInt32();
+          ClientIndex = input.ReadInt32();
           break;
         }
         case 21: {
@@ -735,7 +738,7 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public PROTO_LoginResult(PROTO_LoginResult other) : this() {
     _hasBits0 = other._hasBits0;
-    result_ = other.result_;
+    clientIndex_ = other.clientIndex_;
     reason_ = other.reason_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -746,30 +749,30 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
     return new PROTO_LoginResult(this);
   }
 
-  /// <summary>Field number for the "result" field.</summary>
-  public const int ResultFieldNumber = 1;
-  private readonly static bool ResultDefaultValue = false;
+  /// <summary>Field number for the "clientIndex" field.</summary>
+  public const int ClientIndexFieldNumber = 1;
+  private readonly static int ClientIndexDefaultValue = 0;
 
-  private bool result_;
+  private int clientIndex_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Result {
-    get { if ((_hasBits0 & 1) != 0) { return result_; } else { return ResultDefaultValue; } }
+  public int ClientIndex {
+    get { if ((_hasBits0 & 1) != 0) { return clientIndex_; } else { return ClientIndexDefaultValue; } }
     set {
       _hasBits0 |= 1;
-      result_ = value;
+      clientIndex_ = value;
     }
   }
-  /// <summary>Gets whether the "result" field is set</summary>
+  /// <summary>Gets whether the "clientIndex" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasResult {
+  public bool HasClientIndex {
     get { return (_hasBits0 & 1) != 0; }
   }
-  /// <summary>Clears the value of the "result" field</summary>
+  /// <summary>Clears the value of the "clientIndex" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearResult() {
+  public void ClearClientIndex() {
     _hasBits0 &= ~1;
   }
 
@@ -814,7 +817,7 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Result != other.Result) return false;
+    if (ClientIndex != other.ClientIndex) return false;
     if (Reason != other.Reason) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -823,7 +826,7 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasResult) hash ^= Result.GetHashCode();
+    if (HasClientIndex) hash ^= ClientIndex.GetHashCode();
     if (HasReason) hash ^= Reason.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -843,9 +846,9 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasResult) {
+    if (HasClientIndex) {
       output.WriteRawTag(8);
-      output.WriteBool(Result);
+      output.WriteInt32(ClientIndex);
     }
     if (HasReason) {
       output.WriteRawTag(18);
@@ -861,9 +864,9 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasResult) {
+    if (HasClientIndex) {
       output.WriteRawTag(8);
-      output.WriteBool(Result);
+      output.WriteInt32(ClientIndex);
     }
     if (HasReason) {
       output.WriteRawTag(18);
@@ -879,8 +882,8 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasResult) {
-      size += 1 + 1;
+    if (HasClientIndex) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientIndex);
     }
     if (HasReason) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
@@ -897,8 +900,8 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
     if (other == null) {
       return;
     }
-    if (other.HasResult) {
-      Result = other.Result;
+    if (other.HasClientIndex) {
+      ClientIndex = other.ClientIndex;
     }
     if (other.HasReason) {
       Reason = other.Reason;
@@ -923,7 +926,7 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
         case 8: {
-          Result = input.ReadBool();
+          ClientIndex = input.ReadInt32();
           break;
         }
         case 18: {
@@ -950,7 +953,7 @@ public sealed partial class PROTO_LoginResult : pb::IMessage<PROTO_LoginResult>
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
         case 8: {
-          Result = input.ReadBool();
+          ClientIndex = input.ReadInt32();
           break;
         }
         case 18: {
@@ -972,6 +975,7 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
 {
   private static readonly pb::MessageParser<PROTO_RequestSync> _parser = new pb::MessageParser<PROTO_RequestSync>(() => new PROTO_RequestSync());
   private pb::UnknownFieldSet _unknownFields;
+  private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pb::MessageParser<PROTO_RequestSync> Parser { get { return _parser; } }
@@ -999,7 +1003,8 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public PROTO_RequestSync(PROTO_RequestSync other) : this() {
-    nickname_ = other.nickname_;
+    _hasBits0 = other._hasBits0;
+    clientIndex_ = other.clientIndex_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1009,30 +1014,31 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
     return new PROTO_RequestSync(this);
   }
 
-  /// <summary>Field number for the "nickname" field.</summary>
-  public const int NicknameFieldNumber = 1;
-  private readonly static string NicknameDefaultValue = "";
+  /// <summary>Field number for the "clientIndex" field.</summary>
+  public const int ClientIndexFieldNumber = 1;
+  private readonly static int ClientIndexDefaultValue = 0;
 
-  private string nickname_;
+  private int clientIndex_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public string Nickname {
-    get { return nickname_ ?? NicknameDefaultValue; }
+  public int ClientIndex {
+    get { if ((_hasBits0 & 1) != 0) { return clientIndex_; } else { return ClientIndexDefaultValue; } }
     set {
-      nickname_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      _hasBits0 |= 1;
+      clientIndex_ = value;
     }
   }
-  /// <summary>Gets whether the "nickname" field is set</summary>
+  /// <summary>Gets whether the "clientIndex" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasNickname {
-    get { return nickname_ != null; }
+  public bool HasClientIndex {
+    get { return (_hasBits0 & 1) != 0; }
   }
-  /// <summary>Clears the value of the "nickname" field</summary>
+  /// <summary>Clears the value of the "clientIndex" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearNickname() {
-    nickname_ = null;
+  public void ClearClientIndex() {
+    _hasBits0 &= ~1;
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1050,7 +1056,7 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Nickname != other.Nickname) return false;
+    if (ClientIndex != other.ClientIndex) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1058,7 +1064,7 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasNickname) hash ^= Nickname.GetHashCode();
+    if (HasClientIndex) hash ^= ClientIndex.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1077,9 +1083,9 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasNickname) {
-      output.WriteRawTag(10);
-      output.WriteString(Nickname);
+    if (HasClientIndex) {
+      output.WriteRawTag(8);
+      output.WriteInt32(ClientIndex);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -1091,9 +1097,9 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasNickname) {
-      output.WriteRawTag(10);
-      output.WriteString(Nickname);
+    if (HasClientIndex) {
+      output.WriteRawTag(8);
+      output.WriteInt32(ClientIndex);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -1105,8 +1111,8 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasNickname) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(Nickname);
+    if (HasClientIndex) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientIndex);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -1120,8 +1126,8 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
     if (other == null) {
       return;
     }
-    if (other.HasNickname) {
-      Nickname = other.Nickname;
+    if (other.HasClientIndex) {
+      ClientIndex = other.ClientIndex;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -1142,8 +1148,8 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 10: {
-          Nickname = input.ReadString();
+        case 8: {
+          ClientIndex = input.ReadInt32();
           break;
         }
       }
@@ -1165,8 +1171,8 @@ public sealed partial class PROTO_RequestSync : pb::IMessage<PROTO_RequestSync>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 10: {
-          Nickname = input.ReadString();
+        case 8: {
+          ClientIndex = input.ReadInt32();
           break;
         }
       }
@@ -1213,7 +1219,7 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public PROTO_RequestSyncResult(PROTO_RequestSyncResult other) : this() {
     _hasBits0 = other._hasBits0;
-    id_ = other.id_;
+    roomIndex_ = other.roomIndex_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1223,30 +1229,30 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
     return new PROTO_RequestSyncResult(this);
   }
 
-  /// <summary>Field number for the "id" field.</summary>
-  public const int IdFieldNumber = 1;
-  private readonly static int IdDefaultValue = 0;
+  /// <summary>Field number for the "roomIndex" field.</summary>
+  public const int RoomIndexFieldNumber = 1;
+  private readonly static int RoomIndexDefaultValue = 0;
 
-  private int id_;
+  private int roomIndex_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int Id {
-    get { if ((_hasBits0 & 1) != 0) { return id_; } else { return IdDefaultValue; } }
+  public int RoomIndex {
+    get { if ((_hasBits0 & 1) != 0) { return roomIndex_; } else { return RoomIndexDefaultValue; } }
     set {
       _hasBits0 |= 1;
-      id_ = value;
+      roomIndex_ = value;
     }
   }
-  /// <summary>Gets whether the "id" field is set</summary>
+  /// <summary>Gets whether the "roomIndex" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasId {
+  public bool HasRoomIndex {
     get { return (_hasBits0 & 1) != 0; }
   }
-  /// <summary>Clears the value of the "id" field</summary>
+  /// <summary>Clears the value of the "roomIndex" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearId() {
+  public void ClearRoomIndex() {
     _hasBits0 &= ~1;
   }
 
@@ -1265,7 +1271,7 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Id != other.Id) return false;
+    if (RoomIndex != other.RoomIndex) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1273,7 +1279,7 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasId) hash ^= Id.GetHashCode();
+    if (HasRoomIndex) hash ^= RoomIndex.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1292,9 +1298,9 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasId) {
+    if (HasRoomIndex) {
       output.WriteRawTag(8);
-      output.WriteInt32(Id);
+      output.WriteInt32(RoomIndex);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -1306,9 +1312,9 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasId) {
+    if (HasRoomIndex) {
       output.WriteRawTag(8);
-      output.WriteInt32(Id);
+      output.WriteInt32(RoomIndex);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -1320,8 +1326,8 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasId) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+    if (HasRoomIndex) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomIndex);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -1335,8 +1341,8 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
     if (other == null) {
       return;
     }
-    if (other.HasId) {
-      Id = other.Id;
+    if (other.HasRoomIndex) {
+      RoomIndex = other.RoomIndex;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -1358,7 +1364,7 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
         case 8: {
-          Id = input.ReadInt32();
+          RoomIndex = input.ReadInt32();
           break;
         }
       }
@@ -1381,7 +1387,7 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
         case 8: {
-          Id = input.ReadInt32();
+          RoomIndex = input.ReadInt32();
           break;
         }
       }
@@ -1391,6 +1397,9 @@ public sealed partial class PROTO_RequestSyncResult : pb::IMessage<PROTO_Request
 
 }
 
+/// <summary>
+/// type: REPORT_CHARACTER_PHYSICS
+/// </summary>
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_ReportCharacterPhysics>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -1399,6 +1408,7 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
 {
   private static readonly pb::MessageParser<PROTO_ReportCharacterPhysics> _parser = new pb::MessageParser<PROTO_ReportCharacterPhysics>(() => new PROTO_ReportCharacterPhysics());
   private pb::UnknownFieldSet _unknownFields;
+  private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pb::MessageParser<PROTO_ReportCharacterPhysics> Parser { get { return _parser; } }
@@ -1426,6 +1436,8 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public PROTO_ReportCharacterPhysics(PROTO_ReportCharacterPhysics other) : this() {
+    _hasBits0 = other._hasBits0;
+    roomIndex_ = other.roomIndex_;
     transform_ = other.transform_ != null ? other.transform_.Clone() : null;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -1436,8 +1448,35 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
     return new PROTO_ReportCharacterPhysics(this);
   }
 
+  /// <summary>Field number for the "roomIndex" field.</summary>
+  public const int RoomIndexFieldNumber = 1;
+  private readonly static int RoomIndexDefaultValue = 0;
+
+  private int roomIndex_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int RoomIndex {
+    get { if ((_hasBits0 & 1) != 0) { return roomIndex_; } else { return RoomIndexDefaultValue; } }
+    set {
+      _hasBits0 |= 1;
+      roomIndex_ = value;
+    }
+  }
+  /// <summary>Gets whether the "roomIndex" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasRoomIndex {
+    get { return (_hasBits0 & 1) != 0; }
+  }
+  /// <summary>Clears the value of the "roomIndex" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearRoomIndex() {
+    _hasBits0 &= ~1;
+  }
+
   /// <summary>Field number for the "transform" field.</summary>
-  public const int TransformFieldNumber = 1;
+  public const int TransformFieldNumber = 2;
   private global::PROTO_ObjectTransform transform_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1463,6 +1502,7 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
     if (ReferenceEquals(other, this)) {
       return true;
     }
+    if (RoomIndex != other.RoomIndex) return false;
     if (!object.Equals(Transform, other.Transform)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -1471,6 +1511,7 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
+    if (HasRoomIndex) hash ^= RoomIndex.GetHashCode();
     if (transform_ != null) hash ^= Transform.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -1490,8 +1531,12 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
+    if (HasRoomIndex) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoomIndex);
+    }
     if (transform_ != null) {
-      output.WriteRawTag(10);
+      output.WriteRawTag(18);
       output.WriteMessage(Transform);
     }
     if (_unknownFields != null) {
@@ -1504,8 +1549,12 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasRoomIndex) {
+      output.WriteRawTag(8);
+      output.WriteInt32(RoomIndex);
+    }
     if (transform_ != null) {
-      output.WriteRawTag(10);
+      output.WriteRawTag(18);
       output.WriteMessage(Transform);
     }
     if (_unknownFields != null) {
@@ -1518,6 +1567,9 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
+    if (HasRoomIndex) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomIndex);
+    }
     if (transform_ != null) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(Transform);
     }
@@ -1532,6 +1584,9 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
   public void MergeFrom(PROTO_ReportCharacterPhysics other) {
     if (other == null) {
       return;
+    }
+    if (other.HasRoomIndex) {
+      RoomIndex = other.RoomIndex;
     }
     if (other.transform_ != null) {
       if (transform_ == null) {
@@ -1558,7 +1613,11 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 10: {
+        case 8: {
+          RoomIndex = input.ReadInt32();
+          break;
+        }
+        case 18: {
           if (transform_ == null) {
             Transform = new global::PROTO_ObjectTransform();
           }
@@ -1584,7 +1643,11 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 10: {
+        case 8: {
+          RoomIndex = input.ReadInt32();
+          break;
+        }
+        case 18: {
           if (transform_ == null) {
             Transform = new global::PROTO_ObjectTransform();
           }
@@ -1598,6 +1661,9 @@ public sealed partial class PROTO_ReportCharacterPhysics : pb::IMessage<PROTO_Re
 
 }
 
+/// <summary>
+/// type: SYNC_CHARACTER_PHYSICS
+/// </summary>
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
 public sealed partial class PROTO_SyncCharacterPhysics : pb::IMessage<PROTO_SyncCharacterPhysics>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE

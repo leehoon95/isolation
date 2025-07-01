@@ -28,7 +28,6 @@ public class Character : MonoBehaviour
 		_is.Move -= OnMove;
 		_is.Look -= OnLook;
 		_is.Attack -= OnAttack;
-
 	}
 
 	void OnMove(Vector2 velocity)
@@ -73,11 +72,7 @@ public class Character : MonoBehaviour
 		}
 	}
 
-	private void OnDrawGizmos()
-	{
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine(transform.position, _mousePos);
-	}
+	
 
 	private void OnEnable()
 	{

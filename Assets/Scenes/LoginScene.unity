@@ -713,7 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 332a128623d5e2446912d148cb7c436c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ns: {fileID: 1253051921}
+  _tcpClient: {fileID: 11400000, guid: 10b68c3ce640fa547a7af18af3d36ed7, type: 2}
   _uiLogin: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
   _sdl: {fileID: 196883693}
   _pinfo: {fileID: 11400000, guid: 317a084be5344984ebbccce18a68b1b9, type: 2}
@@ -1787,6 +1787,7 @@ MonoBehaviour:
   _uil: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
   _enterButton: {fileID: 1532228995}
   _disconnectButton: {fileID: 396198380}
+  _sendUDPDataButton: {fileID: 1023086121}
 --- !u!1 &1253051920
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,7 +1804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1253051921
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ public class NetworkSynchronizer : MonoBehaviour
 
 	UdpClient _udpClient;
 	IPEndPoint _udpEndPoint;
+	bool _runUDPReceive;
 
 	public event Action<byte[], int> OnReceivedTCP;
 	public event Action<byte[]> OnReceivedUDP;
@@ -32,7 +33,7 @@ public class NetworkSynchronizer : MonoBehaviour
 				Debug.Log("Already connected to server");
 				return true;
 			}
-
+			
 			_tcpClient = new TcpClient();
 			await _tcpClient.ConnectAsync(adress, port);
 
@@ -106,29 +107,36 @@ public class NetworkSynchronizer : MonoBehaviour
 	//}
 
 	// use for debug.
-	public async Task WriteStringAsync(PROTO_MessageType type, string str)
+	public async Task SendTCPStringAsync(PROTO_MessageType type, string str)
 	{
-		await WriteByteAsync(type, Encoding.UTF8.GetBytes(str));
+		await SendTCPDataAsync(type, Encoding.UTF8.GetBytes(str));
 	}
 
-	public async Task WriteByteAsync(PROTO_MessageType type, byte[] data)
+	public async Task SendTCPDataAsync(PROTO_MessageType type, byte[] data)
 	{
 		if (_tcpClient != null && _tcpClient.Connected)
 		{
-			int length = data.Length + 12;
-			int typeInteger = Convert.ToInt32(type);
+			try
+			{
+				int length = data.Length + 12;
+				int typeInteger = Convert.ToInt32(type);
 
-			byte[] buffer = new byte[data.Length + 12];
+				byte[] buffer = new byte[data.Length + 12];
 
-			var prot = Encoding.ASCII.GetBytes("prot");
+				var prot = Encoding.ASCII.GetBytes("prot");
 
-			// |prot|type|length|data|
-			prot.CopyTo(buffer.AsSpan(0));
-			MemoryMarshal.Write(buffer.AsSpan(4), ref typeInteger);
-			MemoryMarshal.Write(buffer.AsSpan(8), ref length);
-			data.CopyTo(buffer.AsSpan(12));
+				// |prot|type|length|serialized data|
+				prot.CopyTo(buffer.AsSpan(0));
+				MemoryMarshal.Write(buffer.AsSpan(4), ref typeInteger);
+				MemoryMarshal.Write(buffer.AsSpan(8), ref length);
+				data.CopyTo(buffer.AsSpan(12));
 
-			await _networkStream.WriteAsync(buffer, 0, length);
+				await _networkStream.WriteAsync(buffer, 0, length);
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError("WriteByteAsync() Exception: " + ex.Message);
+			}
 		}
 	}
 
@@ -173,26 +181,26 @@ public class NetworkSynchronizer : MonoBehaviour
 		}
 	}
 
-	void Start()
+	public void StartUDPReceive()
 	{
-		if (_udpClient == null)
-		{
-			_udpClient = new UdpClient();
-			_udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			_udpEndPoint = new IPEndPoint(IPAddress.Parse("172.23.12.33"), 51022);
-			//_udpClient.Client.Bind(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 51020));
-			//_ = ReceiveUDPData();
-		}
-		
+		_udpClient = new UdpClient();
+		_runUDPReceive = true;
+		_udpEndPoint = new IPEndPoint(IPAddress.Parse("172.23.12.33"), 51022);
+		_ = ReceiveUDPData();
+	}
+
+	public void StopUDPReceive()
+	{
+		_udpClient?.Close();
+		_runUDPReceive = false;
 	}
 
 	async Task ReceiveUDPData()
 	{
-		while (true)
+		while (_runUDPReceive)
 		{
 			try
 			{
-				
 				print("Waiting for UDP data...");
 				var result = await _udpClient.ReceiveAsync();
 				print($"UDP received {result.RemoteEndPoint.Address.ToString()}:{result.RemoteEndPoint.Port}");
@@ -207,10 +215,23 @@ public class NetworkSynchronizer : MonoBehaviour
 
 		print("ReceiveUDPData() has stopped.");
 	}
-	public async Task SendUDPDataAsync(byte[] data)
+	public async Task SendUDPDataAsync(PROTO_MessageType type, byte[] data)
 	{
 		try
 		{
+			int length = data.Length + 12;
+			int typeInteger = Convert.ToInt32(type);
+
+			byte[] buffer = new byte[data.Length + 12];
+
+			var prot = Encoding.ASCII.GetBytes("prot");
+
+			// |prot|type|length|serialized data|
+			prot.CopyTo(buffer.AsSpan(0));
+			MemoryMarshal.Write(buffer.AsSpan(4), ref typeInteger);
+			MemoryMarshal.Write(buffer.AsSpan(8), ref length);
+			data.CopyTo(buffer.AsSpan(12));
+
 			int res = await _udpClient.SendAsync(data, data.Length, _udpEndPoint);
 			print($"UDP Send res: {res}");
 		}

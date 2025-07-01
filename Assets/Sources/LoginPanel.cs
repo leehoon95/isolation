@@ -10,7 +10,7 @@ public class LoginPanel : MonoBehaviour
 	[SerializeField]
 	TMP_InputField _nickNameInputField;
 	[SerializeField]
-	UILogin _uil;
+	UILoginSO _uil;
 	[SerializeField]
 	Button _enterButton;
 	[SerializeField]
@@ -29,8 +29,8 @@ public class LoginPanel : MonoBehaviour
 		//	_nickNameInputField.text = _sdl.SaveData.nickName;
 		//}
 
-		_enterButton.onClick.AddListener(OnEnter);
-		_disconnectButton.onClick.AddListener(OnDisconnect);
+		_enterButton.onClick.AddListener(OnClickEnter);
+		_disconnectButton.onClick.AddListener(OnClickDisconnect);
 		_sendUDPDataButton.onClick.AddListener(() => {
 			_uil.RaiseSendUDPData();
 		});
@@ -43,7 +43,7 @@ public class LoginPanel : MonoBehaviour
 		_nickNameInputField.text = nickname;
 	}
 
-	public void OnEnter()
+	public void OnClickEnter()
 	{
 		if (_nickNameInputField.text.Length < 2)
 		{
@@ -68,7 +68,7 @@ public class LoginPanel : MonoBehaviour
 		_uil.RaiseOnLoginEnter(_nickNameInputField.text);
 	}
 
-	public void OnDisconnect()
+	public void OnClickDisconnect()
 	{
 		print("Disconnect From the server.");
 		_uil.RaiseOnDisconnect();

@@ -13,7 +13,7 @@ public class NoticePanel : MonoBehaviour
 	[SerializeField]
 	TMP_Text _noticeContent;
 	[SerializeField]
-	UILogin _uil;
+	UILoginSO _uil;
 	IEnumerator _cachedCoroutin;
 	bool _processing;
 
