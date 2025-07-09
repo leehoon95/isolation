@@ -7,6 +7,10 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 [CreateAssetMenu(fileName = "UDPClientSO", menuName = "Scriptable Objects/UDPClientSO")]
 public class UDPClientSO : ScriptableObject
 {
@@ -34,17 +38,35 @@ public class UDPClientSO : ScriptableObject
 
 		_udpClient = new UdpClient();
 		//_udpEndPoint = new IPEndPoint(IPAddress.Parse(adress), port);
-		_cancelToken = new CancellationTokenSource();
+		_cancelToken = new ();
 		_receivingTask = Task.Run(ReceivingUDPDataTask);
+#if UNITY_EDITOR
+		EditorApplication.playModeStateChanged += OnPlayModeChanged;
+#endif
 	}
+
 
 	public void StopReceiving()
 	{
 		_udpClient?.Close();
 		_cancelToken?.Cancel();
+		_cancelToken.Dispose();
 		_cancelToken = null;
 		//_udpEndPoint = null;
+#if UNITY_EDITOR
+		EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+#endif
 	}
+
+#if UNITY_EDITOR
+	void OnPlayModeChanged(PlayModeStateChange state)
+	{
+		if (state == PlayModeStateChange.ExitingPlayMode)
+		{
+			StopReceiving();
+		}
+	}
+#endif
 
 	public async Task ReceivingUDPDataTask()
 	{
@@ -52,7 +74,6 @@ public class UDPClientSO : ScriptableObject
 		{
 			try
 			{
-				//Debug.Log("try receiving");
 				var result = await _udpClient.ReceiveAsync();
 				_onReceived?.Invoke(result.Buffer, result.Buffer.Length);
 				//Debug.Log("udp received");
@@ -60,16 +81,16 @@ public class UDPClientSO : ScriptableObject
 			catch (SocketException se)
 			{
 				Debug.LogError($"UDP Receiving socket exception: {se.ErrorCode}");
-				StopReceiving();
 				break;
 			}
 			catch (Exception ex)
 			{
 				Debug.LogError($"UDP Receiving exception: {ex.Message}.");
-				StopReceiving();
 				break;
 			}
 		}
+
+		StopReceiving();
 	}
 
 	public async Task SendUDPDataAsync(PROTO_MessageType type, byte[] data)

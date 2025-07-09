@@ -1,9 +1,11 @@
 using System.Text.RegularExpressions;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class LoginPanel : MonoBehaviour
 {

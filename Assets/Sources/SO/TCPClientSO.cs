@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UIElements;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [CreateAssetMenu(fileName = "TCPClientSO", menuName = "Scriptable Objects/TCPClientSO")]
 public class TCPClientSO : ScriptableObject
@@ -14,8 +17,7 @@ public class TCPClientSO : ScriptableObject
 	NetworkStream _networkStream;
 	CancellationTokenSource _cancelToken;
 
-	Action<byte[], int> _onReceived;
-	Action _onDisconnected;
+	Func<byte[], int, Awaitable> _onReceived;
 
 	public bool Connnected
 	{
@@ -42,10 +44,12 @@ public class TCPClientSO : ScriptableObject
 			_tcpClient.LingerState = new LingerOption(false, 0);
 			_networkStream = _tcpClient.GetStream();
 
-			_cancelToken = new CancellationTokenSource();
+			_cancelToken = new ();
 
 			_ = Task.Run(ReceivingTask);
-
+#if UNITY_EDITOR
+			EditorApplication.playModeStateChanged += OnPlayModeChanged;
+#endif
 			Debug.Log("Connected to server!");
 
 			return true;
@@ -61,12 +65,22 @@ public class TCPClientSO : ScriptableObject
 			return false;
 		}
 	}
+	
+#if UNITY_EDITOR
+	void OnPlayModeChanged(PlayModeStateChange state)
+	{
+		if (state == PlayModeStateChange.ExitingPlayMode)
+		{
+			CloseConnection();
+		}
+	}
+#endif
 
 	async Task ReceivingTask()
 	{
 		byte[] buffer = new byte[4096];
-
-		while (!_cancelToken.Token.IsCancellationRequested)
+		// destroyCancellationToken: MonoBehavior 파생 클래스 전용
+		while (!_cancelToken.IsCancellationRequested)
 		{
 			try
 			{
@@ -75,7 +89,7 @@ public class TCPClientSO : ScriptableObject
 				{
 					Debug.Log("receive 0 byte");
 					CloseConnection();
-					_onDisconnected?.Invoke();
+					_onReceived?.Invoke(null, 0);
 
 					break; // Connection closed
 				}
@@ -101,10 +115,11 @@ public class TCPClientSO : ScriptableObject
 			catch (Exception ex)
 			{
 				Debug.Log("TCPClientSO.ReceivingTask() Exception: " + ex.Message);
-				CloseConnection();
 				break;
 			}
 		}
+
+		CloseConnection();
 	}
 
 	public void CloseConnection()
@@ -113,20 +128,27 @@ public class TCPClientSO : ScriptableObject
 
 		if (_tcpClient == null || !_tcpClient.Connected)
 		{
-			Debug.Log("CloseConnection() - TcpClient is null or not connected");
 			return;
 		}
 
 		try
 		{
 			_onReceived = null;
-			_cancelToken?.Cancel();
-			_networkStream?.Close();
-			_networkStream = null;
-			_tcpClient?.Close();
-			_tcpClient = null;
 
-			Debug.Log("Disconnected from the server.");
+			_cancelToken?.Cancel();
+			_cancelToken.Dispose();
+			_cancelToken = null;
+
+			_networkStream?.Close();
+			_networkStream?.Dispose();
+			_networkStream = null;
+
+			_tcpClient?.Close();
+			_tcpClient?.Dispose();
+			_tcpClient = null;
+#if UNITY_EDITOR
+			EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+#endif
 		}
 		catch (System.Exception ex)
 		{
@@ -134,29 +156,29 @@ public class TCPClientSO : ScriptableObject
 		}
 	}
 
-	public bool AddReceiveListner(Action<byte[], int> listner)
+	public bool AddReceiveListner(Func<byte[], int, Awaitable> listner)
 	{
 		_onReceived += listner;
 
 		return true;
 	}
 
-	public void RemoveReceiveListner(Action<byte[], int> listner)
+	public void RemoveReceiveListner(Func<byte[], int, Awaitable> listner)
 	{
 		_onReceived -= listner;
 	}
 
-	public bool AddOnDisconnectedListner(Action<byte[], int> listner)
-	{
-		_onReceived += listner;
+	//public bool AddOnDisconnectedListner(Action<byte[], int> listner)
+	//{
+	//	_onReceived += listner;
 
-		return true;
-	}
+	//	return true;
+	//}
 
-	public void RemoveOnDisconnectedListner(Action<byte[], int> listner)
-	{
-		_onReceived -= listner;
-	}
+	//public void RemoveOnDisconnectedListner(Action<byte[], int> listner)
+	//{
+	//	_onReceived -= listner;
+	//}
 
 	public async Task<bool> SendStringAsync(PROTO_MessageType type, string str)
 	{
@@ -193,5 +215,10 @@ public class TCPClientSO : ScriptableObject
 		}
 
 		return false;
+	}
+
+	private void OnDestroy()
+	{
+		Debug.Log("TCPClientSO.OnDestroy() called.");
 	}
 }

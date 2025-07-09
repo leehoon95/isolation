@@ -48,7 +48,7 @@ public class TestSceneGameManager : MonoBehaviour
         await _tcpClient.SendDataAsync(PROTO_MessageType.RequestSync, data);
 	}
 
-	void OnTCPDataReceived(byte[] buffer, int length)
+	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
     {
 		PROTO_MessageType type = (PROTO_MessageType)BitConverter.ToInt32(buffer, 4);
 	    if (type == PROTO_MessageType.RequestSyncResult)

@@ -101,7 +101,7 @@ public class LoginGameManager : MonoBehaviour
 		_tcpClient.CloseConnection();
 	}
 
-	void OnTCPDataReceived(byte[] buffer, int length)
+	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
 	{
 		PROTO_MessageType type = (PROTO_MessageType)BitConverter.ToInt32(buffer, 4);
 
@@ -125,19 +125,17 @@ public class LoginGameManager : MonoBehaviour
 
 				print($"client index : {_pinfo.ClientIndex}");
 
-				MainThreadDispatcher.Enqueue(() =>
-				{
-					//_ns.OnReceivedTCP -= OnDataReceivedFromServer;
-					_tcpClient.RemoveReceiveListner(OnTCPDataReceived);
-					_ = SceneManager.LoadSceneAsync("TestScene");
-				});
+				_tcpClient.RemoveReceiveListner(OnTCPDataReceived);
+
+				await Awaitable.MainThreadAsync();
+				
+				_ = SceneManager.LoadSceneAsync("TestScene");
 			}
 			else
 			{
-				MainThreadDispatcher.Enqueue(() =>
-				{
-					_uiLogin.ShowNoticeOnTop("Login failed. Please try again.");
-				});
+				await Awaitable.MainThreadAsync();
+
+				_uiLogin.ShowNoticeOnTop("Login failed. Please try again.");
 				print("Denied login request.");
 			}
 

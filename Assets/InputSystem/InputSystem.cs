@@ -14,6 +14,11 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 	public event UnityAction<bool> SwitchCamera1;
 	public event UnityAction<bool> SwitchCamera2;
 
+	public Vector2 MousePos
+	{
+		get; private set;
+	}
+
 	void Awake()
 	{
 		var obj = FindAnyObjectByType<InputSystem>();
@@ -43,8 +48,10 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 	void InputSystem_Actions.IPlayerActions.OnLook(InputAction.CallbackContext context)
 	{
 		//print($"OnLook: {Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>())}");
-		Look?.Invoke(context.ReadValue<Vector2>());
+		MousePos = context.ReadValue<Vector2>();
+		//Look?.Invoke(context.ReadValue<Vector2>());
 	}
+
 	void InputSystem_Actions.IPlayerActions.OnAttack(InputAction.CallbackContext context)
 	{
 		//print($"OnAttack: {context.ReadValue<bool>()}");

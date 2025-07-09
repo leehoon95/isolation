@@ -12,13 +12,11 @@ public class Character : MonoBehaviour
 	
 	InputSystem _is;
     Vector2 _characterVelocity;
-    Vector2 _mousePos;
 	int _cameraActivated;
 
 	void EnableWithInputListner()
     {
         _is.Move += OnMove;
-        _is.Look += OnLook;
         _is.Attack += OnAttack;
 		_is.SwitchCamera1 += SwitchCamera1;
 	}
@@ -26,7 +24,6 @@ public class Character : MonoBehaviour
 	void DisableWithInputListner()
 	{
 		_is.Move -= OnMove;
-		_is.Look -= OnLook;
 		_is.Attack -= OnAttack;
 	}
 
@@ -34,11 +31,6 @@ public class Character : MonoBehaviour
     {
 		_characterVelocity = velocity;
 	}
-
-    void OnLook(Vector2 pos)
-    {
-        _mousePos = Camera.main.ScreenToWorldPoint(pos);
-    }
 
     void OnAttack(bool attack)
     {
@@ -49,26 +41,7 @@ public class Character : MonoBehaviour
 	{
 		if (!pressed)
 		{
-			var cl = _cm.Cameras;
-
-			_cameraActivated++;
-
-			if (_cameraActivated >= cl.Count)
-			{
-				_cameraActivated = 0;
-			}
-
-			for (int i = 0; i < cl.Count; i++)
-			{
-				if (i != _cameraActivated)
-				{
-					cl[i].Priority = 0;
-				}
-				else
-				{
-					cl[i].Priority = 1;
-				}
-			}
+			_cm.ActivateNextCamera();
 		}
 	}
 
@@ -101,7 +74,11 @@ public class Character : MonoBehaviour
 
 	void Update()
     {
-     
+		Vector2 dir = Camera.main.ScreenToWorldPoint(_is.MousePos) - transform.position;
+		
+		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+		   
+		transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
 }

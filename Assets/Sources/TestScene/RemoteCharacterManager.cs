@@ -2,6 +2,7 @@ using Google.Protobuf;
 using Google.Protobuf.Collections;
 using JetBrains.Annotations;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class RemoteCharacterManager : MonoBehaviour
@@ -22,15 +23,26 @@ public class RemoteCharacterManager : MonoBehaviour
 
 	Dictionary<int, GameObject> _remoteCharacters = new Dictionary<int, GameObject>();
     float _t;
-    float _interval = 0.02f;
+    float _interval = 0.1f;
     Vector2 _clientPositionOnServer = Vector2.zero;
-    
-    public void SyncTransform(PROTO_ObjectTransform tr)
+    Stopwatch _stopwatch = new Stopwatch();
+
+	public void SyncTransform(PROTO_ObjectTransform tr)
     {
         if (_pinfo.ClientIndex == tr.ClientIndex)
         {
+			if (_stopwatch.IsRunning)
+            {
+				_stopwatch.Stop();
+			}
+
 			_clientPositionOnServer = new Vector2(tr.X, tr.Y);
-            print($"cp on server: {_clientPositionOnServer}");
+            //print($"cp on server: {_clientPositionOnServer}");
+
+
+            print($"sync interval: {_stopwatch.ElapsedMilliseconds}");
+
+            _stopwatch.Stop();
 		}
         else
         {
@@ -54,7 +66,7 @@ public class RemoteCharacterManager : MonoBehaviour
 	void OnDrawGizmos()
 	{
 		Gizmos.color = Color.yellow;
-		Gizmos.DrawSphere(_clientPositionOnServer, 0.5f);
+		Gizmos.DrawSphere(_clientPositionOnServer, 0.1f);
         //Gizmos.DrawCube(_clientPositionOnServer, 0.5f);
 	}
 
