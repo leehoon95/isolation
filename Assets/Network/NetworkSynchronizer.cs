@@ -107,19 +107,19 @@ public class NetworkSynchronizer : MonoBehaviour
 	//}
 
 	// use for debug.
-	public async Task SendTCPStringAsync(PROTO_MessageType type, string str)
+	public async Task SendTCPStringAsync(int type, string str)
 	{
 		await SendTCPDataAsync(type, Encoding.UTF8.GetBytes(str));
 	}
 
-	public async Task SendTCPDataAsync(PROTO_MessageType type, byte[] data)
+	public async Task SendTCPDataAsync(int type, byte[] data)
 	{
 		if (_tcpClient != null && _tcpClient.Connected)
 		{
 			try
 			{
 				int length = data.Length + 12;
-				int typeInteger = Convert.ToInt32(type);
+				//int typeInteger = Convert.ToInt32(type);
 
 				byte[] buffer = new byte[data.Length + 12];
 
@@ -127,7 +127,7 @@ public class NetworkSynchronizer : MonoBehaviour
 
 				// |prot|type|length|serialized data|
 				prot.CopyTo(buffer.AsSpan(0));
-				MemoryMarshal.Write(buffer.AsSpan(4), ref typeInteger);
+				MemoryMarshal.Write(buffer.AsSpan(4), ref type);
 				MemoryMarshal.Write(buffer.AsSpan(8), ref length);
 				data.CopyTo(buffer.AsSpan(12));
 
@@ -215,12 +215,12 @@ public class NetworkSynchronizer : MonoBehaviour
 
 		print("ReceiveUDPData() has stopped.");
 	}
-	public async Task SendUDPDataAsync(PROTO_MessageType type, byte[] data)
+	public async Task SendUDPDataAsync(int type, byte[] data)
 	{
 		try
 		{
 			int length = data.Length + 12;
-			int typeInteger = Convert.ToInt32(type);
+			//int typeInteger = Convert.ToInt32(type);
 
 			byte[] buffer = new byte[data.Length + 12];
 
@@ -228,7 +228,7 @@ public class NetworkSynchronizer : MonoBehaviour
 
 			// |prot|type|length|serialized data|
 			prot.CopyTo(buffer.AsSpan(0));
-			MemoryMarshal.Write(buffer.AsSpan(4), ref typeInteger);
+			MemoryMarshal.Write(buffer.AsSpan(4), ref type);
 			MemoryMarshal.Write(buffer.AsSpan(8), ref length);
 			data.CopyTo(buffer.AsSpan(12));
 
