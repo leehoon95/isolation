@@ -24,7 +24,7 @@ message RM_RoomSmallInfo {
 	string roomName = 2;
 }
 
-message RM_ResultRoomList {
+message RM_ResponseRoomList {
 	int32 count = 1;
 	repeated RM_RoomSmallInfo list = 2;
 }
@@ -33,7 +33,7 @@ message RM_RequestCreateRoom {
 	string roomName = 1;
 }
 
-message RM_ResultCreateRoom {
+message RM_ResponseCreateRoom {
 	int32 roomIndex = 1;
 	string reason = 2;
 }
@@ -42,7 +42,7 @@ message RM_RequestEnterRoom {
 	int32 roomIndex = 1;
 }
 
-message RM_ResultEnterRoom {
+message RM_ResponseEnterRoom {
 	bool result = 1;
 	string reason = 2;
 }

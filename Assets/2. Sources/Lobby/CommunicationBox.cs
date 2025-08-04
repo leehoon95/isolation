@@ -12,6 +12,20 @@ public class CommunicationBox : MonoBehaviour
     ScrollRect _messageList;
 	[SerializeField]
     TMP_InputField _inputMessageField;
-   
-    
+
+	void Start()
+	{
+        _uiSO.SetCommunicationBox(this);
+
+        _inputMessageField.onEndEdit.AddListener(OnEndEdit);
+	}
+
+    void OnEndEdit(string message)
+    {
+        print($"message: {message}");
+
+        _inputMessageField.text = "";
+
+        _uiSO.RaiseOnEndEditMessage(message);
+    }
 }

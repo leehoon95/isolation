@@ -2,6 +2,7 @@ using Google.Protobuf;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -109,7 +110,6 @@ public class LoginGameManager : MonoBehaviour
 
 		if (type == LM_Type.SmResponseLogin)
 		{
-
 			LM_ResponseLogin msg = LM_ResponseLogin.Parser.ParseFrom(buffer, 12, length - 12);
 			if (msg == null)
 			{
@@ -142,8 +142,9 @@ public class LoginGameManager : MonoBehaviour
 		}
 	}
 
-	void OnDisconnectedTCP()
+	void OnDestroy()
 	{
-		_uiLogin.RaiseOnDisconnect();
+		_uiLogin.OnLoginEnter -= OnLoginEnter;
+		_uiLogin.OnDisconnect -= OnDisconnect;
 	}
 }

@@ -14,41 +14,18 @@ public class UILoginSO : ScriptableObject
 	public event Action OnSendUDPData;
 
 	// UI Event service
-	public void RaiseOnLoginEnter(string nickName)
-	{
-		OnLoginEnter?.Invoke(nickName);
-	}
+	public void RaiseOnLoginEnter(string nickName) => OnLoginEnter?.Invoke(nickName);
 
-	public void RaiseOnDisconnect()
-	{
-		OnDisconnect?.Invoke();
-	}
+	public void RaiseOnDisconnect() => OnDisconnect?.Invoke();
 
-	public void RaiseSendUDPData()
-	{
-		OnSendUDPData?.Invoke();
-	}
-	
+	public void RaiseSendUDPData() => OnSendUDPData?.Invoke();
+
 	// Notice service
-	public void ShowNoticeOnTop(string text)
-	{
-		_noticePanel?.ShowNotice(text);
-	}
+	public void ShowNoticeOnTop(string text) => _noticePanel?.ShowNotice(text);
 
 	// Login Pannel
-	public void SetNickname(string nickname)
-	{
-		_loginPanel.SetNickname(nickname);
-	}
-
+	public void SetNickname(string nickname) => _loginPanel.SetNickname(nickname);
 	// object setting method
-	public void SetLoginPanelObject(LoginPanel loginPanel)
-	{
-		_loginPanel = loginPanel;
-	}
-
-	public void SetNoticePanelObejct(NoticePanel noticePanel)
-	{
-		_noticePanel = noticePanel;
-	}
+	public void SetLoginPanelObject(LoginPanel loginPanel) => _loginPanel = loginPanel;
+	public void SetNoticePanelObejct(NoticePanel noticePanel) => _noticePanel = noticePanel;
 }

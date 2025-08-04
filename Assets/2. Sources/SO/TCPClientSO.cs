@@ -47,9 +47,11 @@ public class TCPClientSO : ScriptableObject
 			_cancelToken = new ();
 
 			_ = Task.Run(ReceivingTask);
+
 #if UNITY_EDITOR
 			EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
+
 			Debug.Log("Connected to server!");
 
 			return true;
@@ -136,7 +138,7 @@ public class TCPClientSO : ScriptableObject
 			_onReceived = null;
 
 			_cancelToken?.Cancel();
-			_cancelToken.Dispose();
+			_cancelToken?.Dispose();
 			_cancelToken = null;
 
 			_networkStream?.Close();
@@ -146,9 +148,11 @@ public class TCPClientSO : ScriptableObject
 			_tcpClient?.Close();
 			_tcpClient?.Dispose();
 			_tcpClient = null;
+
 #if UNITY_EDITOR
 			EditorApplication.playModeStateChanged -= OnPlayModeChanged;
 #endif
+
 		}
 		catch (System.Exception ex)
 		{

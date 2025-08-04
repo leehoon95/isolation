@@ -23,7 +23,7 @@ public class RemoteCharacterManager : MonoBehaviour
 
 	Dictionary<int, GameObject> _remoteCharacters = new Dictionary<int, GameObject>();
     float _t;
-    float _interval = 0.1f;
+    //float _interval = 0.1f;
     Vector2 _clientPositionOnServer = Vector2.zero;
     Stopwatch _stopwatch = new Stopwatch();
 

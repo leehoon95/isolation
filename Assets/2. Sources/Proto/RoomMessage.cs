@@ -24,32 +24,32 @@ public static partial class RoomMessageReflection {
         string.Concat(
           "ChJyb29tX21lc3NhZ2UucHJvdG8iJAoSUk1fUmVxdWVzdFJvb21MaXN0Eg4K",
           "BmZpbHRlchgBIAEoBSI3ChBSTV9Sb29tU21hbGxJbmZvEhEKCXJvb21JbmRl",
-          "eBgBIAEoBRIQCghyb29tTmFtZRgCIAEoCSJDChFSTV9SZXN1bHRSb29tTGlz",
-          "dBINCgVjb3VudBgBIAEoBRIfCgRsaXN0GAIgAygLMhEuUk1fUm9vbVNtYWxs",
-          "SW5mbyIoChRSTV9SZXF1ZXN0Q3JlYXRlUm9vbRIQCghyb29tTmFtZRgBIAEo",
-          "CSI4ChNSTV9SZXN1bHRDcmVhdGVSb29tEhEKCXJvb21JbmRleBgBIAEoBRIO",
-          "CgZyZWFzb24YAiABKAkiKAoTUk1fUmVxdWVzdEVudGVyUm9vbRIRCglyb29t",
-          "SW5kZXgYASABKAUiNAoSUk1fUmVzdWx0RW50ZXJSb29tEg4KBnJlc3VsdBgB",
-          "IAEoCBIOCgZyZWFzb24YAiABKAkiNAoTUk1fQnJvYWRjYXN0TWVzc2FnZRIP",
-          "CgdtZXNzYWdlGAEgASgJEgwKBHRpbWUYAiABKAUqvwIKB1JNX1R5cGUSEgoO",
-          "Uk1fVU5TUEVDSUZJRUQQABIUCg9STV9ESVNDT05ORUNURUQQyAESGQoUQ01f",
-          "UkVRVUVTVF9ST09NX0xJU1QQyQESGgoVU01fUkVTUE9OU0VfUk9PTV9MSVNU",
-          "EMoBEhoKFUNNX1JFUVVFU1RfUk9PTV9FTlRFUhDLARIbChZTTV9SRVNQT05T",
-          "RV9ST09NX0VOVEVSEMwBEhoKFUNNX1JFUVVFU1RfUk9PTV9MRUFWRRDNARIb",
-          "ChZTTV9SRVNQT05TRV9ST09NX0xFQVZFEM4BEhsKFkNNX1JFUVVFU1RfQ1JF",
-          "QVRFX1JPT00QzwESHAoXU01fUkVTUE9OU0VfQ1JFQVRFX1JPT00Q0AESEgoN",
-          "Q01fQkNfTUVTU0FHRRDRARISCg1TTV9CQ19NRVNTQUdFENIBYghlZGl0aW9u",
-          "c3DoBw=="));
+          "eBgBIAEoBRIQCghyb29tTmFtZRgCIAEoCSJFChNSTV9SZXNwb25zZVJvb21M",
+          "aXN0Eg0KBWNvdW50GAEgASgFEh8KBGxpc3QYAiADKAsyES5STV9Sb29tU21h",
+          "bGxJbmZvIigKFFJNX1JlcXVlc3RDcmVhdGVSb29tEhAKCHJvb21OYW1lGAEg",
+          "ASgJIjoKFVJNX1Jlc3BvbnNlQ3JlYXRlUm9vbRIRCglyb29tSW5kZXgYASAB",
+          "KAUSDgoGcmVhc29uGAIgASgJIigKE1JNX1JlcXVlc3RFbnRlclJvb20SEQoJ",
+          "cm9vbUluZGV4GAEgASgFIjYKFFJNX1Jlc3BvbnNlRW50ZXJSb29tEg4KBnJl",
+          "c3VsdBgBIAEoCBIOCgZyZWFzb24YAiABKAkiNAoTUk1fQnJvYWRjYXN0TWVz",
+          "c2FnZRIPCgdtZXNzYWdlGAEgASgJEgwKBHRpbWUYAiABKAUqvwIKB1JNX1R5",
+          "cGUSEgoOUk1fVU5TUEVDSUZJRUQQABIUCg9STV9ESVNDT05ORUNURUQQyAES",
+          "GQoUQ01fUkVRVUVTVF9ST09NX0xJU1QQyQESGgoVU01fUkVTUE9OU0VfUk9P",
+          "TV9MSVNUEMoBEhoKFUNNX1JFUVVFU1RfUk9PTV9FTlRFUhDLARIbChZTTV9S",
+          "RVNQT05TRV9ST09NX0VOVEVSEMwBEhoKFUNNX1JFUVVFU1RfUk9PTV9MRUFW",
+          "RRDNARIbChZTTV9SRVNQT05TRV9ST09NX0xFQVZFEM4BEhsKFkNNX1JFUVVF",
+          "U1RfQ1JFQVRFX1JPT00QzwESHAoXU01fUkVTUE9OU0VfQ1JFQVRFX1JPT00Q",
+          "0AESEgoNQ01fQkNfTUVTU0FHRRDRARISCg1TTV9CQ19NRVNTQUdFENIBYghl",
+          "ZGl0aW9uc3DoBw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::RM_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestRoomList), global::RM_RequestRoomList.Parser, new[]{ "Filter" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RoomSmallInfo), global::RM_RoomSmallInfo.Parser, new[]{ "RoomIndex", "RoomName" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResultRoomList), global::RM_ResultRoomList.Parser, new[]{ "Count", "List" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResponseRoomList), global::RM_ResponseRoomList.Parser, new[]{ "Count", "List" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestCreateRoom), global::RM_RequestCreateRoom.Parser, new[]{ "RoomName" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResultCreateRoom), global::RM_ResultCreateRoom.Parser, new[]{ "RoomIndex", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResponseCreateRoom), global::RM_ResponseCreateRoom.Parser, new[]{ "RoomIndex", "Reason" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestEnterRoom), global::RM_RequestEnterRoom.Parser, new[]{ "RoomIndex" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResultEnterRoom), global::RM_ResultEnterRoom.Parser, new[]{ "Result", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResponseEnterRoom), global::RM_ResponseEnterRoom.Parser, new[]{ "Result", "Reason" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_BroadcastMessage), global::RM_BroadcastMessage.Parser, new[]{ "Message", "Time" }, null, null, null, null)
         }));
   }
@@ -557,17 +557,17 @@ public sealed partial class RM_RoomSmallInfo : pb::IMessage<RM_RoomSmallInfo>
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RM_ResultRoomList : pb::IMessage<RM_ResultRoomList>
+public sealed partial class RM_ResponseRoomList : pb::IMessage<RM_ResponseRoomList>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<RM_ResultRoomList> _parser = new pb::MessageParser<RM_ResultRoomList>(() => new RM_ResultRoomList());
+  private static readonly pb::MessageParser<RM_ResponseRoomList> _parser = new pb::MessageParser<RM_ResponseRoomList>(() => new RM_ResponseRoomList());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<RM_ResultRoomList> Parser { get { return _parser; } }
+  public static pb::MessageParser<RM_ResponseRoomList> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -583,7 +583,7 @@ public sealed partial class RM_ResultRoomList : pb::IMessage<RM_ResultRoomList>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultRoomList() {
+  public RM_ResponseRoomList() {
     OnConstruction();
   }
 
@@ -591,7 +591,7 @@ public sealed partial class RM_ResultRoomList : pb::IMessage<RM_ResultRoomList>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultRoomList(RM_ResultRoomList other) : this() {
+  public RM_ResponseRoomList(RM_ResponseRoomList other) : this() {
     _hasBits0 = other._hasBits0;
     count_ = other.count_;
     list_ = other.list_.Clone();
@@ -600,8 +600,8 @@ public sealed partial class RM_ResultRoomList : pb::IMessage<RM_ResultRoomList>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultRoomList Clone() {
-    return new RM_ResultRoomList(this);
+  public RM_ResponseRoomList Clone() {
+    return new RM_ResponseRoomList(this);
   }
 
   /// <summary>Field number for the "count" field.</summary>
@@ -645,12 +645,12 @@ public sealed partial class RM_ResultRoomList : pb::IMessage<RM_ResultRoomList>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as RM_ResultRoomList);
+    return Equals(other as RM_ResponseRoomList);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(RM_ResultRoomList other) {
+  public bool Equals(RM_ResponseRoomList other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -728,7 +728,7 @@ public sealed partial class RM_ResultRoomList : pb::IMessage<RM_ResultRoomList>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(RM_ResultRoomList other) {
+  public void MergeFrom(RM_ResponseRoomList other) {
     if (other == null) {
       return;
     }
@@ -1010,17 +1010,17 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RM_ResultCreateRoom : pb::IMessage<RM_ResultCreateRoom>
+public sealed partial class RM_ResponseCreateRoom : pb::IMessage<RM_ResponseCreateRoom>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<RM_ResultCreateRoom> _parser = new pb::MessageParser<RM_ResultCreateRoom>(() => new RM_ResultCreateRoom());
+  private static readonly pb::MessageParser<RM_ResponseCreateRoom> _parser = new pb::MessageParser<RM_ResponseCreateRoom>(() => new RM_ResponseCreateRoom());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<RM_ResultCreateRoom> Parser { get { return _parser; } }
+  public static pb::MessageParser<RM_ResponseCreateRoom> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1036,7 +1036,7 @@ public sealed partial class RM_ResultCreateRoom : pb::IMessage<RM_ResultCreateRo
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultCreateRoom() {
+  public RM_ResponseCreateRoom() {
     OnConstruction();
   }
 
@@ -1044,7 +1044,7 @@ public sealed partial class RM_ResultCreateRoom : pb::IMessage<RM_ResultCreateRo
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultCreateRoom(RM_ResultCreateRoom other) : this() {
+  public RM_ResponseCreateRoom(RM_ResponseCreateRoom other) : this() {
     _hasBits0 = other._hasBits0;
     roomIndex_ = other.roomIndex_;
     reason_ = other.reason_;
@@ -1053,8 +1053,8 @@ public sealed partial class RM_ResultCreateRoom : pb::IMessage<RM_ResultCreateRo
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultCreateRoom Clone() {
-    return new RM_ResultCreateRoom(this);
+  public RM_ResponseCreateRoom Clone() {
+    return new RM_ResponseCreateRoom(this);
   }
 
   /// <summary>Field number for the "roomIndex" field.</summary>
@@ -1113,12 +1113,12 @@ public sealed partial class RM_ResultCreateRoom : pb::IMessage<RM_ResultCreateRo
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as RM_ResultCreateRoom);
+    return Equals(other as RM_ResponseCreateRoom);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(RM_ResultCreateRoom other) {
+  public bool Equals(RM_ResponseCreateRoom other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -1204,7 +1204,7 @@ public sealed partial class RM_ResultCreateRoom : pb::IMessage<RM_ResultCreateRo
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(RM_ResultCreateRoom other) {
+  public void MergeFrom(RM_ResponseCreateRoom other) {
     if (other == null) {
       return;
     }
@@ -1491,17 +1491,17 @@ public sealed partial class RM_RequestEnterRoom : pb::IMessage<RM_RequestEnterRo
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RM_ResultEnterRoom : pb::IMessage<RM_ResultEnterRoom>
+public sealed partial class RM_ResponseEnterRoom : pb::IMessage<RM_ResponseEnterRoom>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<RM_ResultEnterRoom> _parser = new pb::MessageParser<RM_ResultEnterRoom>(() => new RM_ResultEnterRoom());
+  private static readonly pb::MessageParser<RM_ResponseEnterRoom> _parser = new pb::MessageParser<RM_ResponseEnterRoom>(() => new RM_ResponseEnterRoom());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<RM_ResultEnterRoom> Parser { get { return _parser; } }
+  public static pb::MessageParser<RM_ResponseEnterRoom> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1517,7 +1517,7 @@ public sealed partial class RM_ResultEnterRoom : pb::IMessage<RM_ResultEnterRoom
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultEnterRoom() {
+  public RM_ResponseEnterRoom() {
     OnConstruction();
   }
 
@@ -1525,7 +1525,7 @@ public sealed partial class RM_ResultEnterRoom : pb::IMessage<RM_ResultEnterRoom
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultEnterRoom(RM_ResultEnterRoom other) : this() {
+  public RM_ResponseEnterRoom(RM_ResponseEnterRoom other) : this() {
     _hasBits0 = other._hasBits0;
     result_ = other.result_;
     reason_ = other.reason_;
@@ -1534,8 +1534,8 @@ public sealed partial class RM_ResultEnterRoom : pb::IMessage<RM_ResultEnterRoom
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public RM_ResultEnterRoom Clone() {
-    return new RM_ResultEnterRoom(this);
+  public RM_ResponseEnterRoom Clone() {
+    return new RM_ResponseEnterRoom(this);
   }
 
   /// <summary>Field number for the "result" field.</summary>
@@ -1594,12 +1594,12 @@ public sealed partial class RM_ResultEnterRoom : pb::IMessage<RM_ResultEnterRoom
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as RM_ResultEnterRoom);
+    return Equals(other as RM_ResponseEnterRoom);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(RM_ResultEnterRoom other) {
+  public bool Equals(RM_ResponseEnterRoom other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -1685,7 +1685,7 @@ public sealed partial class RM_ResultEnterRoom : pb::IMessage<RM_ResultEnterRoom
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(RM_ResultEnterRoom other) {
+  public void MergeFrom(RM_ResponseEnterRoom other) {
     if (other == null) {
       return;
     }
