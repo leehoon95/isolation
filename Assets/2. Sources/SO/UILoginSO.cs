@@ -6,8 +6,8 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "UILoginSO", menuName = "Scriptable Objects/UILoginSO")]
 public class UILoginSO : ScriptableObject
 {
-	LoginPanel _loginPanel;
-	NoticePanel _noticePanel;
+	UILoginPanel _loginPanel;
+	UINotificationPanel _noticePanel;
 
 	public event Action<string> OnLoginEnter;
 	public event Action OnDisconnect;
@@ -26,6 +26,6 @@ public class UILoginSO : ScriptableObject
 	// Login Pannel
 	public void SetNickname(string nickname) => _loginPanel.SetNickname(nickname);
 	// object setting method
-	public void SetLoginPanelObject(LoginPanel loginPanel) => _loginPanel = loginPanel;
-	public void SetNoticePanelObejct(NoticePanel noticePanel) => _noticePanel = noticePanel;
+	public void SetLoginPanelObject(UILoginPanel loginPanel) => _loginPanel = loginPanel;
+	public void SetNoticePanelObejct(UINotificationPanel noticePanel) => _noticePanel = noticePanel;
 }

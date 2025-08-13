@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
-public class NoticePanel : MonoBehaviour
+[DisallowMultipleComponent]
+public class UINotificationPanel : UIBehaviour
 {
 	[SerializeField]
 	GameObject _obj;
@@ -13,11 +15,14 @@ public class NoticePanel : MonoBehaviour
 	[SerializeField]
 	TMP_Text _noticeContent;
 	[SerializeField]
+	UINotificationBackground _notificationBackground;
+	[SerializeField]
 	UILoginSO _uil;
+
 	IEnumerator _cachedCoroutin;
 	bool _processing;
 
-	void Start()
+	protected override void Start()
 	{
 		_uil.SetNoticePanelObejct(this);
 	}
@@ -49,7 +54,7 @@ public class NoticePanel : MonoBehaviour
 		_obj.SetActive(true);
 		_animator.SetBool("IsOn", true);
 
-		yield return new WaitForSeconds(2.5f);
+		yield return new WaitForSeconds(3f);
 
 		_animator.SetBool("IsOn", false);
 

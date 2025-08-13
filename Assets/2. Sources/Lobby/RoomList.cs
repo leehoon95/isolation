@@ -42,7 +42,7 @@ public class RoomList : MonoBehaviour
 
 		RoomItem roomItem = Instantiate(_roomPrefap);
 		roomItem.RoomIndex = _tempIndex++;
-		roomItem.OnEntry += OnClickRoomEntry;
+		roomItem.OnClick += OnClickRoomEntry;
 
 		roomItem.transform.SetParent(_scrollRect.content);
 		_roomListCache.Add(roomItem.RoomIndex, roomItem);
@@ -120,7 +120,7 @@ public class RoomList : MonoBehaviour
 			//roomList.Add(item.RoomIndex, item.RoomName);
 			RoomItem roomItem = Instantiate(_roomPrefap);
 			roomItem.RoomIndex = ri.RoomIndex;
-			roomItem.OnEntry += OnClickRoomEntry;
+			roomItem.OnClick += OnClickRoomEntry;
 		}
 
 		_roomListCache = roomList;

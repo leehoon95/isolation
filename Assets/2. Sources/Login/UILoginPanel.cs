@@ -2,12 +2,15 @@ using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class LoginPanel : MonoBehaviour
+[DisallowMultipleComponent]
+public class UILoginPanel : UIBehaviour
 {
 	[SerializeField]
 	TMP_InputField _nickNameInputField;
@@ -20,7 +23,7 @@ public class LoginPanel : MonoBehaviour
 	[SerializeField]
 	Button _sendUDPDataButton;
 
-	private void Start()
+	protected override void Start()
 	{
 		_nickNameInputField.onValueChanged.AddListener(OnNickNameValueChanged);
 		//_nickNameInputField.onSubmit.AddListener(OnSubmit);

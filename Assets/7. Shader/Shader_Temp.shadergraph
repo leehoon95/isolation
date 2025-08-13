@@ -77,9 +77,9 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "361f5bedb6ac45c79f4e5a64425451d6"
+                    "m_Id": "606b3eaddb8c4ad587030d7245480113"
                 },
-                "m_SlotId": 0
+                "m_SlotId": 2
             },
             "m_InputSlot": {
                 "m_Node": {

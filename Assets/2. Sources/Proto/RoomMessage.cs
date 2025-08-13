@@ -26,27 +26,27 @@ public static partial class RoomMessageReflection {
           "BmZpbHRlchgBIAEoBSI3ChBSTV9Sb29tU21hbGxJbmZvEhEKCXJvb21JbmRl",
           "eBgBIAEoBRIQCghyb29tTmFtZRgCIAEoCSJFChNSTV9SZXNwb25zZVJvb21M",
           "aXN0Eg0KBWNvdW50GAEgASgFEh8KBGxpc3QYAiADKAsyES5STV9Sb29tU21h",
-          "bGxJbmZvIigKFFJNX1JlcXVlc3RDcmVhdGVSb29tEhAKCHJvb21OYW1lGAEg",
-          "ASgJIjoKFVJNX1Jlc3BvbnNlQ3JlYXRlUm9vbRIRCglyb29tSW5kZXgYASAB",
-          "KAUSDgoGcmVhc29uGAIgASgJIigKE1JNX1JlcXVlc3RFbnRlclJvb20SEQoJ",
-          "cm9vbUluZGV4GAEgASgFIjYKFFJNX1Jlc3BvbnNlRW50ZXJSb29tEg4KBnJl",
-          "c3VsdBgBIAEoCBIOCgZyZWFzb24YAiABKAkiNAoTUk1fQnJvYWRjYXN0TWVz",
-          "c2FnZRIPCgdtZXNzYWdlGAEgASgJEgwKBHRpbWUYAiABKAUqvwIKB1JNX1R5",
-          "cGUSEgoOUk1fVU5TUEVDSUZJRUQQABIUCg9STV9ESVNDT05ORUNURUQQyAES",
-          "GQoUQ01fUkVRVUVTVF9ST09NX0xJU1QQyQESGgoVU01fUkVTUE9OU0VfUk9P",
-          "TV9MSVNUEMoBEhoKFUNNX1JFUVVFU1RfUk9PTV9FTlRFUhDLARIbChZTTV9S",
-          "RVNQT05TRV9ST09NX0VOVEVSEMwBEhoKFUNNX1JFUVVFU1RfUk9PTV9MRUFW",
-          "RRDNARIbChZTTV9SRVNQT05TRV9ST09NX0xFQVZFEM4BEhsKFkNNX1JFUVVF",
-          "U1RfQ1JFQVRFX1JPT00QzwESHAoXU01fUkVTUE9OU0VfQ1JFQVRFX1JPT00Q",
-          "0AESEgoNQ01fQkNfTUVTU0FHRRDRARISCg1TTV9CQ19NRVNTQUdFENIBYghl",
-          "ZGl0aW9uc3DoBw=="));
+          "bGxJbmZvIjcKFFJNX1JlcXVlc3RDcmVhdGVSb29tEg0KBXRva2VuGAEgASgE",
+          "EhAKCHJvb21OYW1lGAIgASgJIjoKFVJNX1Jlc3BvbnNlQ3JlYXRlUm9vbRIR",
+          "Cglyb29tSW5kZXgYASABKAUSDgoGcmVhc29uGAIgASgJIigKE1JNX1JlcXVl",
+          "c3RFbnRlclJvb20SEQoJcm9vbUluZGV4GAEgASgFIjYKFFJNX1Jlc3BvbnNl",
+          "RW50ZXJSb29tEg4KBnJlc3VsdBgBIAEoCBIOCgZyZWFzb24YAiABKAkiNAoT",
+          "Uk1fQnJvYWRjYXN0TWVzc2FnZRIPCgdtZXNzYWdlGAEgASgJEgwKBHRpbWUY",
+          "AiABKAUqvwIKB1JNX1R5cGUSEgoOUk1fVU5TUEVDSUZJRUQQABIUCg9STV9E",
+          "SVNDT05ORUNURUQQyAESGQoUQ01fUkVRVUVTVF9ST09NX0xJU1QQyQESGgoV",
+          "U01fUkVTUE9OU0VfUk9PTV9MSVNUEMoBEhoKFUNNX1JFUVVFU1RfUk9PTV9F",
+          "TlRFUhDLARIbChZTTV9SRVNQT05TRV9ST09NX0VOVEVSEMwBEhoKFUNNX1JF",
+          "UVVFU1RfUk9PTV9MRUFWRRDNARIbChZTTV9SRVNQT05TRV9ST09NX0xFQVZF",
+          "EM4BEhsKFkNNX1JFUVVFU1RfQ1JFQVRFX1JPT00QzwESHAoXU01fUkVTUE9O",
+          "U0VfQ1JFQVRFX1JPT00Q0AESEgoNQ01fQkNfTUVTU0FHRRDRARISCg1TTV9C",
+          "Q19NRVNTQUdFENIBYghlZGl0aW9uc3DoBw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::RM_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestRoomList), global::RM_RequestRoomList.Parser, new[]{ "Filter" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RoomSmallInfo), global::RM_RoomSmallInfo.Parser, new[]{ "RoomIndex", "RoomName" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResponseRoomList), global::RM_ResponseRoomList.Parser, new[]{ "Count", "List" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestCreateRoom), global::RM_RequestCreateRoom.Parser, new[]{ "RoomName" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestCreateRoom), global::RM_RequestCreateRoom.Parser, new[]{ "Token", "RoomName" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResponseCreateRoom), global::RM_ResponseCreateRoom.Parser, new[]{ "RoomIndex", "Reason" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_RequestEnterRoom), global::RM_RequestEnterRoom.Parser, new[]{ "RoomIndex" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RM_ResponseEnterRoom), global::RM_ResponseEnterRoom.Parser, new[]{ "Result", "Reason" }, null, null, null, null),
@@ -805,6 +805,7 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
 {
   private static readonly pb::MessageParser<RM_RequestCreateRoom> _parser = new pb::MessageParser<RM_RequestCreateRoom>(() => new RM_RequestCreateRoom());
   private pb::UnknownFieldSet _unknownFields;
+  private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pb::MessageParser<RM_RequestCreateRoom> Parser { get { return _parser; } }
@@ -832,6 +833,8 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public RM_RequestCreateRoom(RM_RequestCreateRoom other) : this() {
+    _hasBits0 = other._hasBits0;
+    token_ = other.token_;
     roomName_ = other.roomName_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -842,8 +845,35 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
     return new RM_RequestCreateRoom(this);
   }
 
+  /// <summary>Field number for the "token" field.</summary>
+  public const int TokenFieldNumber = 1;
+  private readonly static ulong TokenDefaultValue = 0UL;
+
+  private ulong token_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong Token {
+    get { if ((_hasBits0 & 1) != 0) { return token_; } else { return TokenDefaultValue; } }
+    set {
+      _hasBits0 |= 1;
+      token_ = value;
+    }
+  }
+  /// <summary>Gets whether the "token" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasToken {
+    get { return (_hasBits0 & 1) != 0; }
+  }
+  /// <summary>Clears the value of the "token" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearToken() {
+    _hasBits0 &= ~1;
+  }
+
   /// <summary>Field number for the "roomName" field.</summary>
-  public const int RoomNameFieldNumber = 1;
+  public const int RoomNameFieldNumber = 2;
   private readonly static string RoomNameDefaultValue = "";
 
   private string roomName_;
@@ -883,6 +913,7 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
     if (ReferenceEquals(other, this)) {
       return true;
     }
+    if (Token != other.Token) return false;
     if (RoomName != other.RoomName) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -891,6 +922,7 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
+    if (HasToken) hash ^= Token.GetHashCode();
     if (HasRoomName) hash ^= RoomName.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -910,8 +942,12 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
+    if (HasToken) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(Token);
+    }
     if (HasRoomName) {
-      output.WriteRawTag(10);
+      output.WriteRawTag(18);
       output.WriteString(RoomName);
     }
     if (_unknownFields != null) {
@@ -924,8 +960,12 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasToken) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(Token);
+    }
     if (HasRoomName) {
-      output.WriteRawTag(10);
+      output.WriteRawTag(18);
       output.WriteString(RoomName);
     }
     if (_unknownFields != null) {
@@ -938,6 +978,9 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
+    if (HasToken) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Token);
+    }
     if (HasRoomName) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(RoomName);
     }
@@ -952,6 +995,9 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
   public void MergeFrom(RM_RequestCreateRoom other) {
     if (other == null) {
       return;
+    }
+    if (other.HasToken) {
+      Token = other.Token;
     }
     if (other.HasRoomName) {
       RoomName = other.RoomName;
@@ -975,7 +1021,11 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 10: {
+        case 8: {
+          Token = input.ReadUInt64();
+          break;
+        }
+        case 18: {
           RoomName = input.ReadString();
           break;
         }
@@ -998,7 +1048,11 @@ public sealed partial class RM_RequestCreateRoom : pb::IMessage<RM_RequestCreate
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 10: {
+        case 8: {
+          Token = input.ReadUInt64();
+          break;
+        }
+        case 18: {
           RoomName = input.ReadString();
           break;
         }

@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: e2cc1992c0487884d96b659b6cd0a60b
+guid: 08afc427293b45f4ab0121a1ebbf4937
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5000481154072502900
-    second: ui_room_0
+      213: 3581421546508221010
+    second: ui_notification_border_0
+  - first:
+      213: -863763098589112973
+    second: ui_notification_border_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +51,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 64
@@ -100,23 +103,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ui_room_0
+      name: ui_notification_border_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
+        width: 64
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 6, y: 8, z: 5, w: 8}
+      border: {x: 0, y: 4, z: 0, w: 4}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c8d197152e8ba9ab0800000000000000
-      internalID: -5000481154072502900
+      spriteID: 25a7d8edbe3c3b130800000000000000
+      internalID: 3581421546508221010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_notification_border_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 375518ac90c4304f0800000000000000
+      internalID: -863763098589112973
       vertices: []
       indices: 
       edges: []
@@ -125,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 6b744060951957e4795b016926d52a44
+    spriteID: c10d517de765d124abe0f7bf83711530
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ui_room_0: -5000481154072502900
+      ui_notification_border_0: 3581421546508221010
+      ui_notification_border_1: -863763098589112973
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

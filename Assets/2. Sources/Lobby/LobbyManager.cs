@@ -14,7 +14,7 @@ public class LobbyManager : MonoBehaviour
 		_uiSO.OnClickRefresh += OnClickRefresh;
 		_uiSO.OnClickExit += OnClickExit;
 		_uiSO.OnSendMessage += OnSendMessage;
-
+		
 		_tcpClient.AddReceiveListner(OnTCPDataReceived);
 	}
 
@@ -69,7 +69,6 @@ public class LobbyManager : MonoBehaviour
 			}
 
 			_uiSO.RefreshRommList(rrl);
-
 		}
 	}
 

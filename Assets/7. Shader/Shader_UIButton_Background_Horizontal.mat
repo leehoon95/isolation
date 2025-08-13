@@ -43,6 +43,11 @@ Material:
     m_Floats:
     - _ColorMask: 15
     - _Horizontal: 1
+    - _MoveHorizontal: 1
+    - _PixelSize: 60
+    - _SOFTMASKABLE: 1
+    - _SOFTMASK_EDITOR: 1
+    - _SpeedDenominator: 20
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0

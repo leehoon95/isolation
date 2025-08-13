@@ -8,8 +8,6 @@ using UnityEngine.SceneManagement;
 
 public class LoginGameManager : MonoBehaviour
 {
-	//[SerializeField]
-	//NetworkSynchronizer _ns;
 	[SerializeField] TCPClientSO _tcpClient;
 	[SerializeField] UILoginSO _uiLogin;
 	[SerializeField] SaveDataLoader _sdl;

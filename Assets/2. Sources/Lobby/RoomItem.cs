@@ -1,11 +1,13 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-enum RoomState
+public enum RoomState
 {
-
+	Open,
+	Disabled
 }
 
 [ExecuteAlways]
@@ -14,26 +16,81 @@ public class RoomItem : MonoBehaviour
 	[SerializeField]
 	uint _padding;
 	[SerializeField]
-	Button _enterButton;
+	Button _button;
+	[SerializeField]
+	TMP_Text _buttonText;
+	[SerializeField]
+	TMP_Text _slotText;
 
-	Action<int> _onEntry;
-	public event Action<int> OnEntry
+	Action<int> _onClick;
+	public event Action<int> OnClick
 	{
 		add
 		{
-			_onEntry -= value;
-			_onEntry += value;
+			_onClick -= value;
+			_onClick += value;
 		}
 		remove
 		{
-			_onEntry -= value;
+			_onClick -= value;
 		}
 	}
+
 	public int RoomIndex { get; set; }
+	public string RoomName
+	{
+		get
+		{
+			return _buttonText.text;
+		}
+		set
+		{
+			_buttonText.text = value;
+		}
+
+	}
+
+	RoomState _roomState;
+	public RoomState State
+	{
+		get
+		{
+			return _roomState;
+		}
+		set
+		{
+			_roomState = value;
+			switch (value)
+			{
+				case RoomState.Open:
+					_button.interactable = true;
+					break;
+				case RoomState.Disabled:
+					_button.interactable = false;
+					break;
+			}
+		}
+	}
+
+	int _clientCount;
+	public int ClientCount
+	{
+		get
+		{
+			return _clientCount;
+		}
+		set
+		{
+			_clientCount = value;
+			_slotText.text = $"{value} / 4";
+		}
+	}
 
 	void Start()
 	{
-		_enterButton.onClick.AddListener(() => _onEntry?.Invoke(RoomIndex));
+		_button.onClick.AddListener(() => _onClick?.Invoke(RoomIndex));
+		//State = RoomState.Open;
+		_slotText.text = "0 / 4";
 	}
 
 	public void FitSize(RectTransform parentRectTransform)
@@ -50,14 +107,14 @@ public class RoomItem : MonoBehaviour
 
 	public void ClearButtonEvent()
 	{
-		_onEntry = null;
-		_enterButton.onClick.RemoveAllListeners();
+		_onClick = null;
+		_button.onClick.RemoveAllListeners();
 
 	}
 
 	void OnDestroy()
 	{
-		_enterButton.onClick.RemoveAllListeners();
-		_onEntry = null;
+		_button.onClick.RemoveAllListeners();
+		_onClick = null;
 	}
 }

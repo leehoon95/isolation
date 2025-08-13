@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader_UIButton_Background_Vertical
-  m_Shader: {fileID: -6465566751694194690, guid: 7ba6c5c3e446fc046a1ab0eab4c0df8d, type: 3}
+  m_Name: Shader_UINotification_Effect
+  m_Shader: {fileID: -6465566751694194690, guid: 35e98bfbac6fe1b48b1ebdd8cab8acdd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -41,11 +41,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 0.5
+    - _BlinkSpeed: 1
+    - _BlinkStrengthMax: 0.5
+    - _BlinkStrengthMin: 0
+    - _BlinkTime: 0.09
     - _ColorMask: 15
-    - _Horizontal: 0
-    - _MoveHorizontal: 0
-    - _PixelSize: 60
-    - _SpeedDenominator: 20
+    - _NoiseStrengthMax: 0.15
+    - _NoiseStrengthMin: 0
+    - _Pixel: 40
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -53,8 +57,10 @@ Material:
     - _StencilWriteMask: 255
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
+    - _Warning: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 1, g: 0.498, b: 0, a: 1}
+    - _NoiseDirection: {r: 0, g: 0.08, b: 0, a: 0}
+    - _Vector2: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
