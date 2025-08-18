@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class SaveData
 {
+	public ulong token = 0;
 	public string nickName = "";
-	public int level = 0;
 }
 
 public class SaveDataLoader : MonoBehaviour
@@ -52,7 +52,7 @@ public class SaveDataLoader : MonoBehaviour
 	{
 		try
 		{
-			print("LoadSaveDataAsync() called");
+			//print("LoadSaveDataAsync() called");
 
 			if (File.Exists(_saveFilePath))
 			{
@@ -61,7 +61,6 @@ public class SaveDataLoader : MonoBehaviour
 				_SDOrigin = JsonUtility.FromJson<SaveData>(json);
 
 				print(json);
-				//Debug.Log("Loaded Save Data: " + saveData._nickName + ", Level: " + saveData._level);
 			}
 			else
 			{
@@ -122,9 +121,11 @@ public class SaveDataLoader : MonoBehaviour
 		}
 		else
 		{
-			print("SaveDataLoader Awake() called");
+#if UNITY_EDITOR
 			_saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
-
+#else
+			_saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
+#endif
 			LoadSaveData();
 
 			DontDestroyOnLoad(gameObject);

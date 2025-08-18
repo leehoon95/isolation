@@ -15,6 +15,7 @@ public class LoginGameManager : MonoBehaviour
 
 	Scene _syncScene;
 	PhysicsScene2D _syncPS;
+	Coroutine _connectToServerCoroutin;
 
 	void Start()
 	{
@@ -23,61 +24,47 @@ public class LoginGameManager : MonoBehaviour
 
 		//_ns.OnReceivedTCP += OnDataReceivedFromServer;
 		_tcpClient.AddReceiveListner(OnTCPDataReceived);
-		_ = _tcpClient.ConnectToServer("172.23.12.33", 51010);
 
-		StartCoroutine(CheckNetworkState("172.23.12.33", 51010)); // 172.23.12.33: wsl2 서버
+		_connectToServerCoroutin = StartCoroutine(CheckNetworkState());
 	}
 
-	IEnumerator CheckNetworkState(string server, int port)
+	IEnumerator CheckNetworkState()
 	{
-		yield return new WaitForSeconds(1f);
+		yield return null;
 
-		while (true)
+		var res = _tcpClient.ConnectToServer();
+
+		while (res.Status != TaskStatus.RanToCompletion)
 		{
-			if (_tcpClient.Connnected)
-			{
-				yield return new WaitForSeconds(10f);
-				continue;
-			}
+			yield return new WaitForSeconds(0.1f);
+		}
 
-			var res = _tcpClient.ConnectToServer(server, port);
-			//         if (_ns.Connected)
-			//         {
-			//             yield return new WaitForSeconds(10f);
-			//             continue; // Already connected, wait for next check
-			//}
+		if (!res.Result)
+		{
+			_uiLogin.SetDialogType(UIDialogType.Ok);
+			_uiLogin.SetDialogTitleText("오류");
+			_uiLogin.SetDialogContentText("서버와 연결할 수 없습니다.");
+			_uiLogin.SetDialogOKButtonText("재시도");
+			_uiLogin.SetDialogOKButtonOnClickListner(TryConnectToServer);
+			_uiLogin.ShowDialog(true);
+			//StopCoroutine(_connectToServerCoroutin);
+		}
 
-			//         var res = _ns.ConnectToServer(server, port);
+	}
 
-			while (res.Status != TaskStatus.RanToCompletion)
-			{
-				yield return new WaitForSeconds(1f);
-			}
+	async void TryConnectToServer()
+	{
+		_uiLogin.ShowDialog(false);
 
-			if (res.Result)
-			{
-				print("Connected to the server.");
-				_uiLogin.ShowNoticeOnTop("Connected to the server.");
-				//var p = new Ping(server);
+		var res = await _tcpClient.ConnectToServer();
 
-				//            if (p.isDone)
-				//            {
-				//                print($"ping: {p.time} ms");
-				//                yield return new WaitForSeconds(5f);
-				//            }
-				//            else
-				//            {
-				//	yield return new WaitForSeconds(0.1f);
-				//}
-
-				yield return new WaitForSeconds(10f);
-			}
-			else
-			{
-				print("Trying to connect to server...");
-				_uiLogin.ShowNoticeOnTop("Trying to connect to server...");
-				yield return new WaitForSeconds(3f);
-			}
+		if (res)
+		{
+			_uiLogin.ShowNoticeOnTop("서버에 연결됨");
+		}
+		else
+		{
+			_connectToServerCoroutin = StartCoroutine(CheckNetworkState());
 		}
 	}
 

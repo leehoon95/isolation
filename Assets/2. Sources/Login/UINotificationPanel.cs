@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -19,11 +20,12 @@ public class UINotificationPanel : UIBehaviour
 	[SerializeField]
 	UILoginSO _uil;
 
-	IEnumerator _cachedCoroutin;
+	Coroutine _cachedCoroutin;
 	bool _processing;
 
-	protected override void Start()
+	protected override void Awake()
 	{
+		base.Awake();
 		_uil.SetNoticePanelObejct(this);
 	}
 
@@ -34,17 +36,20 @@ public class UINotificationPanel : UIBehaviour
 			return;
 		}
 
-		if (_processing && _cachedCoroutin != null)
+
+		if (_processing && !_cachedCoroutin.IsUnityNull())
 		{
+			print("stop coroutin!!");
 			StopCoroutine(_cachedCoroutin);
 			
 			_obj.SetActive(false);
-			_animator.SetBool("IsOn", false);
+			_animator.SetTrigger("Hide");
+			//_animator.GetCurrentAnimatorClipInfo(0)[0].clip.
+			
+			//infos[0].clip.name
 		}
 
-		_cachedCoroutin = ProcessNotify(content);
-
-		StartCoroutine(_cachedCoroutin);
+		_cachedCoroutin = StartCoroutine(ProcessNotify(content));
 	}
 
 	IEnumerator ProcessNotify(string content)
@@ -52,15 +57,27 @@ public class UINotificationPanel : UIBehaviour
 		_processing = true;
 		_noticeContent.text = content;
 		_obj.SetActive(true);
-		_animator.SetBool("IsOn", true);
+		_animator.SetTrigger("On");
 
 		yield return new WaitForSeconds(3f);
 
-		_animator.SetBool("IsOn", false);
+		_animator.SetTrigger("Off");
 
 		yield return new WaitForSeconds(.5f);
 
 		_obj.SetActive(false);
 		_processing = false;
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		if (_processing && !_cachedCoroutin.IsUnityNull())
+		{
+			StopCoroutine(_cachedCoroutin);
+
+			_obj.SetActive(false);
+		}
 	}
 }

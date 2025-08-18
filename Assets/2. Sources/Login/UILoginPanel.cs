@@ -22,6 +22,8 @@ public class UILoginPanel : UIBehaviour
 	Button _disconnectButton;
 	[SerializeField]
 	Button _sendUDPDataButton;
+	[SerializeField]
+	Button _notifyButton;
 
 	protected override void Start()
 	{
@@ -38,6 +40,11 @@ public class UILoginPanel : UIBehaviour
 		_disconnectButton.onClick.AddListener(OnClickDisconnect);
 		_sendUDPDataButton.onClick.AddListener(() => {
 			_uil.RaiseSendUDPData();
+		});
+
+		_notifyButton.onClick.AddListener(() =>
+		{
+			_uil.ShowNoticeOnTop("fkdjskfjkdf000000000");
 		});
 
 		_uil.SetLoginPanelObject(this);
@@ -85,11 +92,6 @@ public class UILoginPanel : UIBehaviour
 		FilteringNickName(value);
 	}
 
-	//void OnSubmit(string value)
-	//{
-	//	print("OnSubmit() called with value: " + value);
-	//	FilteringNickName(value);
-	//}
 
 	void FilteringNickName(string value)
 	{
@@ -100,5 +102,10 @@ public class UILoginPanel : UIBehaviour
 			//_nickNameInputField.
 			//_nickNameInputField.caretPosition = filtered.Length;
 		}
+	}
+
+	public void SetLoginButtonActive(bool active)
+	{
+		_enterButton.enabled = active;
 	}
 }

@@ -14,8 +14,13 @@ using UnityEditor;
 [CreateAssetMenu(fileName = "UDPClientSO", menuName = "Scriptable Objects/UDPClientSO")]
 public class UDPClientSO : ScriptableObject
 {
+	[SerializeField]
+	public string ServerAddress;
+	[SerializeField]
+	public int Port;
+	 
 	UdpClient _udpClient;
-	IPEndPoint _udpEndPoint = new IPEndPoint(IPAddress.Parse("172.23.12.33"), 51022);
+	IPEndPoint _udpEndPoint;
 	CancellationTokenSource _cancelToken;
 	Action<byte[], int> _onReceived;
 
@@ -29,7 +34,7 @@ public class UDPClientSO : ScriptableObject
 		}
 	}
 	
-	public void RunReceiving(string adress = "127.0.0.1", int port = 51022)
+	public void RunReceiving()
 	{
 		if (IsRunning)
 		{
@@ -37,7 +42,7 @@ public class UDPClientSO : ScriptableObject
 		}
 
 		_udpClient = new UdpClient();
-		//_udpEndPoint = new IPEndPoint(IPAddress.Parse(adress), port);
+		_udpEndPoint = new IPEndPoint(IPAddress.Parse(ServerAddress), Port);
 		_cancelToken = new ();
 		_receivingTask = Task.Run(ReceivingUDPDataTask);
 #if UNITY_EDITOR

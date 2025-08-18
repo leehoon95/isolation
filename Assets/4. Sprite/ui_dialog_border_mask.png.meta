@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 08afc427293b45f4ab0121a1ebbf4937
+guid: db4ad53b65d4d2349b1889f4bd96b4ca
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3581421546508221010
-    second: ui_notification_border_0
-  - first:
-      213: -863763098589112973
-    second: ui_notification_border_1
+      213: 374820732287960998
+    second: ui_dialog_border_mask_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -43,9 +40,9 @@ TextureImporter:
     filterMode: 0
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -103,45 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ui_notification_border_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 24
-        width: 64
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 25a7d8edbe3c3b130800000000000000
-      internalID: 3581421546508221010
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ui_notification_border_1
+      name: ui_dialog_border_mask_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 8
+        width: 96
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 36, y: 9, z: 36, w: 9}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 375518ac90c4304f0800000000000000
-      internalID: -863763098589112973
+      spriteID: 6a7c97a5871a33500800000000000000
+      internalID: 374820732287960998
       vertices: []
       indices: 
       edges: []
@@ -150,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c10d517de765d124abe0f7bf83711530
+    spriteID: c024b8afc852e5f4d809a1ea9d9f8716
     internalID: 0
     vertices: []
     indices: 
@@ -160,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ui_notification_border_0: 3581421546508221010
-      ui_notification_border_1: -863763098589112973
+      ui_dialog_border_mask_0: 374820732287960998
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -25,7 +25,7 @@ public class TestSceneGameManager : MonoBehaviour
 
         //_ns.OnReceivedTCP += OnTCPDataReceived;
         _udpClient.AddReceiveListner(OnUDPDataReceived);
-        _udpClient.RunReceiving("172.23.12.33", 51022);
+        _udpClient.RunReceiving();
 
         _tcpClient.AddReceiveListner(OnTCPDataReceived);
 		//_ = SendRequestSync();

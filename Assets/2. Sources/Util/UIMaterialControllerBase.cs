@@ -63,7 +63,7 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 	// Graphic material에 Dirty flag가 설정되면 호출됨
 	Material IMaterialModifier.GetModifiedMaterial(Material baseMaterial)
 	{
-		print("GetModifiedMaterial()");
+		//print("GetModifiedMaterial()");
 		if (material == null)
 		{
 			material = new Material(baseMaterial);

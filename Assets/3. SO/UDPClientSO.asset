@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04ef5c14a02dea948ad4eaa7928ba5f1, type: 3}
   m_Name: UDPClientSO
   m_EditorClassIdentifier: 
+  ServerAddress: 172.23.12.33
+  Port: 51022

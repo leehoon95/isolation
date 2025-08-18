@@ -13,6 +13,11 @@ using UnityEditor;
 [CreateAssetMenu(fileName = "TCPClientSO", menuName = "Scriptable Objects/TCPClientSO")]
 public class TCPClientSO : ScriptableObject
 {
+	[SerializeField]
+	public string ServerAddress;
+	[SerializeField]
+	public int Port;
+
 	TcpClient _tcpClient;
 	NetworkStream _networkStream;
 	CancellationTokenSource _cancelToken;
@@ -27,7 +32,7 @@ public class TCPClientSO : ScriptableObject
 		}
 	}
 
-	public async Task<bool> ConnectToServer(string adress = "127.0.0.1", int port = 51010)
+	public async Task<bool> ConnectToServer()
 	{
 		try
 		{
@@ -36,9 +41,9 @@ public class TCPClientSO : ScriptableObject
 				Debug.Log("Already connected to server");
 				return true;
 			}
-			
+			Debug.Log("ConnectToServer");
 			_tcpClient = new TcpClient();
-			await _tcpClient.ConnectAsync(adress, port);
+			await _tcpClient.ConnectAsync(ServerAddress, Port);
 
 			_tcpClient.NoDelay = true;
 			_tcpClient.LingerState = new LingerOption(false, 0);
