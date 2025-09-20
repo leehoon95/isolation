@@ -1,4 +1,4 @@
-using UnityEngine;
+	using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
@@ -11,6 +11,7 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 	public event UnityAction<Vector2> Move;
 	public event UnityAction<Vector2> Look;
 	public event UnityAction<bool> Attack;
+	public event UnityAction<bool> Attack2;
 	public event UnityAction<bool> SwitchCamera1;
 	public event UnityAction<bool> SwitchCamera2;
 
@@ -21,22 +22,27 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 
 	void Awake()
 	{
-		var obj = FindAnyObjectByType<InputSystem>();
+		//var obj = FindAnyObjectByType<InputSystem>();
 
-		if (obj != null && obj != this)
-		{
-			Destroy(obj.gameObject);
-			return;
-		}
-		else
-		{
-			_inputSystemActions = new InputSystem_Actions();
-			_playerActions = _inputSystemActions.Player;
-			_playerActions.AddCallbacks(this);
-			_playerActions.Enable();
+		//if (obj != null && obj != this)
+		//{
+		//	Destroy(obj.gameObject);
+		//	return;
+		//}
+		//else
+		//{
+		//	_inputSystemActions = new InputSystem_Actions();
+		//	_playerActions = _inputSystemActions.Player;
+		//	_playerActions.AddCallbacks(this);
+		//	_playerActions.Enable();
 
-			DontDestroyOnLoad(gameObject);
-		}
+		//	DontDestroyOnLoad(gameObject);
+		//}
+
+		_inputSystemActions = new InputSystem_Actions();
+		_playerActions = _inputSystemActions.Player;
+		_playerActions.AddCallbacks(this);
+		_playerActions.Enable();
 	}
 
 	void InputSystem_Actions.IPlayerActions.OnMove(InputAction.CallbackContext context)
@@ -49,7 +55,7 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 	{
 		//print($"OnLook: {Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>())}");
 		MousePos = context.ReadValue<Vector2>();
-		//Look?.Invoke(context.ReadValue<Vector2>());
+		Look?.Invoke(context.ReadValue<Vector2>());
 	}
 
 	void InputSystem_Actions.IPlayerActions.OnAttack(InputAction.CallbackContext context)
@@ -69,5 +75,10 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 	void InputSystem_Actions.IPlayerActions.OnSwitchCamera2(InputAction.CallbackContext context)
 	{
 		SwitchCamera2?.Invoke(context.performed);
+	}
+
+	public void OnAttack2(InputAction.CallbackContext context)
+	{
+		Attack2?.Invoke(context.performed);
 	}
 }

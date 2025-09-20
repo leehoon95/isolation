@@ -8,16 +8,12 @@ public class UIDialogButtonMaterial : UIMaterialControllerBase
 #if UNITY_EDITOR
 	protected override void OnValidate()
 	{
-		base.OnValidate();
-
 		SetMaterialDirty();
 	}
 #endif
 
 	protected override void EditMaterialPropertiesValue()
-	{ 
-		base.EditMaterialPropertiesValue();
-
+	{
 		material.SetColor("_Color", _color);
 	}
 }

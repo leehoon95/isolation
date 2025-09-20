@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Attack2",
+                    "type": "Button",
+                    "id": "baacf161-4a07-4f56-b511-f0884dffa96b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -192,6 +201,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ad2eea2f-a1cf-4d01-8328-2567d8da5b45",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -22,43 +22,43 @@ public static partial class LoginMessageReflection {
   static LoginMessageReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChNsb2dpbl9tZXNzYWdlLnByb3RvIiMKD0xNX1JlcXVlc3RMb2dpbhIQCghu",
-          "aWNrbmFtZRgBIAEoCSIxChBMTV9SZXNwb25zZUxvZ2luEg0KBXRva2VuGAEg",
-          "ASgEEg4KBnJlYXNvbhgCIAEoCSpfCgdMTV9UeXBlEhIKDkxNX1VOU1BFQ0lG",
-          "SUVEEAASEwoPTE1fRElTQ09OTkVDVEVEEGQSFAoQQ01fUkVRVUVTVF9MT0dJ",
-          "ThBlEhUKEVNNX1JFU1BPTlNFX0xPR0lOEGZiCGVkaXRpb25zcOgH"));
+          "ChNsb2dpbl9tZXNzYWdlLnByb3RvIiIKDk1fUmVxdWVzdExvZ2luEhAKCG5p",
+          "Y2tuYW1lGAEgASgJIjAKD01fUmVzcG9uc2VMb2dpbhINCgV0b2tlbhgBIAEo",
+          "BBIOCgZyZWFzb24YAiABKAkqYwoRTG9naW5NZXNzYWdlX1R5cGUSEgoOTE1f",
+          "VU5TUEVDSUZJRUQQABITCg9MTV9ESVNDT05ORUNURUQQZBIRCg1SRVFVRVNU",
+          "X0xPR0lOEGUSEgoOUkVTUE9OU0VfTE9HSU4QZmIIZWRpdGlvbnNw6Ac="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::LM_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::LM_RequestLogin), global::LM_RequestLogin.Parser, new[]{ "Nickname" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::LM_ResponseLogin), global::LM_ResponseLogin.Parser, new[]{ "Token", "Reason" }, null, null, null, null)
+        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::LoginMessage_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestLogin), global::M_RequestLogin.Parser, new[]{ "Nickname" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseLogin), global::M_ResponseLogin.Parser, new[]{ "Token", "Reason" }, null, null, null, null)
         }));
   }
   #endregion
 
 }
 #region Enums
-public enum LM_Type {
+public enum LoginMessage_Type {
   [pbr::OriginalName("LM_UNSPECIFIED")] LmUnspecified = 0,
   [pbr::OriginalName("LM_DISCONNECTED")] LmDisconnected = 100,
-  [pbr::OriginalName("CM_REQUEST_LOGIN")] CmRequestLogin = 101,
-  [pbr::OriginalName("SM_RESPONSE_LOGIN")] SmResponseLogin = 102,
+  [pbr::OriginalName("REQUEST_LOGIN")] RequestLogin = 101,
+  [pbr::OriginalName("RESPONSE_LOGIN")] ResponseLogin = 102,
 }
 
 #endregion
 
 #region Messages
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class LM_RequestLogin : pb::IMessage<LM_RequestLogin>
+public sealed partial class M_RequestLogin : pb::IMessage<M_RequestLogin>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<LM_RequestLogin> _parser = new pb::MessageParser<LM_RequestLogin>(() => new LM_RequestLogin());
+  private static readonly pb::MessageParser<M_RequestLogin> _parser = new pb::MessageParser<M_RequestLogin>(() => new M_RequestLogin());
   private pb::UnknownFieldSet _unknownFields;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<LM_RequestLogin> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_RequestLogin> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -74,7 +74,7 @@ public sealed partial class LM_RequestLogin : pb::IMessage<LM_RequestLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public LM_RequestLogin() {
+  public M_RequestLogin() {
     OnConstruction();
   }
 
@@ -82,15 +82,15 @@ public sealed partial class LM_RequestLogin : pb::IMessage<LM_RequestLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public LM_RequestLogin(LM_RequestLogin other) : this() {
+  public M_RequestLogin(M_RequestLogin other) : this() {
     nickname_ = other.nickname_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public LM_RequestLogin Clone() {
-    return new LM_RequestLogin(this);
+  public M_RequestLogin Clone() {
+    return new M_RequestLogin(this);
   }
 
   /// <summary>Field number for the "nickname" field.</summary>
@@ -122,12 +122,12 @@ public sealed partial class LM_RequestLogin : pb::IMessage<LM_RequestLogin>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as LM_RequestLogin);
+    return Equals(other as M_RequestLogin);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(LM_RequestLogin other) {
+  public bool Equals(M_RequestLogin other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -200,7 +200,7 @@ public sealed partial class LM_RequestLogin : pb::IMessage<LM_RequestLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(LM_RequestLogin other) {
+  public void MergeFrom(M_RequestLogin other) {
     if (other == null) {
       return;
     }
@@ -264,17 +264,17 @@ public sealed partial class LM_RequestLogin : pb::IMessage<LM_RequestLogin>
 /// token[0, UINT64_MAX]: 0: login failed. 
 /// </summary>
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class LM_ResponseLogin : pb::IMessage<LM_ResponseLogin>
+public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<LM_ResponseLogin> _parser = new pb::MessageParser<LM_ResponseLogin>(() => new LM_ResponseLogin());
+  private static readonly pb::MessageParser<M_ResponseLogin> _parser = new pb::MessageParser<M_ResponseLogin>(() => new M_ResponseLogin());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<LM_ResponseLogin> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_ResponseLogin> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -290,7 +290,7 @@ public sealed partial class LM_ResponseLogin : pb::IMessage<LM_ResponseLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public LM_ResponseLogin() {
+  public M_ResponseLogin() {
     OnConstruction();
   }
 
@@ -298,7 +298,7 @@ public sealed partial class LM_ResponseLogin : pb::IMessage<LM_ResponseLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public LM_ResponseLogin(LM_ResponseLogin other) : this() {
+  public M_ResponseLogin(M_ResponseLogin other) : this() {
     _hasBits0 = other._hasBits0;
     token_ = other.token_;
     reason_ = other.reason_;
@@ -307,8 +307,8 @@ public sealed partial class LM_ResponseLogin : pb::IMessage<LM_ResponseLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public LM_ResponseLogin Clone() {
-    return new LM_ResponseLogin(this);
+  public M_ResponseLogin Clone() {
+    return new M_ResponseLogin(this);
   }
 
   /// <summary>Field number for the "token" field.</summary>
@@ -367,12 +367,12 @@ public sealed partial class LM_ResponseLogin : pb::IMessage<LM_ResponseLogin>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as LM_ResponseLogin);
+    return Equals(other as M_ResponseLogin);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(LM_ResponseLogin other) {
+  public bool Equals(M_ResponseLogin other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -458,7 +458,7 @@ public sealed partial class LM_ResponseLogin : pb::IMessage<LM_ResponseLogin>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(LM_ResponseLogin other) {
+  public void MergeFrom(M_ResponseLogin other) {
     if (other == null) {
       return;
     }

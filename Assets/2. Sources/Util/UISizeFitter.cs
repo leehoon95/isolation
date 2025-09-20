@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,27 +11,39 @@ enum TargetSizeAxis
 	Vertical = 2,
 }
 
-[ExecuteInEditMode]
+[ExecuteAlways]
+[RequireComponent(typeof(RectTransform))]
+[DisallowMultipleComponent]
 public class UISizeFitter : UIBehaviour
 {
-	[SerializeField]
-	RectTransform _targetRT;
-	[SerializeField]
-	TargetSizeAxis _targetSizeAxis;
+	[SerializeField] RectTransform _rt;
+	[SerializeField] RectTransform _targetRT;
+	[SerializeField] UISizeNotifier _notifier;
+	[SerializeField] float _minWidth;
+	[SerializeField] float _minHeight;
+	[SerializeField] TargetSizeAxis _targetSizeAxis;
 
-	void Update()
+	protected override void Start()
 	{
-		FitSize();
+		_notifier.OnRectTransformChanged += FitSize;
 	}
+
+	protected override void OnDisable()
+	{
+		_notifier.OnRectTransformChanged -= FitSize;
+	}
+
+#if UNITY_EDITOR
+	protected override void OnValidate()
+	{
+		EditorApplication.delayCall += () => FitSize();
+	}
+#endif
 
 	void FitSize()
 	{
-		RectTransform rectTransform = GetComponent<RectTransform>();
-
-		if (rectTransform == null)
+		if (_rt == null)
 		{
-			print("This object doesn't have RectTransform.");
-
 			return;
 		}
 
@@ -41,17 +54,17 @@ public class UISizeFitter : UIBehaviour
 
 		if ((_targetSizeAxis | TargetSizeAxis.Horizontal) != TargetSizeAxis.None)
 		{
-			rectTransform.SetSizeWithCurrentAnchors(
+			_rt.SetSizeWithCurrentAnchors(
 				RectTransform.Axis.Horizontal,
-				_targetRT.rect.width
+				_targetRT.rect.width < _minWidth ? _minWidth : _targetRT.rect.width
 				);
 		}
 
 		if ((_targetSizeAxis | TargetSizeAxis.Vertical) != TargetSizeAxis.None)
 		{
-			rectTransform.SetSizeWithCurrentAnchors(
+			_rt.SetSizeWithCurrentAnchors(
 				RectTransform.Axis.Vertical,
-				_targetRT.rect.height
+				_targetRT.rect.height >= _minHeight ? _targetRT.rect.height : _minHeight
 				);
 		}
 	}

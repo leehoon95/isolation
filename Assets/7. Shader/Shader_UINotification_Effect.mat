@@ -47,7 +47,7 @@ Material:
     - _BlinkStrengthMin: 0
     - _BlinkTime: 0.09
     - _ColorMask: 15
-    - _NoiseStrengthMax: 0.15
+    - _NoiseStrengthMax: 0.02
     - _NoiseStrengthMin: 0
     - _Pixel: 40
     - _Stencil: 0

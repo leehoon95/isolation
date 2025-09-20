@@ -16,15 +16,11 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 
 	protected override void OnEnable()
 	{
-		base.OnEnable();
-
 		SetMaterialDirty();
 	}
 
 	protected override void OnDisable()
 	{
-		base.OnDisable();
-
 		if (material != null)
 		{
 #if UNITY_EDITOR
@@ -41,7 +37,6 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 #if UNITY_EDITOR
 	protected override void OnValidate()
 	{
-		base.OnValidate();
 		SetMaterialDirty();
 	}
 #endif
@@ -49,8 +44,6 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 	// animation을 통해 property가 변경되면 호출됨
 	protected override void OnDidApplyAnimationProperties()
 	{
-		base.OnDidApplyAnimationProperties();
-
 		if (!IsActive())
 		{
 			return;
@@ -58,7 +51,6 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 
 		SetMaterialDirty();
 	}
-
 
 	// Graphic material에 Dirty flag가 설정되면 호출됨
 	Material IMaterialModifier.GetModifiedMaterial(Material baseMaterial)

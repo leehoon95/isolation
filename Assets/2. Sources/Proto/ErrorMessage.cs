@@ -22,12 +22,17 @@ public static partial class ErrorMessageReflection {
   static ErrorMessageReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChNlcnJvcl9tZXNzYWdlLnByb3RvKkQKB0VNX1R5cGUSEgoORU1fVU5TUEVD",
-          "SUZJRUQQABITCg9FTV9ESVNDT05ORUNURUQQARIQCgxFTV9FTkRPRkZJTEUQ",
-          "AmIIZWRpdGlvbnNw6Ac="));
+          "ChNlcnJvcl9tZXNzYWdlLnByb3RvIh4KDU1fUmVxdWVzdFBpbmcSDQoFdG9r",
+          "ZW4YASABKAQiHwoOTV9SZXNwb25zZVBpbmcSDQoFdG9rZW4YASABKAQqUQoH",
+          "RU1fVHlwZRISCg5FTV9VTlNQRUNJRklFRBAAEhMKD0VNX0RJU0NPTk5FQ1RF",
+          "RBABEhAKDEVNX0VORE9GRklMRRACEgsKB0VNX1BJTkcQA2IIZWRpdGlvbnNw",
+          "6Ac="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::EM_Type), }, null, null));
+        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::EM_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestPing), global::M_RequestPing.Parser, new[]{ "Token" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponsePing), global::M_ResponsePing.Parser, new[]{ "Token" }, null, null, null, null)
+        }));
   }
   #endregion
 
@@ -37,6 +42,440 @@ public enum EM_Type {
   [pbr::OriginalName("EM_UNSPECIFIED")] EmUnspecified = 0,
   [pbr::OriginalName("EM_DISCONNECTED")] EmDisconnected = 1,
   [pbr::OriginalName("EM_ENDOFFILE")] EmEndoffile = 2,
+  [pbr::OriginalName("EM_PING")] EmPing = 3,
+}
+
+#endregion
+
+#region Messages
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class M_RequestPing : pb::IMessage<M_RequestPing>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<M_RequestPing> _parser = new pb::MessageParser<M_RequestPing>(() => new M_RequestPing());
+  private pb::UnknownFieldSet _unknownFields;
+  private int _hasBits0;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<M_RequestPing> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ErrorMessageReflection.Descriptor.MessageTypes[0]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_RequestPing() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_RequestPing(M_RequestPing other) : this() {
+    _hasBits0 = other._hasBits0;
+    token_ = other.token_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_RequestPing Clone() {
+    return new M_RequestPing(this);
+  }
+
+  /// <summary>Field number for the "token" field.</summary>
+  public const int TokenFieldNumber = 1;
+  private readonly static ulong TokenDefaultValue = 0UL;
+
+  private ulong token_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong Token {
+    get { if ((_hasBits0 & 1) != 0) { return token_; } else { return TokenDefaultValue; } }
+    set {
+      _hasBits0 |= 1;
+      token_ = value;
+    }
+  }
+  /// <summary>Gets whether the "token" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasToken {
+    get { return (_hasBits0 & 1) != 0; }
+  }
+  /// <summary>Clears the value of the "token" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearToken() {
+    _hasBits0 &= ~1;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as M_RequestPing);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(M_RequestPing other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Token != other.Token) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (HasToken) hash ^= Token.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (HasToken) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(Token);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasToken) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(Token);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (HasToken) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Token);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(M_RequestPing other) {
+    if (other == null) {
+      return;
+    }
+    if (other.HasToken) {
+      Token = other.Token;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          Token = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          Token = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class M_ResponsePing : pb::IMessage<M_ResponsePing>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<M_ResponsePing> _parser = new pb::MessageParser<M_ResponsePing>(() => new M_ResponsePing());
+  private pb::UnknownFieldSet _unknownFields;
+  private int _hasBits0;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<M_ResponsePing> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::ErrorMessageReflection.Descriptor.MessageTypes[1]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_ResponsePing() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_ResponsePing(M_ResponsePing other) : this() {
+    _hasBits0 = other._hasBits0;
+    token_ = other.token_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_ResponsePing Clone() {
+    return new M_ResponsePing(this);
+  }
+
+  /// <summary>Field number for the "token" field.</summary>
+  public const int TokenFieldNumber = 1;
+  private readonly static ulong TokenDefaultValue = 0UL;
+
+  private ulong token_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public ulong Token {
+    get { if ((_hasBits0 & 1) != 0) { return token_; } else { return TokenDefaultValue; } }
+    set {
+      _hasBits0 |= 1;
+      token_ = value;
+    }
+  }
+  /// <summary>Gets whether the "token" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasToken {
+    get { return (_hasBits0 & 1) != 0; }
+  }
+  /// <summary>Clears the value of the "token" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearToken() {
+    _hasBits0 &= ~1;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as M_ResponsePing);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(M_ResponsePing other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Token != other.Token) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (HasToken) hash ^= Token.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (HasToken) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(Token);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasToken) {
+      output.WriteRawTag(8);
+      output.WriteUInt64(Token);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (HasToken) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Token);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(M_ResponsePing other) {
+    if (other == null) {
+      return;
+    }
+    if (other.HasToken) {
+      Token = other.Token;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          Token = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          Token = input.ReadUInt64();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
 }
 
 #endregion

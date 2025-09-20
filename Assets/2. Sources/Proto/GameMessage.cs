@@ -22,44 +22,43 @@ public static partial class GameMessageReflection {
   static GameMessageReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChJnYW1lX21lc3NhZ2UucHJvdG8iKAoOR01fUmVxdWVzdFN5bmMSFgoOc2Vx",
-          "dWVuY2VOdW1iZXIYASABKAUiLgoUR01fUmVxdWVzdFN5bmNSZXN1bHQSFgoO",
-          "c2VxdWVuY2VOdW1iZXIYASABKAUqVwoHR01fVHlwZRISCg5HTV9VTlNQRUNJ",
-          "RklFRBAAEhQKD0dNX0RJU0NPTk5FQ1RFRBCsAhIQCgtTVE1fRVZFTlRfMRCt",
-          "AhIQCgtTVE1fRVZFTlRfMhCuAmIIZWRpdGlvbnNw6Ac="));
+          "ChJnYW1lX21lc3NhZ2UucHJvdG8iEwoRTV9SZXF1ZXN0Sm9pbkNvZGUiMwoK",
+          "TV9Kb2luQ29kZRITCgtzZW5kZXJUb2tlbhgBIAEoBBIQCghqb2luQ29kZRgC",
+          "IAEoCSpiChBHYW1lTWVzc2FnZV9UeXBlEhIKDkdNX1VOU1BFQ0lGSUVEEAAS",
+          "FAoPR01fRElTQ09OTkVDVEVEEKwCEhUKEFJFUVVFU1RfSk9JTkNPREUQrQIS",
+          "DQoISk9JTkNPREUQrgJiCGVkaXRpb25zcOgH"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::GM_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::GM_RequestSync), global::GM_RequestSync.Parser, new[]{ "SequenceNumber" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::GM_RequestSyncResult), global::GM_RequestSyncResult.Parser, new[]{ "SequenceNumber" }, null, null, null, null)
+        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::GameMessage_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestJoinCode), global::M_RequestJoinCode.Parser, null, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_JoinCode), global::M_JoinCode.Parser, new[]{ "SenderToken", "JoinCode" }, null, null, null, null)
         }));
   }
   #endregion
 
 }
 #region Enums
-public enum GM_Type {
+public enum GameMessage_Type {
   [pbr::OriginalName("GM_UNSPECIFIED")] GmUnspecified = 0,
   [pbr::OriginalName("GM_DISCONNECTED")] GmDisconnected = 300,
-  [pbr::OriginalName("STM_EVENT_1")] StmEvent1 = 301,
-  [pbr::OriginalName("STM_EVENT_2")] StmEvent2 = 302,
+  [pbr::OriginalName("REQUEST_JOINCODE")] RequestJoincode = 301,
+  [pbr::OriginalName("JOINCODE")] Joincode = 302,
 }
 
 #endregion
 
 #region Messages
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
+public sealed partial class M_RequestJoinCode : pb::IMessage<M_RequestJoinCode>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<GM_RequestSync> _parser = new pb::MessageParser<GM_RequestSync>(() => new GM_RequestSync());
+  private static readonly pb::MessageParser<M_RequestJoinCode> _parser = new pb::MessageParser<M_RequestJoinCode>(() => new M_RequestJoinCode());
   private pb::UnknownFieldSet _unknownFields;
-  private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<GM_RequestSync> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_RequestJoinCode> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -75,7 +74,7 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public GM_RequestSync() {
+  public M_RequestJoinCode() {
     OnConstruction();
   }
 
@@ -83,61 +82,31 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public GM_RequestSync(GM_RequestSync other) : this() {
-    _hasBits0 = other._hasBits0;
-    sequenceNumber_ = other.sequenceNumber_;
+  public M_RequestJoinCode(M_RequestJoinCode other) : this() {
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public GM_RequestSync Clone() {
-    return new GM_RequestSync(this);
-  }
-
-  /// <summary>Field number for the "sequenceNumber" field.</summary>
-  public const int SequenceNumberFieldNumber = 1;
-  private readonly static int SequenceNumberDefaultValue = 0;
-
-  private int sequenceNumber_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int SequenceNumber {
-    get { if ((_hasBits0 & 1) != 0) { return sequenceNumber_; } else { return SequenceNumberDefaultValue; } }
-    set {
-      _hasBits0 |= 1;
-      sequenceNumber_ = value;
-    }
-  }
-  /// <summary>Gets whether the "sequenceNumber" field is set</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasSequenceNumber {
-    get { return (_hasBits0 & 1) != 0; }
-  }
-  /// <summary>Clears the value of the "sequenceNumber" field</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearSequenceNumber() {
-    _hasBits0 &= ~1;
+  public M_RequestJoinCode Clone() {
+    return new M_RequestJoinCode(this);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as GM_RequestSync);
+    return Equals(other as M_RequestJoinCode);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(GM_RequestSync other) {
+  public bool Equals(M_RequestJoinCode other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (SequenceNumber != other.SequenceNumber) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -145,7 +114,6 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasSequenceNumber) hash ^= SequenceNumber.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -164,10 +132,6 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasSequenceNumber) {
-      output.WriteRawTag(8);
-      output.WriteInt32(SequenceNumber);
-    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -178,10 +142,6 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasSequenceNumber) {
-      output.WriteRawTag(8);
-      output.WriteInt32(SequenceNumber);
-    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -192,9 +152,6 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasSequenceNumber) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SequenceNumber);
-    }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
     }
@@ -203,12 +160,9 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(GM_RequestSync other) {
+  public void MergeFrom(M_RequestJoinCode other) {
     if (other == null) {
       return;
-    }
-    if (other.HasSequenceNumber) {
-      SequenceNumber = other.SequenceNumber;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -229,10 +183,6 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 8: {
-          SequenceNumber = input.ReadInt32();
-          break;
-        }
       }
     }
   #endif
@@ -252,10 +202,6 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 8: {
-          SequenceNumber = input.ReadInt32();
-          break;
-        }
       }
     }
   }
@@ -264,17 +210,17 @@ public sealed partial class GM_RequestSync : pb::IMessage<GM_RequestSync>
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncResult>
+public sealed partial class M_JoinCode : pb::IMessage<M_JoinCode>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<GM_RequestSyncResult> _parser = new pb::MessageParser<GM_RequestSyncResult>(() => new GM_RequestSyncResult());
+  private static readonly pb::MessageParser<M_JoinCode> _parser = new pb::MessageParser<M_JoinCode>(() => new M_JoinCode());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<GM_RequestSyncResult> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_JoinCode> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -290,7 +236,7 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public GM_RequestSyncResult() {
+  public M_JoinCode() {
     OnConstruction();
   }
 
@@ -298,61 +244,89 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public GM_RequestSyncResult(GM_RequestSyncResult other) : this() {
+  public M_JoinCode(M_JoinCode other) : this() {
     _hasBits0 = other._hasBits0;
-    sequenceNumber_ = other.sequenceNumber_;
+    senderToken_ = other.senderToken_;
+    joinCode_ = other.joinCode_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public GM_RequestSyncResult Clone() {
-    return new GM_RequestSyncResult(this);
+  public M_JoinCode Clone() {
+    return new M_JoinCode(this);
   }
 
-  /// <summary>Field number for the "sequenceNumber" field.</summary>
-  public const int SequenceNumberFieldNumber = 1;
-  private readonly static int SequenceNumberDefaultValue = 0;
+  /// <summary>Field number for the "senderToken" field.</summary>
+  public const int SenderTokenFieldNumber = 1;
+  private readonly static ulong SenderTokenDefaultValue = 0UL;
 
-  private int sequenceNumber_;
+  private ulong senderToken_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int SequenceNumber {
-    get { if ((_hasBits0 & 1) != 0) { return sequenceNumber_; } else { return SequenceNumberDefaultValue; } }
+  public ulong SenderToken {
+    get { if ((_hasBits0 & 1) != 0) { return senderToken_; } else { return SenderTokenDefaultValue; } }
     set {
       _hasBits0 |= 1;
-      sequenceNumber_ = value;
+      senderToken_ = value;
     }
   }
-  /// <summary>Gets whether the "sequenceNumber" field is set</summary>
+  /// <summary>Gets whether the "senderToken" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasSequenceNumber {
+  public bool HasSenderToken {
     get { return (_hasBits0 & 1) != 0; }
   }
-  /// <summary>Clears the value of the "sequenceNumber" field</summary>
+  /// <summary>Clears the value of the "senderToken" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearSequenceNumber() {
+  public void ClearSenderToken() {
     _hasBits0 &= ~1;
+  }
+
+  /// <summary>Field number for the "joinCode" field.</summary>
+  public const int JoinCodeFieldNumber = 2;
+  private readonly static string JoinCodeDefaultValue = "";
+
+  private string joinCode_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string JoinCode {
+    get { return joinCode_ ?? JoinCodeDefaultValue; }
+    set {
+      joinCode_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+  /// <summary>Gets whether the "joinCode" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasJoinCode {
+    get { return joinCode_ != null; }
+  }
+  /// <summary>Clears the value of the "joinCode" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearJoinCode() {
+    joinCode_ = null;
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as GM_RequestSyncResult);
+    return Equals(other as M_JoinCode);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(GM_RequestSyncResult other) {
+  public bool Equals(M_JoinCode other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (SequenceNumber != other.SequenceNumber) return false;
+    if (SenderToken != other.SenderToken) return false;
+    if (JoinCode != other.JoinCode) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -360,7 +334,8 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasSequenceNumber) hash ^= SequenceNumber.GetHashCode();
+    if (HasSenderToken) hash ^= SenderToken.GetHashCode();
+    if (HasJoinCode) hash ^= JoinCode.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -379,9 +354,13 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasSequenceNumber) {
+    if (HasSenderToken) {
       output.WriteRawTag(8);
-      output.WriteInt32(SequenceNumber);
+      output.WriteUInt64(SenderToken);
+    }
+    if (HasJoinCode) {
+      output.WriteRawTag(18);
+      output.WriteString(JoinCode);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -393,9 +372,13 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasSequenceNumber) {
+    if (HasSenderToken) {
       output.WriteRawTag(8);
-      output.WriteInt32(SequenceNumber);
+      output.WriteUInt64(SenderToken);
+    }
+    if (HasJoinCode) {
+      output.WriteRawTag(18);
+      output.WriteString(JoinCode);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -407,8 +390,11 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasSequenceNumber) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(SequenceNumber);
+    if (HasSenderToken) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(SenderToken);
+    }
+    if (HasJoinCode) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(JoinCode);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -418,12 +404,15 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(GM_RequestSyncResult other) {
+  public void MergeFrom(M_JoinCode other) {
     if (other == null) {
       return;
     }
-    if (other.HasSequenceNumber) {
-      SequenceNumber = other.SequenceNumber;
+    if (other.HasSenderToken) {
+      SenderToken = other.SenderToken;
+    }
+    if (other.HasJoinCode) {
+      JoinCode = other.JoinCode;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -445,7 +434,11 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
         case 8: {
-          SequenceNumber = input.ReadInt32();
+          SenderToken = input.ReadUInt64();
+          break;
+        }
+        case 18: {
+          JoinCode = input.ReadString();
           break;
         }
       }
@@ -468,7 +461,11 @@ public sealed partial class GM_RequestSyncResult : pb::IMessage<GM_RequestSyncRe
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
         case 8: {
-          SequenceNumber = input.ReadInt32();
+          SenderToken = input.ReadUInt64();
+          break;
+        }
+        case 18: {
+          JoinCode = input.ReadString();
           break;
         }
       }

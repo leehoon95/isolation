@@ -1307,7 +1307,7 @@
     "m_ObjectId": "19db7e48368c45f2a93b1cbdd654e74d",
     "m_Title": "Screen UV",
     "m_Position": {
-        "x": -2674.0,
+        "x": -2673.999755859375,
         "y": -333.0
     }
 }
@@ -3127,7 +3127,7 @@
     "m_ObjectId": "8bdb949408fd4c7d958dd22717b41cdf",
     "m_Title": "Gradient alpha",
     "m_Position": {
-        "x": -1060.999755859375,
+        "x": -1060.9998779296875,
         "y": 810.9998168945313
     }
 }

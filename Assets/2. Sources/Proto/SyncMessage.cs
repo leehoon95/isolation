@@ -22,44 +22,43 @@ public static partial class SyncMessageReflection {
   static SyncMessageReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChJzeW5jX21lc3NhZ2UucHJvdG8iKwoJU01fU3luY18xEg0KBXRva2VuGAEg",
-          "ASgEEg8KB21lc3NhZ2UYAiABKAkiHgoLU01fQkNTeW5jXzESDwoHbWVzc2Fn",
-          "ZRgBIAEoCSpZCgdTTV9UeXBlEhIKDlNNX1VOU1BFQ0lGSUVEEAASFAoPU01f",
-          "RElTQ09OTkVDVEVEEJADEhEKDENNX0JDX1NZTkNfMRCRAxIRCgxTTV9CQ19T",
-          "WU5DXzEQkgNiCGVkaXRpb25zcOgH"));
+          "ChJzeW5jX21lc3NhZ2UucHJvdG8iKgoITV9TeW5jXzESDQoFdG9rZW4YASAB",
+          "KAQSDwoHbWVzc2FnZRgCIAEoCSIdCgpNX0JDU3luY18xEg8KB21lc3NhZ2UY",
+          "ASABKAkqUAoQU3luY01lc3NhZ2VfVHlwZRISCg5TTV9VTlNQRUNJRklFRBAA",
+          "EhQKD1NNX0RJU0NPTk5FQ1RFRBCQAxISCg1SRVFVRVNUX1NZTkMxEJEDYghl",
+          "ZGl0aW9uc3DoBw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::SM_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::SM_Sync_1), global::SM_Sync_1.Parser, new[]{ "Token", "Message" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::SM_BCSync_1), global::SM_BCSync_1.Parser, new[]{ "Message" }, null, null, null, null)
+        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::SyncMessage_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_Sync_1), global::M_Sync_1.Parser, new[]{ "Token", "Message" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_BCSync_1), global::M_BCSync_1.Parser, new[]{ "Message" }, null, null, null, null)
         }));
   }
   #endregion
 
 }
 #region Enums
-public enum SM_Type {
+public enum SyncMessage_Type {
   [pbr::OriginalName("SM_UNSPECIFIED")] SmUnspecified = 0,
   [pbr::OriginalName("SM_DISCONNECTED")] SmDisconnected = 400,
-  [pbr::OriginalName("CM_BC_SYNC_1")] CmBcSync1 = 401,
-  [pbr::OriginalName("SM_BC_SYNC_1")] SmBcSync1 = 402,
+  [pbr::OriginalName("REQUEST_SYNC1")] RequestSync1 = 401,
 }
 
 #endregion
 
 #region Messages
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
+public sealed partial class M_Sync_1 : pb::IMessage<M_Sync_1>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<SM_Sync_1> _parser = new pb::MessageParser<SM_Sync_1>(() => new SM_Sync_1());
+  private static readonly pb::MessageParser<M_Sync_1> _parser = new pb::MessageParser<M_Sync_1>(() => new M_Sync_1());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<SM_Sync_1> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_Sync_1> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -75,7 +74,7 @@ public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public SM_Sync_1() {
+  public M_Sync_1() {
     OnConstruction();
   }
 
@@ -83,7 +82,7 @@ public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public SM_Sync_1(SM_Sync_1 other) : this() {
+  public M_Sync_1(M_Sync_1 other) : this() {
     _hasBits0 = other._hasBits0;
     token_ = other.token_;
     message_ = other.message_;
@@ -92,8 +91,8 @@ public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public SM_Sync_1 Clone() {
-    return new SM_Sync_1(this);
+  public M_Sync_1 Clone() {
+    return new M_Sync_1(this);
   }
 
   /// <summary>Field number for the "token" field.</summary>
@@ -152,12 +151,12 @@ public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as SM_Sync_1);
+    return Equals(other as M_Sync_1);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(SM_Sync_1 other) {
+  public bool Equals(M_Sync_1 other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -243,7 +242,7 @@ public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(SM_Sync_1 other) {
+  public void MergeFrom(M_Sync_1 other) {
     if (other == null) {
       return;
     }
@@ -315,16 +314,16 @@ public sealed partial class SM_Sync_1 : pb::IMessage<SM_Sync_1>
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SM_BCSync_1 : pb::IMessage<SM_BCSync_1>
+public sealed partial class M_BCSync_1 : pb::IMessage<M_BCSync_1>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<SM_BCSync_1> _parser = new pb::MessageParser<SM_BCSync_1>(() => new SM_BCSync_1());
+  private static readonly pb::MessageParser<M_BCSync_1> _parser = new pb::MessageParser<M_BCSync_1>(() => new M_BCSync_1());
   private pb::UnknownFieldSet _unknownFields;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<SM_BCSync_1> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_BCSync_1> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -340,7 +339,7 @@ public sealed partial class SM_BCSync_1 : pb::IMessage<SM_BCSync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public SM_BCSync_1() {
+  public M_BCSync_1() {
     OnConstruction();
   }
 
@@ -348,15 +347,15 @@ public sealed partial class SM_BCSync_1 : pb::IMessage<SM_BCSync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public SM_BCSync_1(SM_BCSync_1 other) : this() {
+  public M_BCSync_1(M_BCSync_1 other) : this() {
     message_ = other.message_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public SM_BCSync_1 Clone() {
-    return new SM_BCSync_1(this);
+  public M_BCSync_1 Clone() {
+    return new M_BCSync_1(this);
   }
 
   /// <summary>Field number for the "message" field.</summary>
@@ -388,12 +387,12 @@ public sealed partial class SM_BCSync_1 : pb::IMessage<SM_BCSync_1>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as SM_BCSync_1);
+    return Equals(other as M_BCSync_1);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(SM_BCSync_1 other) {
+  public bool Equals(M_BCSync_1 other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -466,7 +465,7 @@ public sealed partial class SM_BCSync_1 : pb::IMessage<SM_BCSync_1>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(SM_BCSync_1 other) {
+  public void MergeFrom(M_BCSync_1 other) {
     if (other == null) {
       return;
     }
