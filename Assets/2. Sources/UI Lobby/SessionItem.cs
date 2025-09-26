@@ -11,7 +11,7 @@ public enum RoomState
 }
 
 [ExecuteAlways]
-public class RoomItem : MonoBehaviour
+public class SessionItem : MonoBehaviour
 {
 	[SerializeField]
 	uint _padding;
@@ -21,6 +21,12 @@ public class RoomItem : MonoBehaviour
 	TMP_Text _buttonText;
 	[SerializeField]
 	TMP_Text _slotText;
+
+	int _sessionIndex;
+	int _maxClientCount;
+	int _clientCount;
+	string _password;
+	string _joinCode;
 
 	Action<int> _onClick;
 	public event Action<int> OnClick
@@ -34,20 +40,6 @@ public class RoomItem : MonoBehaviour
 		{
 			_onClick -= value;
 		}
-	}
-
-	public int RoomIndex { get; set; }
-	public string RoomName
-	{
-		get
-		{
-			return _buttonText.text;
-		}
-		set
-		{
-			_buttonText.text = value;
-		}
-
 	}
 
 	RoomState _roomState;
@@ -72,30 +64,14 @@ public class RoomItem : MonoBehaviour
 		}
 	}
 
-	int _clientCount;
-	public int ClientCount
-	{
-		get
-		{
-			return _clientCount;
-		}
-		set
-		{
-			_clientCount = value;
-			_slotText.text = $"{value} / 4";
-		}
-	}
-
 	void Start()
 	{
-		_button.onClick.AddListener(() => _onClick?.Invoke(RoomIndex));
-		//State = RoomState.Open;
+		_button.onClick.AddListener(() => _onClick?.Invoke(_sessionIndex));
 		_slotText.text = "0 / 4";
 	}
 
 	public void FitSize(RectTransform parentRectTransform)
 	{
-		//RectTransform parentRectTransform = transform.parent.GetComponent<RectTransform>();
 		RectTransform rectTransform = GetComponent<RectTransform>();
 
 		rectTransform.SetSizeWithCurrentAnchors(
@@ -103,6 +79,21 @@ public class RoomItem : MonoBehaviour
 			parentRectTransform.rect.width - _padding * 2);
 		rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
 			40f);
+	}
+
+	public void SetSessionInfo(
+		int sessionIndex,
+		string name,
+		int maxClientCount,
+		int clientCount,
+		string password,
+		string joinCode)
+	{
+		_sessionIndex = sessionIndex;
+		_buttonText.text = name;
+		_slotText.text = $"{clientCount} / {maxClientCount}";
+		_password = password;
+		_joinCode = joinCode;
 	}
 
 	public void ClearButtonEvent()

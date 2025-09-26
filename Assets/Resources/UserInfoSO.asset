@@ -10,5 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 452636f833348964f8d241c76bda8fd0, type: 3}
-  m_Name: UserfInfoSO
+  m_Name: UserInfoSO
   m_EditorClassIdentifier: 
+  _userNickname: 
+  _token: 0
+  _roomIndex: 0
+  _messageFromPreviousScene: 
+  _isHost: 0
+  _hostingSessionIndex: 0
+  _debugging: 0

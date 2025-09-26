@@ -1,10 +1,20 @@
-using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
 
-public interface IRoomListUI
+public interface ISessionListUI
 {
-    public void SetRoomList(M_ResponseSessionList rrl);
+	public void ResizeSessionList(int minimumSession);
+	public void SetSessionInfoIndex(
+		int index,
+		int sessionIndex,
+		string name,
+		int maxClientCount,
+		int clientCount,
+		string password,
+		string joinCode);
+
+#if UNITY_EDITOR
+	public void AddTempSession();
+#endif
 }
 
 public interface ICommunicationBoxUI
@@ -17,7 +27,7 @@ public interface ILobbyDialogManager
 	// Common
 	public void CloseDialog();
 
-	// CR: Create Room
+	// CR: Create Session
 	public void OpenDialog_CR();
 	public void SetTitle_CR(string title);
 	public void SetContent_CR(string content);

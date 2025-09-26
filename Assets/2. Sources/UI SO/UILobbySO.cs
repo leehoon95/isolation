@@ -5,15 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UILobbySO", menuName = "Scriptable Objects/UILobbySO")]
 public class UILobbySO : ScriptableObject, ISupportNotificationUI
 {
-	IRoomListUI _roomList;
+	ISessionListUI _sessionList;
 	ICommunicationBoxUI _communicationBox;
 	ILobbyDialogManager _dialogManager;
 	INotificationUI _notification;
 
-	public IRoomListUI RoomList
+	public ISessionListUI SessionList
 	{
-		get => _roomList;
-		set => _roomList = value;
+		get => _sessionList;
+		set => _sessionList = value;
 	}
 	public ICommunicationBoxUI CommunicationBox
 	{
@@ -32,17 +32,17 @@ public class UILobbySO : ScriptableObject, ISupportNotificationUI
 	}
 
 	// event
-	public event Action OnClickCreateRoom;
+	public event Action OnClickCreateSession;
 	public event Action OnClickSettings;
 	public event Action OnClickRefresh;
 	public event Action OnClickExit;
-	public event Action<int> OnClickRoom;
+	public event Action<int> OnClickSession;
 	public event Action<string> OnSendMessage;
 	public event Action OnCancelDialog;
 
 	// Buttons
-	public void RaiseOnClickRoom(int roomIndex) => OnClickRoom?.Invoke(roomIndex);
-	public void RaiseOnClickCreateRoom() => OnClickCreateRoom?.Invoke();
+	public void RaiseOnClickSession(int sessionIndex) => OnClickSession?.Invoke(sessionIndex);
+	public void RaiseOnClickCreateSession() => OnClickCreateSession?.Invoke();
 	public void RaiseOnClickSettings() => OnClickSettings?.Invoke();
 	public void RaiseOnClickRefresh() => OnClickRefresh?.Invoke();
 	public void RaiseOnClickExit() => OnClickExit?.Invoke();
@@ -54,4 +54,18 @@ public class UILobbySO : ScriptableObject, ISupportNotificationUI
 	// Notification
 	public void ShowNotification(string content)
 		=> _notification?.ShowNotification(content);
+
+	// Session List
+	public void ResizeSessionList(int minimumSession = 0) => _sessionList.ResizeSessionList(minimumSession);
+	public void SetSessionInfoIndex(
+		int index,
+		int sessionIndex,
+		string name,
+		int maxClientCount,
+		int clientCount,
+		string password,
+		string joinCode) => _sessionList.SetSessionInfoIndex(index, sessionIndex, name, maxClientCount, clientCount, password, joinCode);
+#if UNITY_EDITOR
+	public void AddTempSession() => _sessionList.AddTempSession();
+#endif
 }

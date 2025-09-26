@@ -23,33 +23,39 @@ public static partial class LobbyMessageReflection {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
           "ChNsb2JieV9tZXNzYWdlLnByb3RvIiYKFE1fUmVxdWVzdFNlc3Npb25MaXN0",
-          "Eg4KBmZpbHRlchgBIAEoBSJ1Cg1NX1Nlc3Npb25JbmZvEhQKDHNlc3Npb25J",
-          "bmRleBgBIAEoBRITCgtzZXNzaW9uTmFtZRgCIAEoCRIUCgxtYXhVc2VyQ291",
-          "bnQYAyABKAUSEQoJdXNlckNvdW50GAQgASgFEhAKCHBhc3N3b3JkGAUgASgJ",
-          "IkQKFU1fUmVzcG9uc2VTZXNzaW9uTGlzdBINCgVjb3VudBgBIAEoBRIcCgRs",
-          "aXN0GAIgAygLMg4uTV9TZXNzaW9uSW5mbyI/ChZNX1JlcXVlc3RDcmVhdGVT",
-          "ZXNzaW9uEhMKC3Nlc3Npb25OYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJ",
-          "Ij8KF01fUmVzcG9uc2VDcmVhdGVTZXNzaW9uEhQKDHNlc3Npb25JbmRleBgB",
-          "IAEoBRIOCgZyZWFzb24YAiABKAkiOwoVTV9SZXF1ZXN0RW50ZXJTZXNzaW9u",
-          "EhQKDHNlc3Npb25JbmRleBgBIAEoBRIMCgRob3N0GAIgASgIIjgKFk1fUmVz",
-          "cG9uc2VFbnRlclNlc3Npb24SDgoGcmVzdWx0GAEgASgIEg4KBnJlYXNvbhgC",
-          "IAEoCSqlAgoRTG9iYnlNZXNzYWdlX1R5cGUSFAoQTEJNVF9VTlNQRUNJRklF",
-          "RBAAEhYKEUxCTVRfRElTQ09OTkVDVEVEEMgBEhkKFFJFUVVFU1RfU0VTU0lP",
-          "Tl9MSVNUEMkBEhoKFVJFU1BPTlNFX1NFU1NJT05fTElTVBDKARIaChVSRVFV",
-          "RVNUX1NFU1NJT05fRU5URVIQywESGwoWUkVTUE9OU0VfU0VTU0lPTl9FTlRF",
-          "UhDMARIaChVSRVFVRVNUX1NFU1NJT05fTEVBVkUQzQESGwoWUkVTUE9OU0Vf",
-          "U0VTU0lPTl9MRUFWRRDOARIbChZSRVFVRVNUX1NFU1NJT05fQ1JFQVRFEM8B",
-          "EhwKF1JFU1BPTlNFX1NFU1NJT05fQ1JFQVRFENABYghlZGl0aW9uc3DoBw=="));
+          "Eg4KBmZpbHRlchgBIAEoBSKLAQoNTV9TZXNzaW9uSW5mbxIUCgxzZXNzaW9u",
+          "SW5kZXgYASABKAUSEwoLc2Vzc2lvbk5hbWUYAiABKAkSFgoObWF4Q2xpZW50",
+          "Q291bnQYAyABKAUSEwoLY2xpZW50Q291bnQYBCABKAUSEAoIcGFzc3dvcmQY",
+          "BSABKAkSEAoIam9pbkNvZGUYBiABKAkiRAoVTV9SZXNwb25zZVNlc3Npb25M",
+          "aXN0Eg0KBWNvdW50GAEgASgFEhwKBGxpc3QYAiADKAsyDi5NX1Nlc3Npb25J",
+          "bmZvIj8KFk1fUmVxdWVzdENyZWF0ZVNlc3Npb24SEwoLc2Vzc2lvbk5hbWUY",
+          "ASABKAkSEAoIcGFzc3dvcmQYAiABKAkiPwoXTV9SZXNwb25zZUNyZWF0ZVNl",
+          "c3Npb24SFAoMc2Vzc2lvbkluZGV4GAEgASgFEg4KBnJlYXNvbhgCIAEoCSI7",
+          "ChVNX1JlcXVlc3RFbnRlclNlc3Npb24SFAoMc2Vzc2lvbkluZGV4GAEgASgF",
+          "EgwKBGhvc3QYAiABKAgiOAoWTV9SZXNwb25zZUVudGVyU2Vzc2lvbhIOCgZy",
+          "ZXN1bHQYASABKAgSDgoGcmVhc29uGAIgASgJIiMKEU1fUmVxdWVzdEpvaW5D",
+          "b2RlEg4KBnJlYXNvbhgBIAEoCSIuCgpNX0pvaW5Db2RlEhAKCGpvaW5Db2Rl",
+          "GAEgASgJEg4KBnJlYXNvbhgCIAEoCSrLAgoRTG9iYnlNZXNzYWdlX1R5cGUS",
+          "FAoQTEJNVF9VTlNQRUNJRklFRBAAEhYKEUxCTVRfRElTQ09OTkVDVEVEEMgB",
+          "EhkKFFJFUVVFU1RfU0VTU0lPTl9MSVNUEMkBEhoKFVJFU1BPTlNFX1NFU1NJ",
+          "T05fTElTVBDKARIaChVSRVFVRVNUX1NFU1NJT05fRU5URVIQywESGwoWUkVT",
+          "UE9OU0VfU0VTU0lPTl9FTlRFUhDMARIaChVSRVFVRVNUX1NFU1NJT05fTEVB",
+          "VkUQzQESGwoWUkVTUE9OU0VfU0VTU0lPTl9MRUFWRRDOARIbChZSRVFVRVNU",
+          "X1NFU1NJT05fQ1JFQVRFEM8BEhwKF1JFU1BPTlNFX1NFU1NJT05fQ1JFQVRF",
+          "ENABEhUKEFJFUVVFU1RfSk9JTkNPREUQ0QESDQoISk9JTkNPREUQ0gFiCGVk",
+          "aXRpb25zcOgH"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::LobbyMessage_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestSessionList), global::M_RequestSessionList.Parser, new[]{ "Filter" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_SessionInfo), global::M_SessionInfo.Parser, new[]{ "SessionIndex", "SessionName", "MaxUserCount", "UserCount", "Password" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_SessionInfo), global::M_SessionInfo.Parser, new[]{ "SessionIndex", "SessionName", "MaxClientCount", "ClientCount", "Password", "JoinCode" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseSessionList), global::M_ResponseSessionList.Parser, new[]{ "Count", "List" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestCreateSession), global::M_RequestCreateSession.Parser, new[]{ "SessionName", "Password" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseCreateSession), global::M_ResponseCreateSession.Parser, new[]{ "SessionIndex", "Reason" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestEnterSession), global::M_RequestEnterSession.Parser, new[]{ "SessionIndex", "Host" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseEnterSession), global::M_ResponseEnterSession.Parser, new[]{ "Result", "Reason" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseEnterSession), global::M_ResponseEnterSession.Parser, new[]{ "Result", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestJoinCode), global::M_RequestJoinCode.Parser, new[]{ "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_JoinCode), global::M_JoinCode.Parser, new[]{ "JoinCode", "Reason" }, null, null, null, null)
         }));
   }
   #endregion
@@ -67,6 +73,8 @@ public enum LobbyMessage_Type {
   [pbr::OriginalName("RESPONSE_SESSION_LEAVE")] ResponseSessionLeave = 206,
   [pbr::OriginalName("REQUEST_SESSION_CREATE")] RequestSessionCreate = 207,
   [pbr::OriginalName("RESPONSE_SESSION_CREATE")] ResponseSessionCreate = 208,
+  [pbr::OriginalName("REQUEST_JOINCODE")] RequestJoincode = 209,
+  [pbr::OriginalName("JOINCODE")] Joincode = 210,
 }
 
 #endregion
@@ -326,9 +334,10 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     _hasBits0 = other._hasBits0;
     sessionIndex_ = other.sessionIndex_;
     sessionName_ = other.sessionName_;
-    maxUserCount_ = other.maxUserCount_;
-    userCount_ = other.userCount_;
+    maxClientCount_ = other.maxClientCount_;
+    clientCount_ = other.clientCount_;
     password_ = other.password_;
+    joinCode_ = other.joinCode_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -391,57 +400,57 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     sessionName_ = null;
   }
 
-  /// <summary>Field number for the "maxUserCount" field.</summary>
-  public const int MaxUserCountFieldNumber = 3;
-  private readonly static int MaxUserCountDefaultValue = 0;
+  /// <summary>Field number for the "maxClientCount" field.</summary>
+  public const int MaxClientCountFieldNumber = 3;
+  private readonly static int MaxClientCountDefaultValue = 0;
 
-  private int maxUserCount_;
+  private int maxClientCount_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int MaxUserCount {
-    get { if ((_hasBits0 & 2) != 0) { return maxUserCount_; } else { return MaxUserCountDefaultValue; } }
+  public int MaxClientCount {
+    get { if ((_hasBits0 & 2) != 0) { return maxClientCount_; } else { return MaxClientCountDefaultValue; } }
     set {
       _hasBits0 |= 2;
-      maxUserCount_ = value;
+      maxClientCount_ = value;
     }
   }
-  /// <summary>Gets whether the "maxUserCount" field is set</summary>
+  /// <summary>Gets whether the "maxClientCount" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasMaxUserCount {
+  public bool HasMaxClientCount {
     get { return (_hasBits0 & 2) != 0; }
   }
-  /// <summary>Clears the value of the "maxUserCount" field</summary>
+  /// <summary>Clears the value of the "maxClientCount" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearMaxUserCount() {
+  public void ClearMaxClientCount() {
     _hasBits0 &= ~2;
   }
 
-  /// <summary>Field number for the "userCount" field.</summary>
-  public const int UserCountFieldNumber = 4;
-  private readonly static int UserCountDefaultValue = 0;
+  /// <summary>Field number for the "clientCount" field.</summary>
+  public const int ClientCountFieldNumber = 4;
+  private readonly static int ClientCountDefaultValue = 0;
 
-  private int userCount_;
+  private int clientCount_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int UserCount {
-    get { if ((_hasBits0 & 4) != 0) { return userCount_; } else { return UserCountDefaultValue; } }
+  public int ClientCount {
+    get { if ((_hasBits0 & 4) != 0) { return clientCount_; } else { return ClientCountDefaultValue; } }
     set {
       _hasBits0 |= 4;
-      userCount_ = value;
+      clientCount_ = value;
     }
   }
-  /// <summary>Gets whether the "userCount" field is set</summary>
+  /// <summary>Gets whether the "clientCount" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasUserCount {
+  public bool HasClientCount {
     get { return (_hasBits0 & 4) != 0; }
   }
-  /// <summary>Clears the value of the "userCount" field</summary>
+  /// <summary>Clears the value of the "clientCount" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearUserCount() {
+  public void ClearClientCount() {
     _hasBits0 &= ~4;
   }
 
@@ -471,6 +480,32 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     password_ = null;
   }
 
+  /// <summary>Field number for the "joinCode" field.</summary>
+  public const int JoinCodeFieldNumber = 6;
+  private readonly static string JoinCodeDefaultValue = "";
+
+  private string joinCode_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string JoinCode {
+    get { return joinCode_ ?? JoinCodeDefaultValue; }
+    set {
+      joinCode_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+  /// <summary>Gets whether the "joinCode" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasJoinCode {
+    get { return joinCode_ != null; }
+  }
+  /// <summary>Clears the value of the "joinCode" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearJoinCode() {
+    joinCode_ = null;
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -488,9 +523,10 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     }
     if (SessionIndex != other.SessionIndex) return false;
     if (SessionName != other.SessionName) return false;
-    if (MaxUserCount != other.MaxUserCount) return false;
-    if (UserCount != other.UserCount) return false;
+    if (MaxClientCount != other.MaxClientCount) return false;
+    if (ClientCount != other.ClientCount) return false;
     if (Password != other.Password) return false;
+    if (JoinCode != other.JoinCode) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -500,9 +536,10 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     int hash = 1;
     if (HasSessionIndex) hash ^= SessionIndex.GetHashCode();
     if (HasSessionName) hash ^= SessionName.GetHashCode();
-    if (HasMaxUserCount) hash ^= MaxUserCount.GetHashCode();
-    if (HasUserCount) hash ^= UserCount.GetHashCode();
+    if (HasMaxClientCount) hash ^= MaxClientCount.GetHashCode();
+    if (HasClientCount) hash ^= ClientCount.GetHashCode();
     if (HasPassword) hash ^= Password.GetHashCode();
+    if (HasJoinCode) hash ^= JoinCode.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -529,17 +566,21 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
       output.WriteRawTag(18);
       output.WriteString(SessionName);
     }
-    if (HasMaxUserCount) {
+    if (HasMaxClientCount) {
       output.WriteRawTag(24);
-      output.WriteInt32(MaxUserCount);
+      output.WriteInt32(MaxClientCount);
     }
-    if (HasUserCount) {
+    if (HasClientCount) {
       output.WriteRawTag(32);
-      output.WriteInt32(UserCount);
+      output.WriteInt32(ClientCount);
     }
     if (HasPassword) {
       output.WriteRawTag(42);
       output.WriteString(Password);
+    }
+    if (HasJoinCode) {
+      output.WriteRawTag(50);
+      output.WriteString(JoinCode);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -559,17 +600,21 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
       output.WriteRawTag(18);
       output.WriteString(SessionName);
     }
-    if (HasMaxUserCount) {
+    if (HasMaxClientCount) {
       output.WriteRawTag(24);
-      output.WriteInt32(MaxUserCount);
+      output.WriteInt32(MaxClientCount);
     }
-    if (HasUserCount) {
+    if (HasClientCount) {
       output.WriteRawTag(32);
-      output.WriteInt32(UserCount);
+      output.WriteInt32(ClientCount);
     }
     if (HasPassword) {
       output.WriteRawTag(42);
       output.WriteString(Password);
+    }
+    if (HasJoinCode) {
+      output.WriteRawTag(50);
+      output.WriteString(JoinCode);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -587,14 +632,17 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     if (HasSessionName) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(SessionName);
     }
-    if (HasMaxUserCount) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxUserCount);
+    if (HasMaxClientCount) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxClientCount);
     }
-    if (HasUserCount) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(UserCount);
+    if (HasClientCount) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientCount);
     }
     if (HasPassword) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
+    }
+    if (HasJoinCode) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(JoinCode);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -614,14 +662,17 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
     if (other.HasSessionName) {
       SessionName = other.SessionName;
     }
-    if (other.HasMaxUserCount) {
-      MaxUserCount = other.MaxUserCount;
+    if (other.HasMaxClientCount) {
+      MaxClientCount = other.MaxClientCount;
     }
-    if (other.HasUserCount) {
-      UserCount = other.UserCount;
+    if (other.HasClientCount) {
+      ClientCount = other.ClientCount;
     }
     if (other.HasPassword) {
       Password = other.Password;
+    }
+    if (other.HasJoinCode) {
+      JoinCode = other.JoinCode;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -651,15 +702,19 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
           break;
         }
         case 24: {
-          MaxUserCount = input.ReadInt32();
+          MaxClientCount = input.ReadInt32();
           break;
         }
         case 32: {
-          UserCount = input.ReadInt32();
+          ClientCount = input.ReadInt32();
           break;
         }
         case 42: {
           Password = input.ReadString();
+          break;
+        }
+        case 50: {
+          JoinCode = input.ReadString();
           break;
         }
       }
@@ -690,15 +745,19 @@ public sealed partial class M_SessionInfo : pb::IMessage<M_SessionInfo>
           break;
         }
         case 24: {
-          MaxUserCount = input.ReadInt32();
+          MaxClientCount = input.ReadInt32();
           break;
         }
         case 32: {
-          UserCount = input.ReadInt32();
+          ClientCount = input.ReadInt32();
           break;
         }
         case 42: {
           Password = input.ReadString();
+          break;
+        }
+        case 50: {
+          JoinCode = input.ReadString();
           break;
         }
       }
@@ -1998,6 +2057,481 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
           break;
         case 8: {
           Result = input.ReadBool();
+          break;
+        }
+        case 18: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class M_RequestJoinCode : pb::IMessage<M_RequestJoinCode>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<M_RequestJoinCode> _parser = new pb::MessageParser<M_RequestJoinCode>(() => new M_RequestJoinCode());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<M_RequestJoinCode> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::LobbyMessageReflection.Descriptor.MessageTypes[7]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_RequestJoinCode() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_RequestJoinCode(M_RequestJoinCode other) : this() {
+    reason_ = other.reason_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_RequestJoinCode Clone() {
+    return new M_RequestJoinCode(this);
+  }
+
+  /// <summary>Field number for the "reason" field.</summary>
+  public const int ReasonFieldNumber = 1;
+  private readonly static string ReasonDefaultValue = "";
+
+  private string reason_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Reason {
+    get { return reason_ ?? ReasonDefaultValue; }
+    set {
+      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+  /// <summary>Gets whether the "reason" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasReason {
+    get { return reason_ != null; }
+  }
+  /// <summary>Clears the value of the "reason" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearReason() {
+    reason_ = null;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as M_RequestJoinCode);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(M_RequestJoinCode other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Reason != other.Reason) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (HasReason) hash ^= Reason.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (HasReason) {
+      output.WriteRawTag(10);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasReason) {
+      output.WriteRawTag(10);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (HasReason) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(M_RequestJoinCode other) {
+    if (other == null) {
+      return;
+    }
+    if (other.HasReason) {
+      Reason = other.Reason;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class M_JoinCode : pb::IMessage<M_JoinCode>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<M_JoinCode> _parser = new pb::MessageParser<M_JoinCode>(() => new M_JoinCode());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<M_JoinCode> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::LobbyMessageReflection.Descriptor.MessageTypes[8]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_JoinCode() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_JoinCode(M_JoinCode other) : this() {
+    joinCode_ = other.joinCode_;
+    reason_ = other.reason_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public M_JoinCode Clone() {
+    return new M_JoinCode(this);
+  }
+
+  /// <summary>Field number for the "joinCode" field.</summary>
+  public const int JoinCodeFieldNumber = 1;
+  private readonly static string JoinCodeDefaultValue = "";
+
+  private string joinCode_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string JoinCode {
+    get { return joinCode_ ?? JoinCodeDefaultValue; }
+    set {
+      joinCode_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+  /// <summary>Gets whether the "joinCode" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasJoinCode {
+    get { return joinCode_ != null; }
+  }
+  /// <summary>Clears the value of the "joinCode" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearJoinCode() {
+    joinCode_ = null;
+  }
+
+  /// <summary>Field number for the "reason" field.</summary>
+  public const int ReasonFieldNumber = 2;
+  private readonly static string ReasonDefaultValue = "";
+
+  private string reason_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Reason {
+    get { return reason_ ?? ReasonDefaultValue; }
+    set {
+      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+  /// <summary>Gets whether the "reason" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasReason {
+    get { return reason_ != null; }
+  }
+  /// <summary>Clears the value of the "reason" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearReason() {
+    reason_ = null;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as M_JoinCode);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(M_JoinCode other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (JoinCode != other.JoinCode) return false;
+    if (Reason != other.Reason) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (HasJoinCode) hash ^= JoinCode.GetHashCode();
+    if (HasReason) hash ^= Reason.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (HasJoinCode) {
+      output.WriteRawTag(10);
+      output.WriteString(JoinCode);
+    }
+    if (HasReason) {
+      output.WriteRawTag(18);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasJoinCode) {
+      output.WriteRawTag(10);
+      output.WriteString(JoinCode);
+    }
+    if (HasReason) {
+      output.WriteRawTag(18);
+      output.WriteString(Reason);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (HasJoinCode) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(JoinCode);
+    }
+    if (HasReason) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(M_JoinCode other) {
+    if (other == null) {
+      return;
+    }
+    if (other.HasJoinCode) {
+      JoinCode = other.JoinCode;
+    }
+    if (other.HasReason) {
+      Reason = other.Reason;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          JoinCode = input.ReadString();
+          break;
+        }
+        case 18: {
+          Reason = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          JoinCode = input.ReadString();
           break;
         }
         case 18: {

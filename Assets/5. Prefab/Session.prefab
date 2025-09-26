@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 2176631522322346719}
   - component: {fileID: 7809971073733647228}
   m_Layer: 5
-  m_Name: Room Name
+  m_Name: Session Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 10, y: 5, z: 10, w: 5}
+  m_margin: {x: 15, y: 5, z: 10, w: 5}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -444,7 +444,7 @@ GameObject:
   - component: {fileID: 3967081790190341679}
   - component: {fileID: 736862637242323545}
   m_Layer: 5
-  m_Name: Room
+  m_Name: Session
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -482,7 +482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b89a030e5033d0447b89296d05c29c45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _padding: 10
+  _padding: 12
   _button: {fileID: 8359420022795319151}
   _buttonText: {fileID: 7809971073733647228}
   _slotText: {fileID: 6667300711100098156}

@@ -35,8 +35,6 @@ public class NGOGameManager : NetworkBehaviour
 			print($"OnClientDisconnectCallback. id: {id}");
 		};
 
-		if (UserInfo)
-
 		_uiso.OnClickStartHost += StartHost;
 		_uiso.OnClickStartClient += StartClient;
 		_uiso.OnClickShutdown += Shutdown;
@@ -66,13 +64,13 @@ public class NGOGameManager : NetworkBehaviour
 			return;
 		}
 
-		M_Joincode j = new();
+		M_JoinCode j = new();
 
-		j.Joincode = joincode;
+		j.JoinCode = joincode;
 
 		var data = j.ToByteArray();
 
-		_ = _tcpClient.SendDataAsync((int)GameMessage_Type.Joincode, data);
+		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.Joincode, data);
 
 		_uiso.ShowNotification($"Send a joincode : {joincode}");
 	}

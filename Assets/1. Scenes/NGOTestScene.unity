@@ -1690,7 +1690,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 107.16, y: -89.11}
+  m_AnchoredPosition: {x: 107.160034, y: -89.109985}
   m_SizeDelta: {x: 214.32, y: 178.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1536427310
@@ -1706,10 +1706,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiso: {fileID: 11400000, guid: dfcc051b14d50f94da1f99d32d1c2698, type: 2}
-  _startHostButton: {fileID: 0}
-  _startClientButton: {fileID: 0}
+  _startHostButton: {fileID: 1652940067}
+  _startClientButton: {fileID: 848694122}
   _spawn1: {fileID: 1328785044}
-  _shutdownButton: {fileID: 0}
+  _shutdownButton: {fileID: 1654717300}
   _showStatusButton: {fileID: 316818919}
 --- !u!114 &1536427311
 MonoBehaviour:

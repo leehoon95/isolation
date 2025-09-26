@@ -1914,7 +1914,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2118740145}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.22854772
+  m_Size: 0.30122185
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2239,7 +2239,7 @@ GameObject:
   - component: {fileID: 855434048}
   - component: {fileID: 855434047}
   m_Layer: 5
-  m_Name: Canvas Room List
+  m_Name: Canvas Session List
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2280,11 +2280,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiso: {fileID: 11400000, guid: c56b68ad509433d42b17d4213243a321, type: 2}
   _scrollRect: {fileID: 7525211198818327925}
-  _createRoomButton: {fileID: 1560922568}
+  _createSessionButton: {fileID: 1560922568}
   _settingButton: {fileID: 1629648868}
   _refreshButton: {fileID: 1527605653}
   _exitButton: {fileID: 2066976936}
-  _roomPrefap: {fileID: 736862637242323545, guid: 3c4cbf76c0045ec458db03009e75cb1c, type: 3}
+  _sessionPrefap: {fileID: 736862637242323545, guid: 3c4cbf76c0045ec458db03009e75cb1c, type: 3}
 --- !u!114 &855434048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2557,7 +2557,7 @@ GameObject:
   - component: {fileID: 926183423}
   - component: {fileID: 926183422}
   m_Layer: 5
-  m_Name: Canvas Room List
+  m_Name: Canvas Session List
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3447,7 +3447,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 716500505}
   m_HandleRect: {fileID: 716500504}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4030,7 +4030,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiso: {fileID: 11400000, guid: c56b68ad509433d42b17d4213243a321, type: 2}
   _tcpClient: {fileID: 11400000, guid: 10b68c3ce640fa547a7af18af3d36ed7, type: 2}
-  _userInfo: {fileID: 11400000, guid: 317a084be5344984ebbccce18a68b1b9, type: 2}
 --- !u!1 &1560922566
 GameObject:
   m_ObjectHideFlags: 0
@@ -4045,7 +4044,7 @@ GameObject:
   - component: {fileID: 1560922568}
   - component: {fileID: 1560922571}
   m_Layer: 5
-  m_Name: Button Create Room
+  m_Name: Button Create Session
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5996,7 +5995,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 804454778423457929}
   m_HandleRect: {fileID: 5649893862285616335}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -6966,7 +6965,7 @@ GameObject:
   - component: {fileID: 8871186269853118529}
   - component: {fileID: 7525211198818327925}
   m_Layer: 5
-  m_Name: Room List
+  m_Name: Session List
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7116,7 +7115,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6244376593600628318}
   m_HandleRect: {fileID: 1434942658629753368}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

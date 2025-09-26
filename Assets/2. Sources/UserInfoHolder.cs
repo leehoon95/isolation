@@ -1,3 +1,5 @@
+using System;
+using UnityEditor.U2D;
 using UnityEngine;
 
 public class UserInfoHolder : MonoBehaviour
@@ -10,18 +12,34 @@ public class UserInfoHolder : MonoBehaviour
 	}
 
 	[SerializeField]
-	UserInfoSO _original;
-
+	UserInfoSO _template; // Resources
+	[SerializeField]
 	UserInfoSO _userInfo;
 
 
 	public UserInfoSO UserInfo
 	{
-		get => _userInfo;
+		get {
+			if (_template != null)
+			{
+				_userInfo = Instantiate(_template);
+			}
+			else
+			{
+				var origin = Resources.Load<UserInfoSO>("UserInfoSO");
+
+				_userInfo = Instantiate(origin);
+
+				if (_userInfo == null)
+				{
+					throw new NullReferenceException("Loading UserInfo failed");
+				}
+			}
+
+			return _userInfo;
+		}
 		private set => _userInfo = value;
 	}
-
-
 
 	void Awake()
 	{
@@ -31,6 +49,9 @@ public class UserInfoHolder : MonoBehaviour
 			return;
 		}
 
+		Debug.Log("UserInfoHolder.Awake()");
+
+		
 		_instance = this;
 		DontDestroyOnLoad(gameObject);
 	}

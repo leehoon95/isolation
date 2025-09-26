@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using System;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
@@ -8,11 +9,27 @@ public class LobbyManager : MonoBehaviour
 {
 	[SerializeField] UILobbySO _uiso;
 	[SerializeField] TCPClientSO _tcpClient;
-	[SerializeField] UserInfoSO _userInfo;
+	//[SerializeField] UserInfoSO _userInfo;
+
+	UserInfoHolder _userInfoHolder;
 
 	void Start()
 	{
-		_uiso.OnClickCreateRoom += OnClickCreateRoom;
+		_userInfoHolder = FindAnyObjectByType<UserInfoHolder>();
+
+		// Lobby Scene에서 실행하지 않은 경우
+		if (_userInfoHolder == null )
+		{
+			var obj = new GameObject("[UserInfoHolder(Debugging)]");
+			obj.AddComponent<UserInfoHolder>();
+
+			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
+			_userInfoHolder.UserInfo.Debugging = true;
+			_userInfoHolder.UserInfo.UserNickname = "TestName001";
+			_userInfoHolder.UserInfo.MessageFromPreviousScene = "";
+		}
+
+		_uiso.OnClickCreateSession += OnClickCreateSession;
 		_uiso.OnClickSettings += OnClickSettings;
 		_uiso.OnClickRefresh += OnClickRefresh;
 		_uiso.OnClickExit += OnClickExit;
@@ -20,12 +37,10 @@ public class LobbyManager : MonoBehaviour
 		_uiso.DialogManager.AddOnOk_CR(OnCreateSession);
 		_uiso.OnCancelDialog += OnCancelDialog;
 
-		print("Lobby start()");
-		//_tcpClient.AddReceiveListner(OnTCPDataReceived);
 		_tcpClient.OnReceived += OnTCPDataReceived;
 	}
 
-	void OnClickCreateRoom()
+	void OnClickCreateSession()
 	{
 		M_RequestCreateSession rcr = new();
 
@@ -39,6 +54,8 @@ public class LobbyManager : MonoBehaviour
 
 	void OnClickRefresh()
 	{
+
+
 		M_RequestSessionList rrl = new();
 
 		rrl.Filter = 1;
@@ -50,7 +67,7 @@ public class LobbyManager : MonoBehaviour
 
 	void OnClickExit()
 	{
-
+		_ = SceneManager.LoadSceneAsync("LoginScene");
 	}
 
 	void OnSendMessage(string message)
@@ -100,7 +117,7 @@ public class LobbyManager : MonoBehaviour
 
 			await Awaitable.MainThreadAsync();
 
-			_userInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			_userInfoHolder.UserInfo.MessageFromPreviousScene = "Disconnected from the server.";
 			_ = SceneManager.LoadSceneAsync("LoginScene");
 
 			return;
@@ -113,11 +130,11 @@ public class LobbyManager : MonoBehaviour
 
 		if (type == LobbyMessage_Type.ResponseSessionList)
 		{
-			M_ResponseSessionList rrl;
+			M_ResponseSessionList rsl;
 
 			try
 			{
-				rrl = M_ResponseSessionList.Parser.ParseFrom(buffer, 12, length - 12);
+				rsl = M_ResponseSessionList.Parser.ParseFrom(buffer, 12, length - 12);
 			}
 			catch (InvalidProtocolBufferException e)
 			{
@@ -125,11 +142,31 @@ public class LobbyManager : MonoBehaviour
 				return;
 			}
 
-			if (rrl.Count == 0 || rrl.List.Count == 0)
+			if (rsl.Count == 0 || rsl.List.Count == 0)
 			{
-				print($"OnTCPDataReceived room list count ({rrl.Count} {rrl.List.Count})");
-
+				_uiso.ShowNotification("공개된 Session이 없습니다");
 				return;
+			}
+			else
+			{
+				await Awaitable.MainThreadAsync();
+
+				var list = rsl.List;
+
+				_uiso.ResizeSessionList(list.Count);
+
+				for (int i = 0; i < list.Count; ++i)
+				{
+					var sinfo = list[i];
+					_uiso.SetSessionInfoIndex(
+						i,
+						sinfo.SessionIndex,
+						sinfo.SessionName,
+						sinfo.MaxClientCount,
+						sinfo.ClientCount,
+						sinfo.Password,
+						sinfo.JoinCode);
+				}
 			}
 		}
 		else if (type == LobbyMessage_Type.ResponseSessionCreate)
@@ -158,8 +195,8 @@ public class LobbyManager : MonoBehaviour
 
 			_uiso.ShowNotification($"Room created {sessionIndex}, {reason}");
 
-			_userInfo.IsHost = true;
-			_userInfo.HostingSessionIndex = sessionIndex;
+			_userInfoHolder.UserInfo.IsHost = true;
+			_userInfoHolder.UserInfo.HostingSessionIndex = sessionIndex;
 
 			M_RequestEnterSession res = new();
 
@@ -202,7 +239,7 @@ public class LobbyManager : MonoBehaviour
 	void OnDestroy()
 	{
 		print("Lobby ondestroy");
-		_uiso.OnClickCreateRoom -= OnClickCreateRoom;
+		_uiso.OnClickCreateSession -= OnClickCreateSession;
 		_uiso.OnClickSettings -= OnClickSettings;
 		_uiso.OnClickRefresh -= OnClickRefresh;
 		_uiso.OnClickExit -= OnClickExit;
