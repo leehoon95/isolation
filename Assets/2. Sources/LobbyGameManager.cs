@@ -12,6 +12,7 @@ public class LobbyManager : MonoBehaviour
 	//[SerializeField] UserInfoSO _userInfo;
 
 	UserInfoHolder _userInfoHolder;
+	DateTime _lastRefreshTime = DateTime.MinValue;
 
 	void Start()
 	{
@@ -27,6 +28,7 @@ public class LobbyManager : MonoBehaviour
 			_userInfoHolder.UserInfo.Debugging = true;
 			_userInfoHolder.UserInfo.UserNickname = "TestName001";
 			_userInfoHolder.UserInfo.MessageFromPreviousScene = "";
+
 		}
 
 		_uiso.OnClickCreateSession += OnClickCreateSession;
@@ -37,13 +39,13 @@ public class LobbyManager : MonoBehaviour
 		_uiso.DialogManager.AddOnOk_CR(OnCreateSession);
 		_uiso.OnCancelDialog += OnCancelDialog;
 
+		_uiso.OnClickSession += OnClickSession;
+
 		_tcpClient.OnReceived += OnTCPDataReceived;
 	}
 
 	void OnClickCreateSession()
 	{
-		M_RequestCreateSession rcr = new();
-
 		_uiso.DialogManager.OpenDialog_CR();
 	}
 
@@ -54,7 +56,19 @@ public class LobbyManager : MonoBehaviour
 
 	void OnClickRefresh()
 	{
+		var duration = DateTime.Now - _lastRefreshTime;
+		
+		if (duration.TotalMilliseconds < 1500)
+		{
+			return;
+		}
 
+#if UNITY_EDITOR
+		if (_userInfoHolder.UserInfo.Debugging)
+		{
+			return;
+		}
+#endif
 
 		M_RequestSessionList rrl = new();
 
@@ -63,11 +77,26 @@ public class LobbyManager : MonoBehaviour
 		var data = rrl.ToByteArray();
 
 		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
+
+		_lastRefreshTime = DateTime.Now;
 	}
 
 	void OnClickExit()
 	{
 		_ = SceneManager.LoadSceneAsync("LoginScene");
+	}
+
+	void OnClickSession(int sessionIndex)
+	{
+		M_RequestSessionEntry rcr = new();
+
+		rcr.SessionIndex = sessionIndex;
+
+		var data = rcr.ToByteArray();
+
+		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
+
+		//_userInfoHolder.UserInfo.StartHost = false;
 	}
 
 	void OnSendMessage(string message)
@@ -95,17 +124,14 @@ public class LobbyManager : MonoBehaviour
 			return;
 		}
 
-		M_RequestCreateSession rcr = new();
-
+		M_RequestSessionCreation rcr = new();
 		rcr.SessionName = sessionName;
 		rcr.Password = password;
 
 		print($"Request to create session {sessionName} / {password}");
 
 		var data = rcr.ToByteArray();
-
-		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionCreate, data);
-
+		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionCreation, data);
 		_uiso.DialogManager.CloseDialog();
 	}
 
@@ -125,8 +151,7 @@ public class LobbyManager : MonoBehaviour
 
 		LobbyMessage_Type type = (LobbyMessage_Type)BitConverter.ToInt32(buffer, 4);
 
-		Debug.LogWarning($"OnDataReceivecFromServer({type}, data, {length}");
-
+		Debug.LogWarning($"OnDataReceivecFromServer({type.ToString()}, data, {length}");
 
 		if (type == LobbyMessage_Type.ResponseSessionList)
 		{
@@ -138,7 +163,7 @@ public class LobbyManager : MonoBehaviour
 			}
 			catch (InvalidProtocolBufferException e)
 			{
-				Debug.LogException(e, this);
+				Debug.LogError($"M_ResponseSessionList ParseFrom error: {e.Message}");
 				return;
 			}
 
@@ -169,17 +194,17 @@ public class LobbyManager : MonoBehaviour
 				}
 			}
 		}
-		else if (type == LobbyMessage_Type.ResponseSessionCreate)
+		else if (type == LobbyMessage_Type.ResponseSessionCreation)
 		{
-			M_ResponseCreateSession rcr;
+			M_ResponseSessionCreation rcr;
 
 			try
 			{
-				rcr = M_ResponseCreateSession.Parser.ParseFrom(buffer, 12, length - 12);
+				rcr = M_ResponseSessionCreation.Parser.ParseFrom(buffer, 12, length - 12);
 			}
 			catch (InvalidProtocolBufferException e)
 			{
-				Debug.LogException(e, this);
+				Debug.LogError($"M_ResponseSessionCreation ParseFrom error: {e.Message}");
 				return;
 			}
 
@@ -195,29 +220,25 @@ public class LobbyManager : MonoBehaviour
 
 			_uiso.ShowNotification($"Room created {sessionIndex}, {reason}");
 
-			_userInfoHolder.UserInfo.IsHost = true;
-			_userInfoHolder.UserInfo.HostingSessionIndex = sessionIndex;
-
-			M_RequestEnterSession res = new();
-
+			M_RequestSessionEntry res = new();
 			res.SessionIndex = sessionIndex;
 			res.Host = true;
-
 			var data = res.ToByteArray();
+			_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
 
-			_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEnter, data);
+			//_userInfoHolder.UserInfo.StartHost = true;
 		}
-		else if (type == LobbyMessage_Type.ResponseSessionEnter)
+		else if (type == LobbyMessage_Type.ResponseSessionEntry)
 		{
-			M_ResponseEnterSession res;
+			M_ResponseSessionEntry res;
 
 			try
 			{
-				res = M_ResponseEnterSession.Parser.ParseFrom(buffer, 12, length - 12);
+				res = M_ResponseSessionEntry.Parser.ParseFrom(buffer, 12, length - 12);
 			}
 			catch (InvalidProtocolBufferException e)
 			{
-				Debug.LogException(e, this);
+				Debug.LogError($"M_ResponseSessionEntry ParseFrom error: {e.Message}");
 				return;
 			}
 
@@ -238,7 +259,7 @@ public class LobbyManager : MonoBehaviour
 
 	void OnDestroy()
 	{
-		print("Lobby ondestroy");
+		print("Lobby OnDestroy");
 		_uiso.OnClickCreateSession -= OnClickCreateSession;
 		_uiso.OnClickSettings -= OnClickSettings;
 		_uiso.OnClickRefresh -= OnClickRefresh;

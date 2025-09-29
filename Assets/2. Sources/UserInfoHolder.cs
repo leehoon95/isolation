@@ -11,8 +11,8 @@ public class UserInfoHolder : MonoBehaviour
 		get { return _instance; }
 	}
 
-	[SerializeField]
-	UserInfoSO _template; // Resources
+	//[SerializeField]
+	//UserInfoSO _template; // Resources
 	[SerializeField]
 	UserInfoSO _userInfo;
 
@@ -20,16 +20,17 @@ public class UserInfoHolder : MonoBehaviour
 	public UserInfoSO UserInfo
 	{
 		get {
-			if (_template != null)
+			//if (_template != null)
+			//{
+			//	_userInfo = Instantiate(_template);
+			//}
+			//else
+			if (_userInfo == null)
 			{
-				_userInfo = Instantiate(_template);
-			}
-			else
-			{
-				var origin = Resources.Load<UserInfoSO>("UserInfoSO");
-
-				_userInfo = Instantiate(origin);
-
+				//_template = Resources.Load<UserInfoSO>("UserInfoSO");
+				//_userInfo = Instantiate(_template);
+				_userInfo = ScriptableObject.CreateInstance<UserInfoSO>();
+				//Instantiate
 				if (_userInfo == null)
 				{
 					throw new NullReferenceException("Loading UserInfo failed");

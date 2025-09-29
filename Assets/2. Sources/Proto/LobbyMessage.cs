@@ -28,34 +28,29 @@ public static partial class LobbyMessageReflection {
           "Q291bnQYAyABKAUSEwoLY2xpZW50Q291bnQYBCABKAUSEAoIcGFzc3dvcmQY",
           "BSABKAkSEAoIam9pbkNvZGUYBiABKAkiRAoVTV9SZXNwb25zZVNlc3Npb25M",
           "aXN0Eg0KBWNvdW50GAEgASgFEhwKBGxpc3QYAiADKAsyDi5NX1Nlc3Npb25J",
-          "bmZvIj8KFk1fUmVxdWVzdENyZWF0ZVNlc3Npb24SEwoLc2Vzc2lvbk5hbWUY",
-          "ASABKAkSEAoIcGFzc3dvcmQYAiABKAkiPwoXTV9SZXNwb25zZUNyZWF0ZVNl",
-          "c3Npb24SFAoMc2Vzc2lvbkluZGV4GAEgASgFEg4KBnJlYXNvbhgCIAEoCSI7",
-          "ChVNX1JlcXVlc3RFbnRlclNlc3Npb24SFAoMc2Vzc2lvbkluZGV4GAEgASgF",
-          "EgwKBGhvc3QYAiABKAgiOAoWTV9SZXNwb25zZUVudGVyU2Vzc2lvbhIOCgZy",
-          "ZXN1bHQYASABKAgSDgoGcmVhc29uGAIgASgJIiMKEU1fUmVxdWVzdEpvaW5D",
-          "b2RlEg4KBnJlYXNvbhgBIAEoCSIuCgpNX0pvaW5Db2RlEhAKCGpvaW5Db2Rl",
-          "GAEgASgJEg4KBnJlYXNvbhgCIAEoCSrLAgoRTG9iYnlNZXNzYWdlX1R5cGUS",
-          "FAoQTEJNVF9VTlNQRUNJRklFRBAAEhYKEUxCTVRfRElTQ09OTkVDVEVEEMgB",
-          "EhkKFFJFUVVFU1RfU0VTU0lPTl9MSVNUEMkBEhoKFVJFU1BPTlNFX1NFU1NJ",
-          "T05fTElTVBDKARIaChVSRVFVRVNUX1NFU1NJT05fRU5URVIQywESGwoWUkVT",
-          "UE9OU0VfU0VTU0lPTl9FTlRFUhDMARIaChVSRVFVRVNUX1NFU1NJT05fTEVB",
-          "VkUQzQESGwoWUkVTUE9OU0VfU0VTU0lPTl9MRUFWRRDOARIbChZSRVFVRVNU",
-          "X1NFU1NJT05fQ1JFQVRFEM8BEhwKF1JFU1BPTlNFX1NFU1NJT05fQ1JFQVRF",
-          "ENABEhUKEFJFUVVFU1RfSk9JTkNPREUQ0QESDQoISk9JTkNPREUQ0gFiCGVk",
-          "aXRpb25zcOgH"));
+          "bmZvIkEKGE1fUmVxdWVzdFNlc3Npb25DcmVhdGlvbhITCgtzZXNzaW9uTmFt",
+          "ZRgBIAEoCRIQCghwYXNzd29yZBgCIAEoCSJBChlNX1Jlc3BvbnNlU2Vzc2lv",
+          "bkNyZWF0aW9uEhQKDHNlc3Npb25JbmRleBgBIAEoBRIOCgZyZWFzb24YAiAB",
+          "KAkiOwoVTV9SZXF1ZXN0U2Vzc2lvbkVudHJ5EhQKDHNlc3Npb25JbmRleBgB",
+          "IAEoBRIMCgRob3N0GAIgASgIIjgKFk1fUmVzcG9uc2VTZXNzaW9uRW50cnkS",
+          "DgoGcmVzdWx0GAEgASgIEg4KBnJlYXNvbhgCIAEoCSqpAgoRTG9iYnlNZXNz",
+          "YWdlX1R5cGUSFAoQTEJNVF9VTlNQRUNJRklFRBAAEhYKEUxCTVRfRElTQ09O",
+          "TkVDVEVEEMgBEhkKFFJFUVVFU1RfU0VTU0lPTl9MSVNUEMkBEhoKFVJFU1BP",
+          "TlNFX1NFU1NJT05fTElTVBDKARIaChVSRVFVRVNUX1NFU1NJT05fRU5UUlkQ",
+          "ywESGwoWUkVTUE9OU0VfU0VTU0lPTl9FTlRSWRDMARIaChVSRVFVRVNUX1NF",
+          "U1NJT05fTEVBVkUQzQESGwoWUkVTUE9OU0VfU0VTU0lPTl9MRUFWRRDOARId",
+          "ChhSRVFVRVNUX1NFU1NJT05fQ1JFQVRJT04QzwESHgoZUkVTUE9OU0VfU0VT",
+          "U0lPTl9DUkVBVElPThDQAWIIZWRpdGlvbnNw6Ac="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::LobbyMessage_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestSessionList), global::M_RequestSessionList.Parser, new[]{ "Filter" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::M_SessionInfo), global::M_SessionInfo.Parser, new[]{ "SessionIndex", "SessionName", "MaxClientCount", "ClientCount", "Password", "JoinCode" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseSessionList), global::M_ResponseSessionList.Parser, new[]{ "Count", "List" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestCreateSession), global::M_RequestCreateSession.Parser, new[]{ "SessionName", "Password" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseCreateSession), global::M_ResponseCreateSession.Parser, new[]{ "SessionIndex", "Reason" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestEnterSession), global::M_RequestEnterSession.Parser, new[]{ "SessionIndex", "Host" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseEnterSession), global::M_ResponseEnterSession.Parser, new[]{ "Result", "Reason" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestJoinCode), global::M_RequestJoinCode.Parser, new[]{ "Reason" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_JoinCode), global::M_JoinCode.Parser, new[]{ "JoinCode", "Reason" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestSessionCreation), global::M_RequestSessionCreation.Parser, new[]{ "SessionName", "Password" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseSessionCreation), global::M_ResponseSessionCreation.Parser, new[]{ "SessionIndex", "Reason" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestSessionEntry), global::M_RequestSessionEntry.Parser, new[]{ "SessionIndex", "Host" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseSessionEntry), global::M_ResponseSessionEntry.Parser, new[]{ "Result", "Reason" }, null, null, null, null)
         }));
   }
   #endregion
@@ -67,14 +62,15 @@ public enum LobbyMessage_Type {
   [pbr::OriginalName("LBMT_DISCONNECTED")] LbmtDisconnected = 200,
   [pbr::OriginalName("REQUEST_SESSION_LIST")] RequestSessionList = 201,
   [pbr::OriginalName("RESPONSE_SESSION_LIST")] ResponseSessionList = 202,
-  [pbr::OriginalName("REQUEST_SESSION_ENTER")] RequestSessionEnter = 203,
-  [pbr::OriginalName("RESPONSE_SESSION_ENTER")] ResponseSessionEnter = 204,
+  [pbr::OriginalName("REQUEST_SESSION_ENTRY")] RequestSessionEntry = 203,
+  [pbr::OriginalName("RESPONSE_SESSION_ENTRY")] ResponseSessionEntry = 204,
   [pbr::OriginalName("REQUEST_SESSION_LEAVE")] RequestSessionLeave = 205,
   [pbr::OriginalName("RESPONSE_SESSION_LEAVE")] ResponseSessionLeave = 206,
-  [pbr::OriginalName("REQUEST_SESSION_CREATE")] RequestSessionCreate = 207,
-  [pbr::OriginalName("RESPONSE_SESSION_CREATE")] ResponseSessionCreate = 208,
-  [pbr::OriginalName("REQUEST_JOINCODE")] RequestJoincode = 209,
-  [pbr::OriginalName("JOINCODE")] Joincode = 210,
+  [pbr::OriginalName("REQUEST_SESSION_CREATION")] RequestSessionCreation = 207,
+  /// <summary>
+  ///REQUEST_JOINCODE = 209;
+  /// </summary>
+  [pbr::OriginalName("RESPONSE_SESSION_CREATION")] ResponseSessionCreation = 208,
 }
 
 #endregion
@@ -1009,16 +1005,16 @@ public sealed partial class M_ResponseSessionList : pb::IMessage<M_ResponseSessi
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreateSession>
+public sealed partial class M_RequestSessionCreation : pb::IMessage<M_RequestSessionCreation>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<M_RequestCreateSession> _parser = new pb::MessageParser<M_RequestCreateSession>(() => new M_RequestCreateSession());
+  private static readonly pb::MessageParser<M_RequestSessionCreation> _parser = new pb::MessageParser<M_RequestSessionCreation>(() => new M_RequestSessionCreation());
   private pb::UnknownFieldSet _unknownFields;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<M_RequestCreateSession> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_RequestSessionCreation> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1034,7 +1030,7 @@ public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreat
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestCreateSession() {
+  public M_RequestSessionCreation() {
     OnConstruction();
   }
 
@@ -1042,7 +1038,7 @@ public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreat
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestCreateSession(M_RequestCreateSession other) : this() {
+  public M_RequestSessionCreation(M_RequestSessionCreation other) : this() {
     sessionName_ = other.sessionName_;
     password_ = other.password_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -1050,8 +1046,8 @@ public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreat
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestCreateSession Clone() {
-    return new M_RequestCreateSession(this);
+  public M_RequestSessionCreation Clone() {
+    return new M_RequestSessionCreation(this);
   }
 
   /// <summary>Field number for the "sessionName" field.</summary>
@@ -1109,12 +1105,12 @@ public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreat
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as M_RequestCreateSession);
+    return Equals(other as M_RequestSessionCreation);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(M_RequestCreateSession other) {
+  public bool Equals(M_RequestSessionCreation other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -1200,7 +1196,7 @@ public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreat
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(M_RequestCreateSession other) {
+  public void MergeFrom(M_RequestSessionCreation other) {
     if (other == null) {
       return;
     }
@@ -1272,17 +1268,17 @@ public sealed partial class M_RequestCreateSession : pb::IMessage<M_RequestCreat
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCreateSession>
+public sealed partial class M_ResponseSessionCreation : pb::IMessage<M_ResponseSessionCreation>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<M_ResponseCreateSession> _parser = new pb::MessageParser<M_ResponseCreateSession>(() => new M_ResponseCreateSession());
+  private static readonly pb::MessageParser<M_ResponseSessionCreation> _parser = new pb::MessageParser<M_ResponseSessionCreation>(() => new M_ResponseSessionCreation());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<M_ResponseCreateSession> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_ResponseSessionCreation> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1298,7 +1294,7 @@ public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCre
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_ResponseCreateSession() {
+  public M_ResponseSessionCreation() {
     OnConstruction();
   }
 
@@ -1306,7 +1302,7 @@ public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCre
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_ResponseCreateSession(M_ResponseCreateSession other) : this() {
+  public M_ResponseSessionCreation(M_ResponseSessionCreation other) : this() {
     _hasBits0 = other._hasBits0;
     sessionIndex_ = other.sessionIndex_;
     reason_ = other.reason_;
@@ -1315,8 +1311,8 @@ public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCre
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_ResponseCreateSession Clone() {
-    return new M_ResponseCreateSession(this);
+  public M_ResponseSessionCreation Clone() {
+    return new M_ResponseSessionCreation(this);
   }
 
   /// <summary>Field number for the "sessionIndex" field.</summary>
@@ -1375,12 +1371,12 @@ public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCre
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as M_ResponseCreateSession);
+    return Equals(other as M_ResponseSessionCreation);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(M_ResponseCreateSession other) {
+  public bool Equals(M_ResponseSessionCreation other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -1466,7 +1462,7 @@ public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCre
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(M_ResponseCreateSession other) {
+  public void MergeFrom(M_ResponseSessionCreation other) {
     if (other == null) {
       return;
     }
@@ -1538,17 +1534,17 @@ public sealed partial class M_ResponseCreateSession : pb::IMessage<M_ResponseCre
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterSession>
+public sealed partial class M_RequestSessionEntry : pb::IMessage<M_RequestSessionEntry>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<M_RequestEnterSession> _parser = new pb::MessageParser<M_RequestEnterSession>(() => new M_RequestEnterSession());
+  private static readonly pb::MessageParser<M_RequestSessionEntry> _parser = new pb::MessageParser<M_RequestSessionEntry>(() => new M_RequestSessionEntry());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<M_RequestEnterSession> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_RequestSessionEntry> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1564,7 +1560,7 @@ public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterS
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestEnterSession() {
+  public M_RequestSessionEntry() {
     OnConstruction();
   }
 
@@ -1572,7 +1568,7 @@ public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterS
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestEnterSession(M_RequestEnterSession other) : this() {
+  public M_RequestSessionEntry(M_RequestSessionEntry other) : this() {
     _hasBits0 = other._hasBits0;
     sessionIndex_ = other.sessionIndex_;
     host_ = other.host_;
@@ -1581,8 +1577,8 @@ public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterS
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestEnterSession Clone() {
-    return new M_RequestEnterSession(this);
+  public M_RequestSessionEntry Clone() {
+    return new M_RequestSessionEntry(this);
   }
 
   /// <summary>Field number for the "sessionIndex" field.</summary>
@@ -1642,12 +1638,12 @@ public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterS
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as M_RequestEnterSession);
+    return Equals(other as M_RequestSessionEntry);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(M_RequestEnterSession other) {
+  public bool Equals(M_RequestSessionEntry other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -1733,7 +1729,7 @@ public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterS
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(M_RequestEnterSession other) {
+  public void MergeFrom(M_RequestSessionEntry other) {
     if (other == null) {
       return;
     }
@@ -1805,17 +1801,17 @@ public sealed partial class M_RequestEnterSession : pb::IMessage<M_RequestEnterS
 }
 
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnterSession>
+public sealed partial class M_ResponseSessionEntry : pb::IMessage<M_ResponseSessionEntry>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
 {
-  private static readonly pb::MessageParser<M_ResponseEnterSession> _parser = new pb::MessageParser<M_ResponseEnterSession>(() => new M_ResponseEnterSession());
+  private static readonly pb::MessageParser<M_ResponseSessionEntry> _parser = new pb::MessageParser<M_ResponseSessionEntry>(() => new M_ResponseSessionEntry());
   private pb::UnknownFieldSet _unknownFields;
   private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<M_ResponseEnterSession> Parser { get { return _parser; } }
+  public static pb::MessageParser<M_ResponseSessionEntry> Parser { get { return _parser; } }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1831,7 +1827,7 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_ResponseEnterSession() {
+  public M_ResponseSessionEntry() {
     OnConstruction();
   }
 
@@ -1839,7 +1835,7 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_ResponseEnterSession(M_ResponseEnterSession other) : this() {
+  public M_ResponseSessionEntry(M_ResponseSessionEntry other) : this() {
     _hasBits0 = other._hasBits0;
     result_ = other.result_;
     reason_ = other.reason_;
@@ -1848,8 +1844,8 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_ResponseEnterSession Clone() {
-    return new M_ResponseEnterSession(this);
+  public M_ResponseSessionEntry Clone() {
+    return new M_ResponseSessionEntry(this);
   }
 
   /// <summary>Field number for the "result" field.</summary>
@@ -1908,12 +1904,12 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
-    return Equals(other as M_ResponseEnterSession);
+    return Equals(other as M_ResponseSessionEntry);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(M_ResponseEnterSession other) {
+  public bool Equals(M_ResponseSessionEntry other) {
     if (ReferenceEquals(other, null)) {
       return false;
     }
@@ -1999,7 +1995,7 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(M_ResponseEnterSession other) {
+  public void MergeFrom(M_ResponseSessionEntry other) {
     if (other == null) {
       return;
     }
@@ -2057,481 +2053,6 @@ public sealed partial class M_ResponseEnterSession : pb::IMessage<M_ResponseEnte
           break;
         case 8: {
           Result = input.ReadBool();
-          break;
-        }
-        case 18: {
-          Reason = input.ReadString();
-          break;
-        }
-      }
-    }
-  }
-  #endif
-
-}
-
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class M_RequestJoinCode : pb::IMessage<M_RequestJoinCode>
-#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    , pb::IBufferMessage
-#endif
-{
-  private static readonly pb::MessageParser<M_RequestJoinCode> _parser = new pb::MessageParser<M_RequestJoinCode>(() => new M_RequestJoinCode());
-  private pb::UnknownFieldSet _unknownFields;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<M_RequestJoinCode> Parser { get { return _parser; } }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pbr::MessageDescriptor Descriptor {
-    get { return global::LobbyMessageReflection.Descriptor.MessageTypes[7]; }
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  pbr::MessageDescriptor pb::IMessage.Descriptor {
-    get { return Descriptor; }
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestJoinCode() {
-    OnConstruction();
-  }
-
-  partial void OnConstruction();
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestJoinCode(M_RequestJoinCode other) : this() {
-    reason_ = other.reason_;
-    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_RequestJoinCode Clone() {
-    return new M_RequestJoinCode(this);
-  }
-
-  /// <summary>Field number for the "reason" field.</summary>
-  public const int ReasonFieldNumber = 1;
-  private readonly static string ReasonDefaultValue = "";
-
-  private string reason_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public string Reason {
-    get { return reason_ ?? ReasonDefaultValue; }
-    set {
-      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-    }
-  }
-  /// <summary>Gets whether the "reason" field is set</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasReason {
-    get { return reason_ != null; }
-  }
-  /// <summary>Clears the value of the "reason" field</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearReason() {
-    reason_ = null;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public override bool Equals(object other) {
-    return Equals(other as M_RequestJoinCode);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(M_RequestJoinCode other) {
-    if (ReferenceEquals(other, null)) {
-      return false;
-    }
-    if (ReferenceEquals(other, this)) {
-      return true;
-    }
-    if (Reason != other.Reason) return false;
-    return Equals(_unknownFields, other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public override int GetHashCode() {
-    int hash = 1;
-    if (HasReason) hash ^= Reason.GetHashCode();
-    if (_unknownFields != null) {
-      hash ^= _unknownFields.GetHashCode();
-    }
-    return hash;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public override string ToString() {
-    return pb::JsonFormatter.ToDiagnosticString(this);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void WriteTo(pb::CodedOutputStream output) {
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    output.WriteRawMessage(this);
-  #else
-    if (HasReason) {
-      output.WriteRawTag(10);
-      output.WriteString(Reason);
-    }
-    if (_unknownFields != null) {
-      _unknownFields.WriteTo(output);
-    }
-  #endif
-  }
-
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasReason) {
-      output.WriteRawTag(10);
-      output.WriteString(Reason);
-    }
-    if (_unknownFields != null) {
-      _unknownFields.WriteTo(ref output);
-    }
-  }
-  #endif
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int CalculateSize() {
-    int size = 0;
-    if (HasReason) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
-    }
-    if (_unknownFields != null) {
-      size += _unknownFields.CalculateSize();
-    }
-    return size;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(M_RequestJoinCode other) {
-    if (other == null) {
-      return;
-    }
-    if (other.HasReason) {
-      Reason = other.Reason;
-    }
-    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(pb::CodedInputStream input) {
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    input.ReadRawMessage(this);
-  #else
-    uint tag;
-    while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
-        default:
-          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-          break;
-        case 10: {
-          Reason = input.ReadString();
-          break;
-        }
-      }
-    }
-  #endif
-  }
-
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-    uint tag;
-    while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
-        default:
-          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-          break;
-        case 10: {
-          Reason = input.ReadString();
-          break;
-        }
-      }
-    }
-  }
-  #endif
-
-}
-
-[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class M_JoinCode : pb::IMessage<M_JoinCode>
-#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    , pb::IBufferMessage
-#endif
-{
-  private static readonly pb::MessageParser<M_JoinCode> _parser = new pb::MessageParser<M_JoinCode>(() => new M_JoinCode());
-  private pb::UnknownFieldSet _unknownFields;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pb::MessageParser<M_JoinCode> Parser { get { return _parser; } }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public static pbr::MessageDescriptor Descriptor {
-    get { return global::LobbyMessageReflection.Descriptor.MessageTypes[8]; }
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  pbr::MessageDescriptor pb::IMessage.Descriptor {
-    get { return Descriptor; }
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_JoinCode() {
-    OnConstruction();
-  }
-
-  partial void OnConstruction();
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_JoinCode(M_JoinCode other) : this() {
-    joinCode_ = other.joinCode_;
-    reason_ = other.reason_;
-    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public M_JoinCode Clone() {
-    return new M_JoinCode(this);
-  }
-
-  /// <summary>Field number for the "joinCode" field.</summary>
-  public const int JoinCodeFieldNumber = 1;
-  private readonly static string JoinCodeDefaultValue = "";
-
-  private string joinCode_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public string JoinCode {
-    get { return joinCode_ ?? JoinCodeDefaultValue; }
-    set {
-      joinCode_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-    }
-  }
-  /// <summary>Gets whether the "joinCode" field is set</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasJoinCode {
-    get { return joinCode_ != null; }
-  }
-  /// <summary>Clears the value of the "joinCode" field</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearJoinCode() {
-    joinCode_ = null;
-  }
-
-  /// <summary>Field number for the "reason" field.</summary>
-  public const int ReasonFieldNumber = 2;
-  private readonly static string ReasonDefaultValue = "";
-
-  private string reason_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public string Reason {
-    get { return reason_ ?? ReasonDefaultValue; }
-    set {
-      reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-    }
-  }
-  /// <summary>Gets whether the "reason" field is set</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasReason {
-    get { return reason_ != null; }
-  }
-  /// <summary>Clears the value of the "reason" field</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearReason() {
-    reason_ = null;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public override bool Equals(object other) {
-    return Equals(other as M_JoinCode);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool Equals(M_JoinCode other) {
-    if (ReferenceEquals(other, null)) {
-      return false;
-    }
-    if (ReferenceEquals(other, this)) {
-      return true;
-    }
-    if (JoinCode != other.JoinCode) return false;
-    if (Reason != other.Reason) return false;
-    return Equals(_unknownFields, other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public override int GetHashCode() {
-    int hash = 1;
-    if (HasJoinCode) hash ^= JoinCode.GetHashCode();
-    if (HasReason) hash ^= Reason.GetHashCode();
-    if (_unknownFields != null) {
-      hash ^= _unknownFields.GetHashCode();
-    }
-    return hash;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public override string ToString() {
-    return pb::JsonFormatter.ToDiagnosticString(this);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void WriteTo(pb::CodedOutputStream output) {
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    output.WriteRawMessage(this);
-  #else
-    if (HasJoinCode) {
-      output.WriteRawTag(10);
-      output.WriteString(JoinCode);
-    }
-    if (HasReason) {
-      output.WriteRawTag(18);
-      output.WriteString(Reason);
-    }
-    if (_unknownFields != null) {
-      _unknownFields.WriteTo(output);
-    }
-  #endif
-  }
-
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasJoinCode) {
-      output.WriteRawTag(10);
-      output.WriteString(JoinCode);
-    }
-    if (HasReason) {
-      output.WriteRawTag(18);
-      output.WriteString(Reason);
-    }
-    if (_unknownFields != null) {
-      _unknownFields.WriteTo(ref output);
-    }
-  }
-  #endif
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public int CalculateSize() {
-    int size = 0;
-    if (HasJoinCode) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(JoinCode);
-    }
-    if (HasReason) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
-    }
-    if (_unknownFields != null) {
-      size += _unknownFields.CalculateSize();
-    }
-    return size;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(M_JoinCode other) {
-    if (other == null) {
-      return;
-    }
-    if (other.HasJoinCode) {
-      JoinCode = other.JoinCode;
-    }
-    if (other.HasReason) {
-      Reason = other.Reason;
-    }
-    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void MergeFrom(pb::CodedInputStream input) {
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    input.ReadRawMessage(this);
-  #else
-    uint tag;
-    while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
-        default:
-          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-          break;
-        case 10: {
-          JoinCode = input.ReadString();
-          break;
-        }
-        case 18: {
-          Reason = input.ReadString();
-          break;
-        }
-      }
-    }
-  #endif
-  }
-
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-    uint tag;
-    while ((tag = input.ReadTag()) != 0) {
-    if ((tag & 7) == 4) {
-      // Abort on any end group tag.
-      return;
-    }
-    switch(tag) {
-        default:
-          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-          break;
-        case 10: {
-          JoinCode = input.ReadString();
           break;
         }
         case 18: {

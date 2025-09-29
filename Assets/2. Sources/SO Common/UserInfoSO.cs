@@ -12,9 +12,7 @@ public class UserInfoSO : ScriptableObject
     [SerializeField]
     string _messageFromPreviousScene;
     [SerializeField]
-    bool _isHost;
-    [SerializeField]
-    int _hostingSessionIndex;
+    bool _startHost;
     [SerializeField]
     bool _debugging;
 
@@ -42,17 +40,11 @@ public class UserInfoSO : ScriptableObject
         set => _messageFromPreviousScene = value;
     }
 
-    public bool IsHost
+    public bool StartHost
     {
-        get => _isHost;
-        set => _isHost = value;
+        get => _startHost;
+        set => _startHost = value;
     }
-
-    public int HostingSessionIndex
-    {
-        get => _hostingSessionIndex;
-        set => _hostingSessionIndex = value;
-	}
 
     public bool Debugging
     {

@@ -1,6 +1,8 @@
 using Google.Protobuf;
+using System;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NGOGameManager : NetworkBehaviour
 {
@@ -13,12 +15,12 @@ public class NGOGameManager : NetworkBehaviour
 	[SerializeField]
 	UserInfoSO _userInfo;
 
+	UserInfoHolder _userInfoHolder;
 	int _pingPongCount;
 
 	void Start()
 	{
 		var nm = NetworkManager.Singleton;
-
 
 		nm.OnClientConnectedCallback += (ulong id) =>
 		{
@@ -35,11 +37,24 @@ public class NGOGameManager : NetworkBehaviour
 			print($"OnClientDisconnectCallback. id: {id}");
 		};
 
+		_userInfoHolder = FindAnyObjectByType<UserInfoHolder>();
+		if (_userInfoHolder == null)
+		{
+			throw new NullReferenceException("Loading UserInfo failed");
+		}
+
 		_uiso.OnClickStartHost += StartHost;
 		_uiso.OnClickStartClient += StartClient;
 		_uiso.OnClickShutdown += Shutdown;
 		_uiso.OnClickSpawn += Spawn;
 		_uiso.OnClickShowStatus += OnClickShowStatus;
+
+		_tcpClient.OnReceived += OnTCPDataReceived;
+
+		M_RequestEnvironment re = new();
+		re.Filter = 1;
+		var data = re.ToByteArray();
+		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.RequestEnvironment, data);
 	}
 
 	public override void OnDestroy()
@@ -70,7 +85,7 @@ public class NGOGameManager : NetworkBehaviour
 
 		var data = j.ToByteArray();
 
-		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.Joincode, data);
+		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.Joincode, data); // activate session
 
 		_uiso.ShowNotification($"Send a joincode : {joincode}");
 	}
@@ -126,6 +141,41 @@ public class NGOGameManager : NetworkBehaviour
 		);
 	}
 
+	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
+	{
+		if (length == 0)
+		{
+			// Disconnected from server.
+
+			await Awaitable.MainThreadAsync();
+
+			_userInfoHolder.UserInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			_ = SceneManager.LoadSceneAsync("LoginScene");
+
+			return;
+		}
+
+		SessionMessage_Type type = (SessionMessage_Type)BitConverter.ToInt32(buffer, 4);
+
+		Debug.LogWarning($"OnDataReceivecFromServer({type.ToString()}, data, {length}");
+
+		if (type == SessionMessage_Type.Environment)
+		{
+			M_Environment env;
+
+			try
+			{
+				env = M_Environment.Parser.ParseFrom(buffer, 12, length - 12);
+			}
+			catch (InvalidProtocolBufferException e)
+			{
+				Debug.LogError($"M_Environment ParseFrom error: {e.Message}");
+				return;
+
+			}
+		}
+
+	}
 
 	void OnClickPingPong() => PingRpc(_pingPongCount++, NetworkManager.Singleton.RpcTarget.Server);
 

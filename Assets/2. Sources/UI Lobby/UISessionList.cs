@@ -33,20 +33,6 @@ public class UISessionList : UIBehaviour, ISessionListUI
 		_exitButton.onClick.AddListener(() => _uiso.RaiseOnClickExit());
 	}
 
-	void OnCreateRoom()
-	{
-		print("OnCreateRoom");
-
-		SessionItem roomItem = Instantiate(_sessionPrefap);
-		//roomItem.RoomIndex = _tempIndex++;
-		roomItem.OnClick += OnClickSessionEntry;
-
-		roomItem.transform.SetParent(_scrollRect.content);
-		//_roomListCache.Add(roomItem.RoomIndex, roomItem);
-		roomItem.FitSize(_scrollRect.content.GetComponent<RectTransform>());
-		//roomItem.transform.localScale = Vector3.one;
-	}
-
 	void OnExit()
 	{
 		print("OnExit");
@@ -62,18 +48,16 @@ public class UISessionList : UIBehaviour, ISessionListUI
 		print("OnSetting");
 	}
 
-
-
 	void RefreshRoomList()
 	{
-
-
 		_scrollRect.verticalNormalizedPosition = 1f;
 	}
 
-	void OnClickSessionEntry(int roomIndex)
+	void OnClickSessionEntry(int sessionIndex)
 	{
-		print($"OnClickRoomEntry {roomIndex}");
+		print($"OnClickRoomEntry {sessionIndex}");
+
+		_uiso.RaiseOnClickSession(sessionIndex);
 	}
 
 	protected override void OnRectTransformDimensionsChange()
