@@ -10,20 +10,30 @@ public class LoginGameManager : MonoBehaviour
 	[SerializeField] TCPClientSO _tcpClient;
 	[SerializeField] UILoginSO _uiso;
 	[SerializeField] SaveDataLoader _sdl;
-	[SerializeField] UserInfoSO _userInfo;
+
+	UserInfoHolder _userInfoHolder;
 
 	void Start()
 	{
-		_uiso.OnLoginEnter += OnLoginEnter;
-		_uiso.OnDisconnect += OnDisconnect; // disconnect test
+		_userInfoHolder = FindAnyObjectByType<UserInfoHolder>();
 
-		//_tcpClient.AddReceiveListner(OnTCPDataReceived);
+		if (_userInfoHolder == null)
+		{
+			var obj = new GameObject("[UserInfoHolder]");
+			obj.AddComponent<UserInfoHolder>();
+
+			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
+		}
+
+		_uiso.OnLoginEnter += OnLoginEnter;
+		_uiso.OnDisconnect += OnDisconnect;
+
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		if (_userInfo.MessageFromPreviousScene != null)
+		if (_userInfoHolder.UserInfo.MessageFromPreviousScene != null)
 		{
-			_uiso.ShowNotification(_userInfo.MessageFromPreviousScene);
-			_userInfo.MessageFromPreviousScene = null;
+			_uiso.ShowNotification(_userInfoHolder.UserInfo.MessageFromPreviousScene);
+			_userInfoHolder.UserInfo.MessageFromPreviousScene = null;
 		}
 
 		if (!_tcpClient.Connnected)
@@ -36,6 +46,11 @@ public class LoginGameManager : MonoBehaviour
 	{
 		_uiso.DialogManager.SetActive_Ok(false);
 		_uiso.DialogManager.RemoveOnOk_Ok(TryConnectToServer);
+
+		if (_tcpClient.Connnected)
+		{
+			return;
+		}
 
 		var res = await _tcpClient.ConnectToServer();
 
@@ -66,7 +81,7 @@ public class LoginGameManager : MonoBehaviour
 			return;
 		}
 
-		_userInfo.UserNickname = nickname;
+		_userInfoHolder.UserInfo.UserNickname = nickname;
 
 		M_RequestLogin msg = new M_RequestLogin();
 		msg.Nickname = nickname;
@@ -86,19 +101,22 @@ public class LoginGameManager : MonoBehaviour
 
 	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
 	{
+		LoginMessage_Type type = (LoginMessage_Type)BitConverter.ToInt32(buffer, 4);
+		Debug.Log($"LoginGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
+
 		if (length == 0)
 		{
 			await Awaitable.MainThreadAsync();
 
+			_uiso.ShowNotification("¼­¹ö¿Í ¿¬°áÀÌ ²÷¾îÁü");
 			TryConnectToServer();
 
 			return;
 		}
 
-		LoginMessage_Type type = (LoginMessage_Type)BitConverter.ToInt32(buffer, 4);
+		
 
-		print($"OnDataReceivecFromServer({type}, data, {length}");
-	
+		
 		if (type == LoginMessage_Type.ResponseLogin)
 		{
 			M_ResponseLogin msg;
@@ -119,36 +137,30 @@ public class LoginGameManager : MonoBehaviour
 				return;
 			}
 
-			if (msg.Token > 0 && msg.Reason.ToLower().CompareTo("ok") == 0)
+			await Awaitable.MainThreadAsync();
+
+			if (msg.Result)
 			{
-				print("Allowed login request.");
+				print("Login success");
 
-				_userInfo.Token = msg.Token;
-
-				print($"token : {_userInfo.Token}");
-
-				await Awaitable.MainThreadAsync();
-
+				CleanEvent();
 				//_ = SceneManager.LoadSceneAsync("LobbyScene");
-				_ = SceneManager.LoadSceneAsync("LobbyScene");
+				await SceneManager.LoadSceneAsync("LobbyScene");
 			}
 			else
 			{
-				await Awaitable.MainThreadAsync();
-				_userInfo.UserNickname = null;
+				_userInfoHolder.UserInfo.UserNickname = null;
 				_uiso.ShowNotification("Login failed. Please try again.");
 				print($"Login request is Denied. (reason: {msg.Reason})");
 			}
-
 		}
 	}
 
-	void OnDestroy()
+	void CleanEvent()
 	{
 		_uiso.OnLoginEnter -= OnLoginEnter;
 		_uiso.OnDisconnect -= OnDisconnect;
 
-		//_tcpClient.RemoveReceiveListner(OnTCPDataReceived);
 		_tcpClient.OnReceived -= OnTCPDataReceived;
 	}
 }

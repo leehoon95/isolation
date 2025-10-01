@@ -101,12 +101,20 @@ public class OwnerCharacter : NetworkBehaviour
 			_attack2 = false;
 		}
 	}
-
-	void Update()
+	
+	void FixedUpdate()
 	{
-		Vector2 directionToMouse = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
-		float angle = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
-		transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+		if (IsOwner)
+		{
+			Vector2 directionToMouse = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
+			_angle.Value = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
+			
+			transform.rotation = Quaternion.Euler(0f, 0f, _angle.Value - 90f);
+		}
+		else
+		{
+			transform.rotation = Quaternion.Euler(0f, 0f, _angle.Value - 90f);
+		}
 	}
 
 	[Rpc(SendTo.Server)]

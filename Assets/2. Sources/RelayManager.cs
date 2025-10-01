@@ -80,6 +80,7 @@ public class RelayManager
 			Debug.LogError($"Realy create allocation request failed {e.Message}");
 			throw;
 		}
+
 		/*
 		 * AllocationUtils.ToRelayServerData
 		 * Unity Transport에 데이터를 넘기기위한 헬퍼 메서드 (Allocation 정보 -> RelayServerData 구조체)
@@ -88,7 +89,7 @@ public class RelayManager
 		NetworkManager.Singleton.GetComponent<UnityTransport>()
 			.SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, connectionType));
 		var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-		
+
 		return NetworkManager.Singleton.StartHost() ? joinCode : null;
 	}
 
@@ -106,7 +107,7 @@ public class RelayManager
 	   var allocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
 		NetworkManager.Singleton.GetComponent<UnityTransport>()
 			.SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, connectionType));
-
+		NetworkManager.Singleton.LogLevel = Unity.Netcode.LogLevel.Error;
 		return NetworkManager.Singleton.StartClient();
 	}
 }

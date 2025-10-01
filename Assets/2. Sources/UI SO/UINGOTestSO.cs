@@ -28,7 +28,7 @@ public class UINGOTestSO : ScriptableObject, ISupportNotificationUI
 
 	public event Action OnClickStartHost;
 	public event Action OnClickStartClient;
-	public event Action OnClickSpawn;
+	public event Func<Awaitable> OnClickSpawn;
 	public event Action OnClickShutdown;
 	public event Action OnClickShowStatus;
 

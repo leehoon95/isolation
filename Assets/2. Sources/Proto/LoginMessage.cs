@@ -23,15 +23,15 @@ public static partial class LoginMessageReflection {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
           "ChNsb2dpbl9tZXNzYWdlLnByb3RvIiIKDk1fUmVxdWVzdExvZ2luEhAKCG5p",
-          "Y2tuYW1lGAEgASgJIjAKD01fUmVzcG9uc2VMb2dpbhINCgV0b2tlbhgBIAEo",
-          "BBIOCgZyZWFzb24YAiABKAkqYwoRTG9naW5NZXNzYWdlX1R5cGUSEgoOTE1f",
-          "VU5TUEVDSUZJRUQQABITCg9MTV9ESVNDT05ORUNURUQQZBIRCg1SRVFVRVNU",
-          "X0xPR0lOEGUSEgoOUkVTUE9OU0VfTE9HSU4QZmIIZWRpdGlvbnNw6Ac="));
+          "Y2tuYW1lGAEgASgJIjEKD01fUmVzcG9uc2VMb2dpbhIOCgZyZXN1bHQYASAB",
+          "KAgSDgoGcmVhc29uGAIgASgJKmMKEUxvZ2luTWVzc2FnZV9UeXBlEhIKDkxN",
+          "X1VOU1BFQ0lGSUVEEAASEwoPTE1fRElTQ09OTkVDVEVEEGQSEQoNUkVRVUVT",
+          "VF9MT0dJThBlEhIKDlJFU1BPTlNFX0xPR0lOEGZiCGVkaXRpb25zcOgH"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::LoginMessage_Type), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::M_RequestLogin), global::M_RequestLogin.Parser, new[]{ "Nickname" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseLogin), global::M_ResponseLogin.Parser, new[]{ "Token", "Reason" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::M_ResponseLogin), global::M_ResponseLogin.Parser, new[]{ "Result", "Reason" }, null, null, null, null)
         }));
   }
   #endregion
@@ -300,7 +300,7 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public M_ResponseLogin(M_ResponseLogin other) : this() {
     _hasBits0 = other._hasBits0;
-    token_ = other.token_;
+    result_ = other.result_;
     reason_ = other.reason_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -311,30 +311,30 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
     return new M_ResponseLogin(this);
   }
 
-  /// <summary>Field number for the "token" field.</summary>
-  public const int TokenFieldNumber = 1;
-  private readonly static ulong TokenDefaultValue = 0UL;
+  /// <summary>Field number for the "result" field.</summary>
+  public const int ResultFieldNumber = 1;
+  private readonly static bool ResultDefaultValue = false;
 
-  private ulong token_;
+  private bool result_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public ulong Token {
-    get { if ((_hasBits0 & 1) != 0) { return token_; } else { return TokenDefaultValue; } }
+  public bool Result {
+    get { if ((_hasBits0 & 1) != 0) { return result_; } else { return ResultDefaultValue; } }
     set {
       _hasBits0 |= 1;
-      token_ = value;
+      result_ = value;
     }
   }
-  /// <summary>Gets whether the "token" field is set</summary>
+  /// <summary>Gets whether the "result" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasToken {
+  public bool HasResult {
     get { return (_hasBits0 & 1) != 0; }
   }
-  /// <summary>Clears the value of the "token" field</summary>
+  /// <summary>Clears the value of the "result" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearToken() {
+  public void ClearResult() {
     _hasBits0 &= ~1;
   }
 
@@ -379,7 +379,7 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Token != other.Token) return false;
+    if (Result != other.Result) return false;
     if (Reason != other.Reason) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -388,7 +388,7 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasToken) hash ^= Token.GetHashCode();
+    if (HasResult) hash ^= Result.GetHashCode();
     if (HasReason) hash ^= Reason.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -408,9 +408,9 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasToken) {
+    if (HasResult) {
       output.WriteRawTag(8);
-      output.WriteUInt64(Token);
+      output.WriteBool(Result);
     }
     if (HasReason) {
       output.WriteRawTag(18);
@@ -426,9 +426,9 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasToken) {
+    if (HasResult) {
       output.WriteRawTag(8);
-      output.WriteUInt64(Token);
+      output.WriteBool(Result);
     }
     if (HasReason) {
       output.WriteRawTag(18);
@@ -444,8 +444,8 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasToken) {
-      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Token);
+    if (HasResult) {
+      size += 1 + 1;
     }
     if (HasReason) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
@@ -462,8 +462,8 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
     if (other == null) {
       return;
     }
-    if (other.HasToken) {
-      Token = other.Token;
+    if (other.HasResult) {
+      Result = other.Result;
     }
     if (other.HasReason) {
       Reason = other.Reason;
@@ -488,7 +488,7 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
         case 8: {
-          Token = input.ReadUInt64();
+          Result = input.ReadBool();
           break;
         }
         case 18: {
@@ -515,7 +515,7 @@ public sealed partial class M_ResponseLogin : pb::IMessage<M_ResponseLogin>
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
         case 8: {
-          Token = input.ReadUInt64();
+          Result = input.ReadBool();
           break;
         }
         case 18: {

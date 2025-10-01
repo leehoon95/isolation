@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,7 +18,7 @@ public class UISessionList : UIBehaviour, ISessionListUI
 	Button _exitButton;
 	[SerializeField]
 	SessionItem _sessionPrefap;
-	
+
 	//Dictionary<int, SessionItem> _roomListCache = new();
 	//int _tempIndex = 0;
 
@@ -62,14 +61,10 @@ public class UISessionList : UIBehaviour, ISessionListUI
 
 	protected override void OnRectTransformDimensionsChange()
 	{
-		Debug.Log("OnRectTransformDimensionsChange");
-
 		if (_scrollRect.content.childCount == 0)
 		{
 			return;
 		}
-
-
 
 		RectTransform rectTransform = _scrollRect.content.GetComponent<RectTransform>();
 
@@ -88,11 +83,6 @@ public class UISessionList : UIBehaviour, ISessionListUI
 		_settingButton.onClick.RemoveAllListeners();
 		_refreshButton.onClick.RemoveAllListeners();
 		_exitButton.onClick.RemoveAllListeners();
-	}
-
-	protected override void OnValidate()
-	{
-		Debug.Log("onvalidate()");
 	}
 
 	public void SetSessionInfoIndex(
@@ -159,7 +149,7 @@ public class UISessionList : UIBehaviour, ISessionListUI
 		ResizeSessionList(count + 1);
 
 		SetSessionInfoIndex(
-			count, 
+			count,
 			-1,
 			$"temp {count + 1}",
 			0,

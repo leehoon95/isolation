@@ -9,7 +9,6 @@ public class LobbyManager : MonoBehaviour
 {
 	[SerializeField] UILobbySO _uiso;
 	[SerializeField] TCPClientSO _tcpClient;
-	//[SerializeField] UserInfoSO _userInfo;
 
 	UserInfoHolder _userInfoHolder;
 	DateTime _lastRefreshTime = DateTime.MinValue;
@@ -21,14 +20,13 @@ public class LobbyManager : MonoBehaviour
 		// Lobby Scene에서 실행하지 않은 경우
 		if (_userInfoHolder == null )
 		{
-			var obj = new GameObject("[UserInfoHolder(Debugging)]");
+			var obj = new GameObject("[UserInfoHolder(lobby)]");
 			obj.AddComponent<UserInfoHolder>();
 
 			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
 			_userInfoHolder.UserInfo.Debugging = true;
 			_userInfoHolder.UserInfo.UserNickname = "TestName001";
 			_userInfoHolder.UserInfo.MessageFromPreviousScene = "";
-
 		}
 
 		_uiso.OnClickCreateSession += OnClickCreateSession;
@@ -42,6 +40,8 @@ public class LobbyManager : MonoBehaviour
 		_uiso.OnClickSession += OnClickSession;
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
+
+		OnClickRefresh();
 	}
 
 	void OnClickCreateSession()
@@ -54,11 +54,11 @@ public class LobbyManager : MonoBehaviour
 
 	}
 
-	void OnClickRefresh()
+	async void OnClickRefresh()
 	{
 		var duration = DateTime.Now - _lastRefreshTime;
-		
-		if (duration.TotalMilliseconds < 1500)
+
+		if (duration.TotalMilliseconds < 1000)
 		{
 			return;
 		}
@@ -76,13 +76,22 @@ public class LobbyManager : MonoBehaviour
 
 		var data = rrl.ToByteArray();
 
-		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
+		await _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
 
 		_lastRefreshTime = DateTime.Now;
 	}
 
 	void OnClickExit()
 	{
+		CleanEvent();
+
+		M_RequestLobbyExit rle = new();
+		rle.Reason = "ok";
+
+		var data = rle.ToByteArray();
+
+		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestLobbyExit, data);
+
 		_ = SceneManager.LoadSceneAsync("LoginScene");
 	}
 
@@ -137,6 +146,9 @@ public class LobbyManager : MonoBehaviour
 
 	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
 	{
+		LobbyMessage_Type type = (LobbyMessage_Type)BitConverter.ToInt32(buffer, 4);
+		Debug.Log($"LobbyGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
+
 		if (length == 0)
 		{
 			// Disconnected from server.
@@ -148,10 +160,6 @@ public class LobbyManager : MonoBehaviour
 
 			return;
 		}
-
-		LobbyMessage_Type type = (LobbyMessage_Type)BitConverter.ToInt32(buffer, 4);
-
-		Debug.LogWarning($"OnDataReceivecFromServer({type.ToString()}, data, {length}");
 
 		if (type == LobbyMessage_Type.ResponseSessionList)
 		{
@@ -167,7 +175,7 @@ public class LobbyManager : MonoBehaviour
 				return;
 			}
 
-			if (rsl.Count == 0 || rsl.List.Count == 0)
+			if (rsl.List.Count == 0)
 			{
 				_uiso.ShowNotification("공개된 Session이 없습니다");
 				return;
@@ -222,7 +230,7 @@ public class LobbyManager : MonoBehaviour
 
 			M_RequestSessionEntry res = new();
 			res.SessionIndex = sessionIndex;
-			res.Host = true;
+
 			var data = res.ToByteArray();
 			_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
 
@@ -243,7 +251,7 @@ public class LobbyManager : MonoBehaviour
 			}
 
 			await Awaitable.MainThreadAsync();
-			_uiso.ShowNotification($"M_ResponseEnterSession {res.Result}, {res.Reason}");
+			
 
 			if (res.Result)
 			{
@@ -252,14 +260,14 @@ public class LobbyManager : MonoBehaviour
 			}
 			else
 			{
-				_uiso.ShowNotification($"세션에 들어갈 수 없습니다. {res.Reason}");
+				Debug.LogError($"M_ResponseEnterSession {res.Result}, {res.Reason}");
+				//_uiso.ShowNotification($"세션에 들어갈 수 없습니다. {res.Reason}");
 			}
 		}
 	}
 
-	void OnDestroy()
+	void CleanEvent()
 	{
-		print("Lobby OnDestroy");
 		_uiso.OnClickCreateSession -= OnClickCreateSession;
 		_uiso.OnClickSettings -= OnClickSettings;
 		_uiso.OnClickRefresh -= OnClickRefresh;
@@ -267,8 +275,8 @@ public class LobbyManager : MonoBehaviour
 		_uiso.OnSendMessage -= OnSendMessage;
 		_uiso.DialogManager.RemoveOnOk_CR(OnCreateSession);
 		_uiso.OnCancelDialog -= OnCancelDialog;
+		_uiso.OnClickSession -= OnClickSession;
 
-		//_tcpClient.RemoveReceiveListner(OnTCPDataReceived);
 		_tcpClient.OnReceived -= OnTCPDataReceived;
 	}
 }

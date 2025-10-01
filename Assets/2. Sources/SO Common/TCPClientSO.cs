@@ -106,7 +106,10 @@ public class TCPClientSO : ScriptableObject
 				{
 					Debug.LogWarning("receive 0 byte");
 
-					await _onReceived?.Invoke(null, 0);
+					if (_onReceived != null)
+					{
+						_ = _onReceived.Invoke(null, 0);
+					}
 
 					break; // Connection closed
 				}
@@ -120,13 +123,17 @@ public class TCPClientSO : ScriptableObject
 				}
 
 				Debug.Log($"tcp data received! {bytesRead}");
-				_onReceived?.Invoke(buffer, bytesRead);
+
+				if (_onReceived != null)
+				{
+					_ = _onReceived.Invoke(buffer, bytesRead);
+				}
 
 				//string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
 			}
-			catch (OperationCanceledException)
+			catch (OperationCanceledException e)
 			{
-				Debug.Log("TCPClientSO.ReceivingTask() cancelled.");
+				Debug.Log($"TCPClientSO.ReceivingTask() cancelled. {e.Message}");
 				break;
 			}
 			catch (Exception ex)

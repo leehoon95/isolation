@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum RoomState
@@ -10,8 +11,9 @@ public enum RoomState
 	Disabled
 }
 
-[ExecuteAlways]
-public class SessionItem : MonoBehaviour
+//[ExecuteAlways]
+
+public class SessionItem : UIBehaviour
 {
 	[SerializeField]
 	uint _padding;
@@ -64,8 +66,9 @@ public class SessionItem : MonoBehaviour
 		}
 	}
 
-	void Start()
+	protected override void Awake()
 	{
+		Debug.Log("SessionItem.Start()");
 		_button.onClick.AddListener(() => _onClick?.Invoke(_sessionIndex));
 		_slotText.text = "0 / 4";
 	}
@@ -94,6 +97,8 @@ public class SessionItem : MonoBehaviour
 		_slotText.text = $"{clientCount} / {maxClientCount}";
 		_password = password;
 		_joinCode = joinCode;
+
+		Debug.LogWarning($"slottext {_slotText.text}");
 	}
 
 	public void ClearButtonEvent()
@@ -103,7 +108,7 @@ public class SessionItem : MonoBehaviour
 
 	}
 
-	void OnDestroy()
+	protected override void OnDestroy()
 	{
 		_button.onClick.RemoveAllListeners();
 		_onClick = null;
