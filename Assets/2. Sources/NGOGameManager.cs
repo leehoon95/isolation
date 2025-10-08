@@ -111,6 +111,8 @@ public class NGOGameManager : NetworkBehaviour
 		{
 			// client¿¡ ÀüÆÄ
 			nm.Shutdown();
+
+			SceneManager.LoadScene("LoginScene");
 		}
 	}
 

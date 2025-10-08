@@ -24,6 +24,8 @@ public class UIDialogOk : UIBehaviour
 	// 가능하면 직접 구독 해제할 것
 	public event UnityAction OnOk;
 
+	Animator _buttonAnimator;
+
 	//public event UnityAction OnOk
 	//{
 	//	add
@@ -40,6 +42,16 @@ public class UIDialogOk : UIBehaviour
 	protected override void Start()
 	{
 		_ok.onClick.AddListener(() => OnOk?.Invoke());
+	}
+
+	protected override void OnEnable()
+	{
+		var animator = _ok.gameObject.GetComponent<Animator>();
+		if (animator != null)
+		{
+			Debug.Log("rebind");
+			animator.Play("Normal", -1, 0f);
+		}
 	}
 
 	public void SetTitle(string title) => _title.text = title;

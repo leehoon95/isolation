@@ -20,7 +20,7 @@ public class LobbyManager : MonoBehaviour
 		// Lobby Scene에서 실행하지 않은 경우
 		if (_userInfoHolder == null )
 		{
-			var obj = new GameObject("[UserInfoHolder(lobby)]");
+			var obj = new GameObject("[User Info Holder(lobby)]");
 			obj.AddComponent<UserInfoHolder>();
 
 			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
@@ -146,20 +146,21 @@ public class LobbyManager : MonoBehaviour
 
 	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
 	{
-		LobbyMessage_Type type = (LobbyMessage_Type)BitConverter.ToInt32(buffer, 4);
-		Debug.Log($"LobbyGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
-
 		if (length == 0)
 		{
 			// Disconnected from server.
 
 			await Awaitable.MainThreadAsync();
 
+			CleanEvent();
 			_userInfoHolder.UserInfo.MessageFromPreviousScene = "Disconnected from the server.";
-			_ = SceneManager.LoadSceneAsync("LoginScene");
+			SceneManager.LoadScene("LoginScene");
 
 			return;
 		}
+
+		LobbyMessage_Type type = (LobbyMessage_Type)BitConverter.ToInt32(buffer, 4);
+		Debug.Log($"LobbyGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
 
 		if (type == LobbyMessage_Type.ResponseSessionList)
 		{

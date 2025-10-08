@@ -19,7 +19,7 @@ public class LoginGameManager : MonoBehaviour
 
 		if (_userInfoHolder == null)
 		{
-			var obj = new GameObject("[UserInfoHolder]");
+			var obj = new GameObject("[User Info Holder]");
 			obj.AddComponent<UserInfoHolder>();
 
 			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
@@ -49,6 +49,7 @@ public class LoginGameManager : MonoBehaviour
 
 		if (_tcpClient.Connnected)
 		{
+			Debug.Log("TryConnectToServer connected");
 			return;
 		}
 
@@ -88,7 +89,6 @@ public class LoginGameManager : MonoBehaviour
 
 		var data = msg.ToByteArray();
 
-		//_ = _ns.SendTCPDataAsync(PROTO_MessageType.RequestLogin, data);
 		_ = _tcpClient.SendDataAsync((int)LoginMessage_Type.RequestLogin, data);
 	}
 
@@ -101,9 +101,6 @@ public class LoginGameManager : MonoBehaviour
 
 	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
 	{
-		LoginMessage_Type type = (LoginMessage_Type)BitConverter.ToInt32(buffer, 4);
-		Debug.Log($"LoginGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
-
 		if (length == 0)
 		{
 			await Awaitable.MainThreadAsync();
@@ -114,9 +111,9 @@ public class LoginGameManager : MonoBehaviour
 			return;
 		}
 
-		
+		LoginMessage_Type type = (LoginMessage_Type)BitConverter.ToInt32(buffer, 4);
+		Debug.Log($"LoginGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
 
-		
 		if (type == LoginMessage_Type.ResponseLogin)
 		{
 			M_ResponseLogin msg;
@@ -145,7 +142,7 @@ public class LoginGameManager : MonoBehaviour
 
 				CleanEvent();
 				//_ = SceneManager.LoadSceneAsync("LobbyScene");
-				await SceneManager.LoadSceneAsync("LobbyScene");
+				SceneManager.LoadScene("LobbyScene");
 			}
 			else
 			{
