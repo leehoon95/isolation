@@ -1,37 +1,39 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UserInfoSO", menuName = "Scriptable Objects/UserInfoSO")]
-public class UserInfoSO : ScriptableObject
+public class PlayerInfoSO : ScriptableObject
 {
     [SerializeField]
-    string _userNickname;
+    string _playerNickname;
     [SerializeField]
     ulong _token;
     [SerializeField]
-    int _roomIndex;
+    int _sessionIndex;
     [SerializeField]
     string _messageFromPreviousScene;
     [SerializeField]
     bool _startHost;
     [SerializeField]
     bool _debugging;
+    [SerializeField]
+    string _lobbyId;
+    [SerializeField]
+    string _sessionName;
+    [SerializeField]
+    string _sessionPassword;
+    [SerializeField]
+    int _maxPlayers;
 
-    public string UserNickname
+    public string PlayerNickname
     {
-        get => _userNickname;
-        set => _userNickname = value;
+        get => _playerNickname;
+        set => _playerNickname = value;
     }
 
     public ulong Token
     {
         get => _token;
         set => _token = value;
-    }
-
-    public int CurrentRoomIndex
-    {
-        get => _roomIndex;
-        set => _roomIndex = value;
     }
 
     public string MessageFromPreviousScene
@@ -50,6 +52,24 @@ public class UserInfoSO : ScriptableObject
     {
         get => _debugging;
         set => _debugging = value;
+    }
+
+    public string LobbyId
+    {
+        get => _lobbyId;
+        set => _lobbyId = value;
+    }
+
+    public string SessionName
+    {
+        get => _sessionName;
+        set => _sessionName = value;
+    }
+
+    public string SessionPassword
+    {
+        get => _sessionPassword;
+        set => _sessionPassword = value;
     }
 
     //public void SetNickname(string nickname)

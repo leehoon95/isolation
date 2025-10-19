@@ -10,23 +10,23 @@ public class LobbyManager : MonoBehaviour
 	[SerializeField] UILobbySO _uiso;
 	[SerializeField] TCPClientSO _tcpClient;
 
-	UserInfoHolder _userInfoHolder;
+	PlayerInfoHolder _PlayerInfoHolder;
 	DateTime _lastRefreshTime = DateTime.MinValue;
 
 	void Start()
 	{
-		_userInfoHolder = FindAnyObjectByType<UserInfoHolder>();
+		_PlayerInfoHolder = FindAnyObjectByType<PlayerInfoHolder>();
 
 		// Lobby Scene에서 실행하지 않은 경우
-		if (_userInfoHolder == null )
+		if (_PlayerInfoHolder == null )
 		{
 			var obj = new GameObject("[User Info Holder(lobby)]");
-			obj.AddComponent<UserInfoHolder>();
+			obj.AddComponent<PlayerInfoHolder>();
 
-			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
-			_userInfoHolder.UserInfo.Debugging = true;
-			_userInfoHolder.UserInfo.UserNickname = "TestName001";
-			_userInfoHolder.UserInfo.MessageFromPreviousScene = "";
+			_PlayerInfoHolder = obj.GetComponent<PlayerInfoHolder>();
+			_PlayerInfoHolder.PlayerInfo.Debugging = true;
+			_PlayerInfoHolder.PlayerInfo.PlayerNickname = "TestName001";
+			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = "";
 		}
 
 		_uiso.OnClickCreateSession += OnClickCreateSession;
@@ -34,6 +34,7 @@ public class LobbyManager : MonoBehaviour
 		_uiso.OnClickRefresh += OnClickRefresh;
 		_uiso.OnClickExit += OnClickExit;
 		_uiso.OnSendMessage += OnSendMessage;
+
 		_uiso.DialogManager.AddOnOk_CR(OnCreateSession);
 		_uiso.OnCancelDialog += OnCancelDialog;
 
@@ -41,7 +42,16 @@ public class LobbyManager : MonoBehaviour
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		OnClickRefresh();
+		_ = InitAndGetLobbyList();
+	}
+
+	async Awaitable InitAndGetLobbyList()
+	{
+		await UGSManager.InitServices();
+
+		var list = await UGSLobbyManager.GetLobbyList();
+
+		Debug.Log($"Got lobby list {list.Count}");
 	}
 
 	void OnClickCreateSession()
@@ -64,7 +74,7 @@ public class LobbyManager : MonoBehaviour
 		}
 
 #if UNITY_EDITOR
-		if (_userInfoHolder.UserInfo.Debugging)
+		if (_PlayerInfoHolder.PlayerInfo.Debugging)
 		{
 			return;
 		}
@@ -105,7 +115,7 @@ public class LobbyManager : MonoBehaviour
 
 		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
 
-		//_userInfoHolder.UserInfo.StartHost = false;
+		//_PlayerInfoHolder.UserInfo.StartHost = false;
 	}
 
 	void OnSendMessage(string message)
@@ -153,7 +163,7 @@ public class LobbyManager : MonoBehaviour
 			await Awaitable.MainThreadAsync();
 
 			CleanEvent();
-			_userInfoHolder.UserInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = "Disconnected from the server.";
 			SceneManager.LoadScene("LoginScene");
 
 			return;
@@ -235,7 +245,7 @@ public class LobbyManager : MonoBehaviour
 			var data = res.ToByteArray();
 			_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
 
-			//_userInfoHolder.UserInfo.StartHost = true;
+			//_PlayerInfoHolder.UserInfo.StartHost = true;
 		}
 		else if (type == LobbyMessage_Type.ResponseSessionEntry)
 		{

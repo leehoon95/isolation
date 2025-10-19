@@ -11,18 +11,18 @@ public class LoginGameManager : MonoBehaviour
 	[SerializeField] UILoginSO _uiso;
 	[SerializeField] SaveDataLoader _sdl;
 
-	UserInfoHolder _userInfoHolder;
+	PlayerInfoHolder _PlayerInfoHolder;
 
 	void Start()
 	{
-		_userInfoHolder = FindAnyObjectByType<UserInfoHolder>();
+		_PlayerInfoHolder = FindAnyObjectByType<PlayerInfoHolder>();
 
-		if (_userInfoHolder == null)
+		if (_PlayerInfoHolder == null)
 		{
 			var obj = new GameObject("[User Info Holder]");
-			obj.AddComponent<UserInfoHolder>();
+			obj.AddComponent<PlayerInfoHolder>();
 
-			_userInfoHolder = obj.GetComponent<UserInfoHolder>();
+			_PlayerInfoHolder = obj.GetComponent<PlayerInfoHolder>();
 		}
 
 		_uiso.OnLoginEnter += OnLoginEnter;
@@ -30,10 +30,10 @@ public class LoginGameManager : MonoBehaviour
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		if (_userInfoHolder.UserInfo.MessageFromPreviousScene != null)
+		if (_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene != null)
 		{
-			_uiso.ShowNotification(_userInfoHolder.UserInfo.MessageFromPreviousScene);
-			_userInfoHolder.UserInfo.MessageFromPreviousScene = null;
+			_uiso.ShowNotification(_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene);
+			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = null;
 		}
 
 		if (!_tcpClient.Connnected)
@@ -82,7 +82,7 @@ public class LoginGameManager : MonoBehaviour
 			return;
 		}
 
-		_userInfoHolder.UserInfo.UserNickname = nickname;
+		_PlayerInfoHolder.PlayerInfo.PlayerNickname = nickname;
 
 		M_RequestLogin msg = new M_RequestLogin();
 		msg.Nickname = nickname;
@@ -146,7 +146,7 @@ public class LoginGameManager : MonoBehaviour
 			}
 			else
 			{
-				_userInfoHolder.UserInfo.UserNickname = null;
+				_PlayerInfoHolder.PlayerInfo.PlayerNickname = null;
 				_uiso.ShowNotification("Login failed. Please try again.");
 				print($"Login request is Denied. (reason: {msg.Reason})");
 			}

@@ -104,11 +104,17 @@ public class TCPClientSO : ScriptableObject
 				int bytesRead = await _networkStream.ReadAsync(buffer, 0, buffer.Length, _cancelToken.Token);
 				if (bytesRead == 0)
 				{
-					Debug.LogWarning("receive 0 byte");
+					Debug.LogWarning("TCPClient.ReceivingTask Receive 0 byte");
 
 					if (_onReceived != null)
 					{
+						Debug.LogWarning("TCPClient.ReceivingTask Call ");
+						
 						_ = _onReceived.Invoke(null, 0);
+					}
+					else
+					{
+						Debug.LogWarning("TCPClient.ReceivingTask _onReceived is null");
 					}
 
 					break; // Connection closed

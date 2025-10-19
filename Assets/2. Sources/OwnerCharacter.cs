@@ -20,7 +20,6 @@ public class OwnerCharacter : NetworkBehaviour
 	NetworkObject _bullet;
 
 	InputSystem _inputSystem;
-	bool _attack1, _attack2;
 	int _pingCount;
 
 	NetworkVariable<float> _angle = new NetworkVariable<float>(
@@ -82,11 +81,9 @@ public class OwnerCharacter : NetworkBehaviour
 	{
 		if (performed)
 		{
-			_attack1 = true;
 		}
 		else
 		{
-			_attack1 = false;
 		}
 	}
 
@@ -94,11 +91,9 @@ public class OwnerCharacter : NetworkBehaviour
 	{
 		if (performed)
 		{
-			_attack2 = true;
 		}
 		else
 		{
-			_attack2 = false;
 		}
 	}
 	

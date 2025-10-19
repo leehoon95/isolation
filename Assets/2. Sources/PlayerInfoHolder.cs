@@ -1,12 +1,13 @@
 using System;
+using Unity.Services.Authentication;
 using UnityEditor.U2D;
 using UnityEngine;
 
-public class UserInfoHolder : MonoBehaviour
+public class PlayerInfoHolder : MonoBehaviour
 {
-	static UserInfoHolder _instance;
+	static PlayerInfoHolder _instance;
 
-	public static UserInfoHolder Instance
+	public static PlayerInfoHolder Instance
 	{
 		get { return _instance; }
 	}
@@ -14,10 +15,10 @@ public class UserInfoHolder : MonoBehaviour
 	//[SerializeField]
 	//UserInfoSO _template; // Resources
 	[SerializeField]
-	UserInfoSO _userInfo;
+	PlayerInfoSO _playerInfo;
 
 
-	public UserInfoSO UserInfo
+	public PlayerInfoSO PlayerInfo
 	{
 		get {
 			//if (_template != null)
@@ -25,21 +26,21 @@ public class UserInfoHolder : MonoBehaviour
 			//	_userInfo = Instantiate(_template);
 			//}
 			//else
-			if (_userInfo == null)
+			if (_playerInfo == null)
 			{
 				//_template = Resources.Load<UserInfoSO>("UserInfoSO");
 				//_userInfo = Instantiate(_template);
-				_userInfo = ScriptableObject.CreateInstance<UserInfoSO>();
+				_playerInfo = ScriptableObject.CreateInstance<PlayerInfoSO>();
 				//Instantiate
-				if (_userInfo == null)
+				if (_playerInfo == null)
 				{
 					throw new NullReferenceException("Loading UserInfo failed");
 				}
 			}
 
-			return _userInfo;
+			return _playerInfo;
 		}
-		private set => _userInfo = value;
+		private set => _playerInfo = value;
 	}
 
 	void Awake()
@@ -50,7 +51,7 @@ public class UserInfoHolder : MonoBehaviour
 			return;
 		}
 
-		Debug.Log("UserInfoHolder.Awake()");
+		Debug.Log("PlayerInfoHolder.Awake()");
 
 		
 		_instance = this;

@@ -13,12 +13,12 @@ public class NGOGameManager : NetworkBehaviour
 	[SerializeField]
 	NetworkObject _character;
 	[SerializeField]
-	UserInfoSO _userInfo;
+	PlayerInfoSO _userInfo;
 
-	UserInfoHolder _userInfoHolder;
+	PlayerInfoHolder _PlayerInfoHolder;
 	int _pingPongCount;
 
-	bool _host;
+	bool _isHost;
 	string _sessionName;
 	string _joinCode;
 	string _password;
@@ -29,23 +29,28 @@ public class NGOGameManager : NetworkBehaviour
 
 		nm.OnClientConnectedCallback += (ulong id) =>
 		{
-			Debug.LogWarning($"OnClientConnectedCallback. id: {id}");
+			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientConnectedCallback. id: {id}");
 			_ = Spawn();
 		};
 
 		nm.OnClientStarted += () =>
 		{
-			Debug.LogWarning($"OnClientStarted.");
-			
+			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientStarted.");
+
 		};
 
 		nm.OnClientDisconnectCallback += (ulong id) =>
 		{
-			Debug.LogWarning($"OnClientDisconnectCallback. id: {id}");
+			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientDisconnectCallback. id: {id}");
 		};
 
-		_userInfoHolder = FindAnyObjectByType<UserInfoHolder>();
-		if (_userInfoHolder == null)
+		nm.OnClientStopped += (bool isHost) =>
+		{
+			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientStopped. isHost: {isHost}");
+		};
+
+		_PlayerInfoHolder = FindAnyObjectByType<PlayerInfoHolder>();
+		if (_PlayerInfoHolder == null)
 		{
 			throw new NullReferenceException("Loading UserInfo failed");
 		}
@@ -56,6 +61,13 @@ public class NGOGameManager : NetworkBehaviour
 		_uiso.OnClickSpawn += Spawn;
 		_uiso.OnClickShowStatus += OnClickShowStatus;
 		_tcpClient.OnReceived += OnTCPDataReceived;
+
+		if (_PlayerInfoHolder.PlayerInfo.StartHost)
+		{
+			_isHost = true;
+		}
+
+		return;
 
 		M_RequestEnvironment re = new();
 		re.Filter = 1;
@@ -77,30 +89,42 @@ public class NGOGameManager : NetworkBehaviour
 
 	async void StartHost()
 	{
-		Debug.LogWarning("Start HOST");
-		var joincode = await RelayManager.StartHostWithRelayAndGetJoinCode(4, "dtls");
+		var res = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(1, "dtls");
 
-		Debug.Log($"Send to server the joinCode: {joincode}");
-
-		if (_userInfo.Debugging)
+		if (res.Item1)
 		{
+			Debug.Log($"START HOST\n" +
+				$"result: {res.Item1}, joinCode: {res.Item2}");
+		}
+		else
+		{
+			Debug.Log($"START HOST \n" +
+				$"fail reason: {res.Item2}");
+
 			return;
 		}
 
 		M_JoinCode j = new();
 
-		j.JoinCode = joincode;
+		j.JoinCode = res.Item2;
 
 		var data = j.ToByteArray();
 
 		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.Joincode, data); // activate session
-
-		_uiso.ShowNotification($"Send a joincode : {joincode}");
 	}
 	async void StartClient(string joinCode)
 	{
 		Debug.LogWarning("Start CLIENT");
-		await RelayManager.StartClientWithRelay(joinCode, "dtls");
+		try
+		{
+			await UGSRelayManager.StartClientWithRelay(joinCode, "dtls");
+		}
+		catch (Exception e)
+		{
+			Debug.LogError($"외부 로그 {e.Message}");
+		}
+
+		Debug.LogWarning("Start CLIENT END");
 	}
 
 	void Shutdown()
@@ -139,19 +163,35 @@ public class NGOGameManager : NetworkBehaviour
 	void OnClickShowStatus()
 	{
 		var nm = NetworkManager.Singleton;
+		NetworkClient nc = new();
+		//_uiso.SetText(
+		string status = $"===Network Manager Status===\n" +
+			$"local client id: {nm.LocalClientId}\n" +
+			$"is server: {nm.IsServer}\n" +
+			$"is host: {nm.IsHost}\n" +
+			$"is client: {nm.IsClient}\n" +
+			$"is connected client: {nm.IsConnectedClient}\n" +
+			$"is active and enabled: {nm.isActiveAndEnabled}\n" +
+			$"is approved: {nm.IsApproved}\n" +
+			$"is listening: {nm.IsListening}\n" +
+			$"session name: {_sessionName}\n" +
+			$"joinCode: {_joinCode}\n" +
+			$"Connected host name: {nm.ConnectedHostname}\n" +
+			$"Current session owner: {nm.CurrentSessionOwner}\n";
 
-		_uiso.SetText(
-		$"local client id: {nm.LocalClientId}\n" +
-		$"is server: {nm.IsServer}\n" +
-		$"is host: {nm.IsHost}\n" +
-		$"is client: {nm.IsClient}\n" +
-		$"is connected client: {nm.IsConnectedClient}\n" +
-		$"is active and enabled: {nm.isActiveAndEnabled}\n" +
-		$"is approved: {nm.IsApproved}\n" +
-		$"is listening: {nm.IsListening}\n" +
-		$"session name: {_sessionName}\n" +
-		$"joinCode: {_joinCode}\n"
-		);
+		status += "===Connected Client IDs===\n";
+		foreach (var id in nm.ConnectedClientsIds)
+		{
+			status += $"	{id}\n";
+		}
+
+		status += "===Connected clients===\n";
+		foreach (var c in nm.ConnectedClients)
+		{
+			status += $"	{c.Key} {c.Value}\n";
+		}
+
+		Debug.Log(status);
 	}
 
 	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
@@ -162,7 +202,7 @@ public class NGOGameManager : NetworkBehaviour
 
 			await Awaitable.MainThreadAsync();
 
-			_userInfoHolder.UserInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = "Disconnected from the server.";
 			_ = SceneManager.LoadSceneAsync("LoginScene");
 
 			return;
@@ -188,14 +228,14 @@ public class NGOGameManager : NetworkBehaviour
 			}
 
 
-			_host = env.Host;
+			_isHost = env.Host;
 			_sessionName = env.SessionName;
 			_joinCode = env.JoinCode;
 			_password = env.Password;
 
 			await Awaitable.MainThreadAsync();
 
-			if (_host)
+			if (_isHost)
 			{
 				StartHost();
 			}
