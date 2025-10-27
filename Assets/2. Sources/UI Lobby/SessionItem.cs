@@ -5,14 +5,6 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public enum RoomState
-{
-	Open,
-	Disabled
-}
-
-//[ExecuteAlways]
-
 public class SessionItem : UIBehaviour
 {
 	[SerializeField]
@@ -24,14 +16,13 @@ public class SessionItem : UIBehaviour
 	[SerializeField]
 	TMP_Text _slotText;
 
-	int _sessionIndex;
-	int _maxClientCount;
-	int _clientCount;
-	string _password;
-	string _joinCode;
+	int _maxPlayer;
+	int _playerCount;
+	string _lobbyCode;
+	bool _interactable = false;
 
-	Action<int> _onClick;
-	public event Action<int> OnClick
+	Action<string> _onClick;
+	public event Action<string> OnClick
 	{
 		add
 		{
@@ -44,32 +35,21 @@ public class SessionItem : UIBehaviour
 		}
 	}
 
-	RoomState _roomState;
-	public RoomState State
+	public bool State
 	{
 		get
 		{
-			return _roomState;
+			return _interactable;
 		}
 		set
 		{
-			_roomState = value;
-			switch (value)
-			{
-				case RoomState.Open:
-					_button.interactable = true;
-					break;
-				case RoomState.Disabled:
-					_button.interactable = false;
-					break;
-			}
+			_interactable = value;
 		}
 	}
 
 	protected override void Awake()
 	{
-		Debug.Log("SessionItem.Start()");
-		_button.onClick.AddListener(() => _onClick?.Invoke(_sessionIndex));
+		_button.onClick.AddListener(() => _onClick?.Invoke(_lobbyCode));
 		_slotText.text = "0 / 4";
 	}
 
@@ -85,20 +65,14 @@ public class SessionItem : UIBehaviour
 	}
 
 	public void SetSessionInfo(
-		int sessionIndex,
 		string name,
-		int maxClientCount,
-		int clientCount,
-		string password,
-		string joinCode)
+		int maxPlayerCount,
+		int playerCount,
+		string lobbyCode)
 	{
-		_sessionIndex = sessionIndex;
 		_buttonText.text = name;
-		_slotText.text = $"{clientCount} / {maxClientCount}";
-		_password = password;
-		_joinCode = joinCode;
-
-		Debug.LogWarning($"slottext {_slotText.text}");
+		_slotText.text = $"{playerCount} / {maxPlayerCount}";
+		_lobbyCode = lobbyCode;
 	}
 
 	public void ClearButtonEvent()
@@ -110,7 +84,6 @@ public class SessionItem : UIBehaviour
 
 	protected override void OnDestroy()
 	{
-		_button.onClick.RemoveAllListeners();
-		_onClick = null;
+		ClearButtonEvent();
 	}
 }

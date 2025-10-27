@@ -49,7 +49,6 @@ public class UIDialogOk : UIBehaviour
 		var animator = _ok.gameObject.GetComponent<Animator>();
 		if (animator != null)
 		{
-			Debug.Log("rebind");
 			animator.Play("Normal", -1, 0f);
 		}
 	}

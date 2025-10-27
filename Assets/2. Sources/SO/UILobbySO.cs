@@ -36,15 +36,16 @@ public class UILobbySO : ScriptableObject, ISupportNotificationUI
 	public event Action OnClickSettings;
 	public event Action OnClickRefresh;
 	public event Action OnClickExit;
-	public event Action<int> OnClickSession;
+	public event Action<string> OnClickSession;
 	public event Action<string> OnSendMessage;
 	public event Action OnCancelDialog;
 
 	// Buttons
-	public void RaiseOnClickSession(int sessionIndex) => OnClickSession?.Invoke(sessionIndex);
+	public void RaiseOnClickSession(string lobbyId) => OnClickSession?.Invoke(lobbyId);
 	public void RaiseOnClickCreateSession() => OnClickCreateSession?.Invoke();
 	public void RaiseOnClickSettings() => OnClickSettings?.Invoke();
-	public void RaiseOnClickRefresh() => OnClickRefresh?.Invoke();
+	public void RaiseOnClickRefresh()
+		=> OnClickRefresh?.Invoke();
 	public void RaiseOnClickExit() => OnClickExit?.Invoke();
 	public void RaiseOnEndEditMessage(string message) => OnSendMessage?.Invoke(message);
 
@@ -59,13 +60,27 @@ public class UILobbySO : ScriptableObject, ISupportNotificationUI
 	public void ResizeSessionList(int minimumSession = 0) => _sessionList.ResizeSessionList(minimumSession);
 	public void SetSessionInfoIndex(
 		int index,
-		int sessionIndex,
 		string name,
-		int maxClientCount,
-		int clientCount,
-		string password,
-		string joinCode) => _sessionList.SetSessionInfoIndex(index, sessionIndex, name, maxClientCount, clientCount, password, joinCode);
+		int maxPlayerCount,
+		int playerCount,
+		string lobbyId) 
+		=> _sessionList.SetSessionInfoIndex(
+			index, 
+			name, 
+			maxPlayerCount, 
+			playerCount, 
+			lobbyId);
+	public void ShowEmptySessionListNotification(bool show)
+		=> _sessionList.ShowEmptySessionListNotification(show);
+
 #if UNITY_EDITOR
 	public void AddTempSession() => _sessionList.AddTempSession();
 #endif
+}
+public class UILobbySOHolder : SOHolderSinglton<UILobbySO, UILobbySOHolder>
+{
+	protected override void Awake()
+	{
+		base.Awake();
+	}
 }

@@ -12,9 +12,9 @@ public class UGSLobbyManager : MonoBehaviour
 	public static string PlayerName { get; set; }
 	public static string PlayerLevel { get; set; }
 	public static string HeartBeatTargetId { get; set; }
-	public static Action<ILobbyChanges> OnLobbyChanged;
-	public static Action OnKickedFromLobby;
-	public static Action<LobbyEventConnectionState> OnLobbyEventConnectionStateChanged;
+	//public static Action<ILobbyChanges> OnLobbyChanged;
+	//public static Action OnKickedFromLobby;
+	//public static Action<LobbyEventConnectionState> OnLobbyEventConnectionStateChanged;
 
 
 	static Player GetPlayer()
@@ -24,9 +24,9 @@ public class UGSLobbyManager : MonoBehaviour
 			Data = new Dictionary<string, PlayerDataObject>
 			{
 				{ "PlayerName",
-					new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, PlayerName)},
+					new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerName)},
 				{ "PlayerLevel",
-					new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, PlayerLevel)}
+					new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerLevel)}
 			},
 			Profile = new PlayerProfile(PlayerName)
 		};
@@ -34,21 +34,19 @@ public class UGSLobbyManager : MonoBehaviour
 
 	/*
 	 * 
-	 * 
-	 * 
 	 */
-	static void InvokeOnLobbyChanged(ILobbyChanges changes) => OnLobbyChanged?.Invoke(changes);
-	static void InvokeOnKickedFromLobby() => OnKickedFromLobby?.Invoke();
-	static void InvokeOnLobbyEventConnectionStateChanged(LobbyEventConnectionState changes)
-		=> OnLobbyEventConnectionStateChanged?.Invoke(changes);
-	
+	//static void InvokeOnLobbyChanged(ILobbyChanges changes) => OnLobbyChanged?.Invoke(changes);
+	//static void InvokeOnKickedFromLobby() => OnKickedFromLobby?.Invoke();
+	//static void InvokeOnLobbyEventConnectionStateChanged(LobbyEventConnectionState changes)
+	//	=> OnLobbyEventConnectionStateChanged?.Invoke(changes);
 
-	public static async Awaitable<(bool, Lobby)> CreateLobby(
-		string lobbyName, 
+
+	public static async Task<(bool, Lobby, ILobbyEvents)> CreateLobby(
+		string lobbyName,
 		int maxPlayers,
 		string relayJoinCode,
-		string password = "",
-		bool inPrivate = false)
+		LobbyEventCallbacks callbacks = null,
+		string password = null)
 	{
 		/*
 		 * Player: 로비 만드는 player 정보
@@ -58,7 +56,6 @@ public class UGSLobbyManager : MonoBehaviour
 		var createOptions = new CreateLobbyOptions
 		{
 			Player = GetPlayer(),
-			IsPrivate = inPrivate,
 			Password = password,
 			Data = new Dictionary<string, DataObject>
 			{
@@ -72,12 +69,11 @@ public class UGSLobbyManager : MonoBehaviour
 		{
 			var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions);
 
-			var callbacks = new LobbyEventCallbacks();
-			callbacks.LobbyChanged += InvokeOnLobbyChanged;
-			callbacks.KickedFromLobby += InvokeOnKickedFromLobby;
-			callbacks.LobbyEventConnectionStateChanged += InvokeOnLobbyEventConnectionStateChanged;
-
-			await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
+			ILobbyEvents cb = null;
+			if (callbacks != null)
+			{
+				cb = await LobbyService.Instance.SubscribeToLobbyEventsAsync(lobby.Id, callbacks);
+			}
 
 #if UNITY_EDITOR
 			Debug.Log("Created Lobby Info\n" +
@@ -88,29 +84,42 @@ public class UGSLobbyManager : MonoBehaviour
 				);
 #endif
 
-			return (true, lobby);
+			return (true, lobby, cb);
 		}
 		catch (ArgumentNullException e)
 		{
 			// Thrown when lobbyName is null or only contains whitespaces.
 			Debug.LogError($"UGSLobbyManager.CreateLobby ArgumentNullException. message: {e.Message}");
-			return (false, null);
+			return (false, null, null);
 		}
 		catch (InvalidOperationException e)
 		{
 			// Thrown when maxPlayers is less than one.
 			Debug.LogError($"UGSLobbyManager.CreateLobby InvalidOperationException. message: {e.Message}");
-			return (false, null);
+			return (false, null, null);
 		}
 		catch (LobbyServiceException e)
 		{
 			// Thrown when the lobby service returns an error.
 			Debug.LogError($"UGSLobbyManager.CreateLobby LobbyServiceException. message: {e.Message}");
-			return (false, null);
+			switch (e.Reason)
+			{
+				case LobbyExceptionReason.AlreadySubscribedToLobby:
+					Debug.LogWarning($"Already subscribed to lobby({lobbyName}). We did not need to try and subscribe again. Exception Message: {e.Message}");
+					break;
+				case LobbyExceptionReason.SubscriptionToLobbyLostWhileBusy:
+					Debug.LogError($"Subscription to lobby events was lost while it was busy trying to subscribe. Exception Message: {e.Message}");
+					break;
+				case LobbyExceptionReason.LobbyEventServiceConnectionError:
+					Debug.LogError($"Failed to connect to lobby events. Exception Message: {e.Message}");
+					break;
+			}
+
+			return (false, null, null);
 		}
 	}
 
-	public async Awaitable MaintainLobbyAlive(Lobby lobby)
+	public static async Task MaintainLobbyAlive(Lobby lobby)
 	{
 		if (lobby == null)
 		{
@@ -128,7 +137,7 @@ public class UGSLobbyManager : MonoBehaviour
 	public static bool IsLobbyHost(Lobby lobby)
 		=> lobby != null && (lobby.HostId == AuthenticationService.Instance.PlayerId);
 
-	public static async Awaitable<List<Lobby>> GetLobbyList(bool isAvailableSlot = false, bool isPrivate = false)
+	public static async Task<List<Lobby>> GetLobbyList(bool isAvailableSlot = false)
 	{
 		try
 		{
@@ -144,11 +153,7 @@ public class UGSLobbyManager : MonoBehaviour
 					new QueryFilter(
 						field: QueryFilter.FieldOptions.AvailableSlots,
 						op: QueryFilter.OpOptions.GE,
-						value: isAvailableSlot ? "1" : "0"),
-					new QueryFilter(
-						field: QueryFilter.FieldOptions.Created,
-						op: QueryFilter.OpOptions.GE,
-						value: "0")
+						value: isAvailableSlot ? "1" : "0")
 				},
 				Order = new List<QueryOrder>
 				{
@@ -161,19 +166,7 @@ public class UGSLobbyManager : MonoBehaviour
 
 			var lobbyListQueryResponse = await LobbyService.Instance.QueryLobbiesAsync(options);
 			var result = lobbyListQueryResponse.Results;
-			
-#if UNITY_EDITOR
-			string text = "---Lobby List---\n";
-			foreach (var lobby in result)
-			{
-				text += $"{lobby.Id} {lobby.Name} {lobby.AvailableSlots}/{lobby.MaxPlayers}\n";
-				text += $"	GameMode: {lobby.Data["GameMode"].Value}\n";
-				text += $"	GameStart: {lobby.Data["GameStart"].Value}\n";
-				text += $"	RelayJoinCode: {lobby.Data["RelayJoinCode"].Value}\n";
-			}
-			text += "------";
-			Debug.Log(text);
-#endif
+
 			return result;
 		}
 		catch (LobbyServiceException e)
@@ -191,48 +184,30 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Awaitable<Lobby> JoinLobbyById(string lobbyId, string password)
+	public static async Task<(Lobby, LobbyExceptionReason)> JoinLobbyById(string lobbyId, string password)
 	{
 		var options = new JoinLobbyByIdOptions
 		{
 			Player = GetPlayer(),
 			Password = password
 		};
-		
-		return await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, options);
+
+		try
+		{
+			return (await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, options), LobbyExceptionReason.Unknown);
+		}
+		catch (LobbyServiceException e)
+		{
+			Debug.LogError($"UGSLobbyManager.JoinLobbyById Exception. ErrorCode: {e.ErrorCode}. message: {e.Message}");
+			return (null, e.Reason);
+		}
 	}
 
-	/*
-	 * 
-	 */
-	public static async Awaitable<(bool result, Lobby lobby)> GetLobbyById(string id)
+	public static async Task<(bool result, Lobby lobby)> GetLobbyById(string id)
 	{
 		try
 		{
 			var lobby = await LobbyService.Instance.GetLobbyAsync(id);
-
-#if UNITY_EDITOR
-			var players = lobby.Players;
-
-			string log = $"===Lobby updated({lobby.Version})===";
-
-			log += "---Player List---\n";
-			foreach (var player in players)
-			{
-				log += $"{player.Profile.Name} {PlayerName} {player.Id} {player.Joined} {player.ConnectionInfo}\n";
-			}
-			log += "------\n";
-
-			log += "---Lobby Data---\n";
-
-			foreach (var data in lobby.Data)
-			{
-				log += $"{data.Key} {data.Value}\n";
-			}
-			log += "------";
-
-			Debug.Log(log);
-#endif
 
 			return (true, lobby);
 		}
@@ -252,7 +227,7 @@ public class UGSLobbyManager : MonoBehaviour
 		{
 			return;
 		}
-		
+
 		try
 		{
 			await LobbyService.Instance.DeleteLobbyAsync(lobby.Id);
@@ -264,15 +239,16 @@ public class UGSLobbyManager : MonoBehaviour
 	}
 
 	/*
+	 * host가 다른 player를 kick할 때, 또는 player 스스로 나갈 때
 	 * host가 나가면 남아있는 player 중에서 host로 무작위 지정
 	 * 마지막 player가 나가면 lobby 자동으로 삭제됨
 	 */
-	public static async Awaitable<(bool result, string reason)> RemovePlayer(Lobby lobby, string playerId = "")
+	public static async Task<(bool result, string reason)> RemovePlayer(Lobby lobby, string playerId = "")
 	{
 		try
 		{
 			await LobbyService.Instance.RemovePlayerAsync(
-				lobby.Id, 
+				lobby.Id,
 				playerId == "" ? AuthenticationService.Instance.PlayerId : playerId);
 
 			return (true, "ok");
@@ -281,6 +257,23 @@ public class UGSLobbyManager : MonoBehaviour
 		{
 			Debug.LogError($"UGSLobbyManager.RemovePlayer LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}");
 			return (false, e.Message);
+		}
+	}
+
+	public static async Task MigrateHost(Lobby from, string to)
+	{
+
+		try
+		{
+			var joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(from.Id,
+				new UpdateLobbyOptions
+				{
+					HostId = to,
+				});
+		}
+		catch (LobbyServiceException e)
+		{
+			Debug.LogError($"UGSLobbyManager.MigrateHost LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}");
 		}
 	}
 
@@ -300,5 +293,35 @@ public class UGSLobbyManager : MonoBehaviour
 			Debug.LogError($"UGSLobbyManager.GetJoinedLobbie LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}");
 			return (false, null);
 		}
+	}
+
+	public static string LobbyInfo(Lobby lobby)
+	{
+		if (lobby == null)
+		{
+			return "";
+		}
+
+		string text = $"=== Lobby Info({lobby.Id}) ===\n";
+
+		text += $"--- Lobby updated(version: {lobby.Version}) ---\n";
+
+		text += "--- Lobby Data ---\n";
+		foreach (var data in lobby.Data)
+		{
+			text += $"{data.Key}, {data.Value.Value}\n";
+		}
+
+		text += "--- Lobby Players ---\n";
+		foreach (var player in lobby.Players)
+		{
+			text += $"{player.Id}, Profile Name: {player?.Profile?.Name}\n"
+				+ $"	PlayerName: {player.Data["PlayerName"].Value}, PlayerLevel: {player.Data["PlayerLevel"].Value}\n"
+				+ $"	joined: {player.Joined}, connection Info: {player?.ConnectionInfo}\n"
+				+ $"	LastUpdated: {player?.LastUpdated}, Allocation ID: {player?.AllocationId}\n";
+		}
+		text += "--- Lobby Info ---\n";
+
+		return text;
 	}
 }

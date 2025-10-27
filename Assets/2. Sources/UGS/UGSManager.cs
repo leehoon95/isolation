@@ -1,10 +1,15 @@
+using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
 public class UGSManager : MonoBehaviour
 {
-	public static async Awaitable InitServices()
+	public static bool IsInitialized()
+		=> (UnityServices.State == ServicesInitializationState.Initialized)
+		&& AuthenticationService.Instance.IsSignedIn;
+
+	public static async Task InitServices()
 	{
 
 		if (UnityServices.State != ServicesInitializationState.Initialized)

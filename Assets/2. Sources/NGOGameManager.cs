@@ -1,36 +1,63 @@
 using Google.Protobuf;
 using System;
+using System.Collections;
 using Unity.Netcode;
+using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class NGOGameManager : NetworkBehaviour
+public class NGOGameManager : MonoBehaviour
 {
 	[SerializeField]
-	TCPClientSO _tcpClient;
+	GameObject _targetPrefab;
 	[SerializeField]
+	NetworkSpawner _spawner;
+
 	UINGOTestSO _uiso;
-	[SerializeField]
-	NetworkObject _character;
-	[SerializeField]
-	PlayerInfoSO _userInfo;
-
-	PlayerInfoHolder _PlayerInfoHolder;
+	PlayerInfoSO _playerInfo;
+	TCPClientSO _tcpClient;
+	
 	int _pingPongCount;
-
 	bool _isHost;
 	string _sessionName;
 	string _joinCode;
 	string _password;
+	Lobby _lobby;
+	ILobbyEvents _lobbyEvents;
+	Coroutine _heartbeatCoroutin;
+
+	void Awake()
+	{
+		if (FindAnyObjectByType<UINGOTestSOHolder>() == null)
+		{
+			var obj = new GameObject("[UI Lobby Holder]");
+			obj.AddComponent<UINGOTestSOHolder>();
+		}
+	}
 
 	void Start()
 	{
+		_playerInfo = FindAnyObjectByType<PlayerInfoHolder>().Data;
+		_tcpClient = FindAnyObjectByType<TCPClientHolder>().Data;
+		_uiso = FindAnyObjectByType<UINGOTestSOHolder>().Data;
+		_uiso.Notification = FindAnyObjectByType<UINotification>();
+
+		if (_playerInfo == null
+			|| _tcpClient == null
+			|| _uiso == null)
+		{
+			throw new Exception("Where is the SO holder in ngo scene");
+		}
+
 		var nm = NetworkManager.Singleton;
 
+		
 		nm.OnClientConnectedCallback += (ulong id) =>
 		{
 			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientConnectedCallback. id: {id}");
-			_ = Spawn();
+			//_ = Spawn();
 		};
 
 		nm.OnClientStarted += () =>
@@ -48,23 +75,46 @@ public class NGOGameManager : NetworkBehaviour
 		{
 			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientStopped. isHost: {isHost}");
 		};
+		
 
-		_PlayerInfoHolder = FindAnyObjectByType<PlayerInfoHolder>();
-		if (_PlayerInfoHolder == null)
-		{
-			throw new NullReferenceException("Loading UserInfo failed");
-		}
-
-		//_uiso.OnClickStartHost += StartHost;
-		//_uiso.OnClickStartClient += StartClient;
-		_uiso.OnClickShutdown += Shutdown;
-		_uiso.OnClickSpawn += Spawn;
-		_uiso.OnClickShowStatus += OnClickShowStatus;
+		_uiso.OnClick_1 += () => { };
+		_uiso.OnClick_2 += () => { };
+		//_uiso.OnClick_3 += () => { };
+		_uiso.OnClick_4 += () => {
+			if (nm.IsHost)
+			{
+				_spawner.SpawnPrefab();
+			}
+			else
+			{
+				_spawner.SpawnPrefabWithOwnership();
+			}
+		};
+		_uiso.OnClick_5 += () => {
+			if (nm.IsHost)
+			{
+				_spawner.SpawnPrefab();
+			}
+			else
+			{
+				_spawner.SpawnPrefabWithOwnership();
+			}
+		};
+		_uiso.OnClick_6 += OnClickShowStatus;
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		if (_PlayerInfoHolder.PlayerInfo.StartHost)
+		//if (!_playerInfoHolder.Instance.Debugging)
 		{
-			_isHost = true;
+			if (_playerInfo.StartHost)
+			{
+				_isHost = true;
+
+				StartHost().Forget();
+			}
+			else
+			{
+				StartClient(_playerInfo.LobbyIdForEntry).Forget();
+			}
 		}
 
 		return;
@@ -75,46 +125,114 @@ public class NGOGameManager : NetworkBehaviour
 		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.RequestEnvironment, data);
 	}
 
-	public override void OnDestroy()
+	void OnDestroy()
 	{
-		base.OnDestroy();
+		_uiso.ClearEvent();
 
-		//_uiso.OnClickStartHost -= StartHost;
-		//_uiso.OnClickStartClient -= StartClient;
-		_uiso.OnClickShutdown -= Shutdown;
-		_uiso.OnClickSpawn -= Spawn;
-		_uiso.OnClickShowStatus -= OnClickShowStatus;
-		_tcpClient.OnReceived -= OnTCPDataReceived;
+		if (_heartbeatCoroutin != null)
+		{
+			StopCoroutine(_heartbeatCoroutin);
+		}
 	}
 
-	async void StartHost()
+	async Awaitable StartHost()
 	{
-		var res = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(1, "dtls");
+		Debug.Log($"START HOST");
+		(var successRelay, var joinCode) = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(1, "dtls");
 
-		if (res.Item1)
+		if (successRelay)
 		{
-			Debug.Log($"START HOST\n" +
-				$"result: {res.Item1}, joinCode: {res.Item2}");
+			var callbacks = new LobbyEventCallbacks();
+			callbacks.LobbyChanged += OnLobbyChanged;
+			callbacks.KickedFromLobby += OnKickedFromLobby;
+			callbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
+
+			(var successLobby, var lobby, var lobbyEvents) = await UGSLobbyManager.CreateLobby(
+				_playerInfo.LobbyName,
+				2,
+				joinCode,
+				callbacks,
+				_playerInfo.LobbyPassword);
+
+			if (successLobby)
+			{
+				_lobby = lobby;
+				_lobbyEvents = lobbyEvents;
+
+				//Spawn();
+
+				StartCoroutine(HeartbeatLobby());
+			}
+			else
+			{
+				_playerInfo.MessageFromPreviousScene = "Lobby 생성 실패";
+
+				SceneManager.LoadScene("LobbyScene");
+			}
 		}
 		else
 		{
-			Debug.Log($"START HOST \n" +
-				$"fail reason: {res.Item2}");
+			_playerInfo.MessageFromPreviousScene = "Host 시작 실패";
 
-			return;
+			SceneManager.LoadScene("LobbyScene");
 		}
+
+		return;
 
 		M_JoinCode j = new();
 
-		j.JoinCode = res.Item2;
+		j.JoinCode = joinCode;
 
 		var data = j.ToByteArray();
 
 		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.Joincode, data); // activate session
 	}
-	async void StartClient(string joinCode)
+
+	async Awaitable StartClient(string joinCode, string password = null)
 	{
 		Debug.LogWarning("Start CLIENT");
+
+		(var lobby, var reason) = await UGSLobbyManager.JoinLobbyById(
+			joinCode, 
+			password);
+
+		if (lobby != null)
+		{
+#if UNITY_EDITOR
+			Debug.Log("Join Lobby Success!!!\n"
+				+ $"Player ID: {AuthenticationService.Instance.PlayerId}"
+				+ $"	{lobby.Id}"
+				+ $"	{lobby.Name}"
+				+ $"	{lobby.Created}"
+				+ $"	{lobby.HostId}"
+				+ $"	{lobby.Data["GameMode"].Value}"
+				+ $"	{lobby.Data["GamePlaying"].Value}"
+				+ $"	{lobby.Data["RelayJoinCode"].Value}"
+				);
+
+#endif
+
+			_lobby = lobby;
+
+			await UGSRelayManager.StartClientWithRelay(lobby.Data["RelayJoinCode"].Value, "dtls");
+
+			//Spawn();
+		}
+		else
+		{
+			if (reason == LobbyExceptionReason.LobbyFull)
+			{
+				_playerInfo.MessageFromPreviousScene = "Session is full";
+			}
+			else
+			{
+				_playerInfo.MessageFromPreviousScene = "세션에 들어갈 수 없습니다";
+			}
+
+			SceneManager.LoadScene("NGOTestScene");
+		}
+
+		return;
 		try
 		{
 			await UGSRelayManager.StartClientWithRelay(joinCode, "dtls");
@@ -125,6 +243,66 @@ public class NGOGameManager : NetworkBehaviour
 		}
 
 		Debug.LogWarning("Start CLIENT END");
+	}
+
+	IEnumerator HeartbeatLobby()
+	{
+		while (true) {
+			yield return new WaitForSeconds(20f);
+
+			if (_lobby == null)
+			{
+				Debug.LogWarning("NGOGameManager.HeartbeatLobby lobby is null");
+				continue;
+			}
+
+			_ = UGSLobbyManager.MaintainLobbyAlive(_lobby);
+		}
+	}
+
+	void OnLobbyChanged(ILobbyChanges changes)
+	{
+		if (changes.LobbyDeleted)
+		{
+			Debug.LogWarning("NGOGameManager.OnLobbyChanged LobbyDeleted");
+		}
+		else
+		{
+			changes.ApplyToLobby(_lobby);
+		}
+	}
+
+	void OnKickedFromLobby()
+	{
+		Debug.LogWarning("NGOGameManager.OnKickedFromLobby Kicked");
+		_lobbyEvents = null;
+	}
+
+	void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState state)
+	{
+		switch (state)
+		{
+			case LobbyEventConnectionState.Unsubscribed:
+				/* Update the UI if necessary, as the subscription has been stopped. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsubscribed");
+				break;
+			case LobbyEventConnectionState.Subscribing:
+				/* Update the UI if necessary, while waiting to be subscribed. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribing");
+				break;
+			case LobbyEventConnectionState.Subscribed:
+				/* Update the UI if necessary, to show subscription is working. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribed");
+				break;
+			case LobbyEventConnectionState.Unsynced:
+				/* Update the UI to show connection problems. Lobby will attempt to reconnect automatically. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsynced");
+				break;
+			case LobbyEventConnectionState.Error:
+				/* Update the UI to show the connection has errored. Lobby will not attempt to reconnect as something has gone wrong. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Error");
+				break;
+		}
 	}
 
 	void Shutdown()
@@ -140,37 +318,24 @@ public class NGOGameManager : NetworkBehaviour
 		}
 	}
 
-	async Awaitable Spawn()
+	async void OnClickShowStatus()
 	{
-		var nm = NetworkManager.Singleton;
-
-		await Awaitable.MainThreadAsync();
-
-		if (nm.IsHost)
+		if (_lobby == null)
 		{
-
-			var obj = Instantiate(_character, default, Quaternion.identity);
-
-			obj.GetComponent<NetworkObject>()
-				.SpawnAsPlayerObject(NetworkManager.Singleton.LocalClientId, true);
+			return;
 		}
-		else
-		{
-			SpawnObjectRpc();
-		}
-	}
 
-	void OnClickShowStatus()
-	{
+		await UGSLobbyManager.GetLobbyById(_lobby.Id);
+
 		var nm = NetworkManager.Singleton;
 		NetworkClient nc = new();
 		//_uiso.SetText(
-		string status = $"===Network Manager Status===\n" +
+		string status = $"=== Network Manager Info ===\n" +
+			$"AS player id: {AuthenticationService.Instance.PlayerId}\n" +
 			$"local client id: {nm.LocalClientId}\n" +
-			$"is server: {nm.IsServer}\n" +
 			$"is host: {nm.IsHost}\n" +
 			$"is client: {nm.IsClient}\n" +
-			$"is connected client: {nm.IsConnectedClient}\n" +
+			$"is connected client: {nm.IsConnectedClient}\n" + // 서버(host)에 연결되고 승인되고 동기화되고 있는가
 			$"is active and enabled: {nm.isActiveAndEnabled}\n" +
 			$"is approved: {nm.IsApproved}\n" +
 			$"is listening: {nm.IsListening}\n" +
@@ -178,20 +343,19 @@ public class NGOGameManager : NetworkBehaviour
 			$"joinCode: {_joinCode}\n" +
 			$"Connected host name: {nm.ConnectedHostname}\n" +
 			$"Current session owner: {nm.CurrentSessionOwner}\n";
-
-		status += "===Connected Client IDs===\n";
+		
+		status += "=== Connected Clients ===\n";
 		foreach (var id in nm.ConnectedClientsIds)
 		{
-			status += $"	{id}\n";
+			status += $"{id}\n";
 		}
 
-		status += "===Connected clients===\n";
-		foreach (var c in nm.ConnectedClients)
-		{
-			status += $"	{c.Key} {c.Value}\n";
-		}
+		status += "\n";
+		status += UGSLobbyManager.LobbyInfo(_lobby);
 
-		Debug.Log(status);
+		_uiso.ShowText(status);
+
+		Debug.LogWarning(status);
 	}
 
 	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
@@ -202,7 +366,7 @@ public class NGOGameManager : NetworkBehaviour
 
 			await Awaitable.MainThreadAsync();
 
-			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			_playerInfo.MessageFromPreviousScene = "Disconnected from the server.";
 			_ = SceneManager.LoadSceneAsync("LoginScene");
 
 			return;
@@ -227,7 +391,6 @@ public class NGOGameManager : NetworkBehaviour
 
 			}
 
-
 			_isHost = env.Host;
 			_sessionName = env.SessionName;
 			_joinCode = env.JoinCode;
@@ -235,57 +398,15 @@ public class NGOGameManager : NetworkBehaviour
 
 			await Awaitable.MainThreadAsync();
 
-			if (_isHost)
-			{
-				StartHost();
-			}
-			else
-			{
-				StartClient(_joinCode);
-			}
+			//if (_isHost)
+			//{
+			//	StartHost();
+			//}
+			//else
+			//{
+			//	StartClient(_joinCode);
+			//}
 		}
 
-	}
-
-	void OnClickPingPong() => PingRpc(_pingPongCount++, NetworkManager.Singleton.RpcTarget.Server);
-
-
-
-	[Rpc(SendTo.Server)]
-	void SpawnObjectRpc(RpcParams rpcParams = default)
-	{
-		print($"SpawnObjejctRpc() called. Sender client id: {rpcParams.Receive.SenderClientId}");
-
-		//if (!NetworkManager.Singleton.IsHost)
-		//{
-		//	return;
-		//}
-
-		var obj = Instantiate(_character, default, Quaternion.identity);
-
-		obj.GetComponent<NetworkObject>()
-			.SpawnAsPlayerObject(rpcParams.Receive.SenderClientId, true);
-
-		print("Spawn complete.");
-	}
-
-	[Rpc(SendTo.Server)]
-	void PingRpc(int pingCount, RpcParams rpcParams)
-	{
-		print($"Received ping. message: {pingCount}");
-
-		PongRpc(
-			pingCount,
-			"Pong!",
-			NetworkManager.Singleton.RpcTarget.Single(
-				rpcParams.Receive.SenderClientId,
-				RpcTargetUse.Temp)
-			);
-	}
-
-	[Rpc(SendTo.SpecifiedInParams)]
-	void PongRpc(int pingCount, string message, RpcParams rpcParams)
-	{
-		print($"Received pong. ping count: {pingCount}, message: {message}");
 	}
 }

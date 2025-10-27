@@ -380,7 +380,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09333ccaabd7ee742958b363254b802e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uiso: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
   _dialogOk: {fileID: 963267973}
   _dialogYesNo: {fileID: 178635903}
 --- !u!1 &210934220
@@ -995,7 +994,6 @@ MonoBehaviour:
   _animator: {fileID: 1665966692}
   _noticeContent: {fileID: 1355239254}
   _notificationBackground: {fileID: 604938125}
-  _SOSupportNotification: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
 --- !u!1 &428959302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1025,8 +1023,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 332a128623d5e2446912d148cb7c436c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tcpClient: {fileID: 11400000, guid: 10b68c3ce640fa547a7af18af3d36ed7, type: 2}
-  _uiso: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
   _sdl: {fileID: 196883693}
 --- !u!4 &428959304
 Transform:
@@ -1837,7 +1833,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 170.1
+  m_fontSize: 197.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2280,7 +2276,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nickNameInputField: {fileID: 804446415}
-  _uiso: {fileID: 11400000, guid: f07d067fd0336ea4ca8a1a1afcbfae15, type: 2}
   _enterButton: {fileID: 1532228995}
   _disconnectButton: {fileID: 396198380}
   _sendUDPDataButton: {fileID: 1023086121}

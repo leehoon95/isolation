@@ -5,12 +5,11 @@ public interface ISessionListUI
 	public void ResizeSessionList(int minimumSession);
 	public void SetSessionInfoIndex(
 		int index,
-		int sessionIndex,
 		string name,
-		int maxClientCount,
-		int clientCount,
-		string password,
-		string joinCode);
+		int maxPlayerCount,
+		int playerCount,
+		string lobbyId);
+	public void ShowEmptySessionListNotification(bool show);
 
 #if UNITY_EDITOR
 	public void AddTempSession();

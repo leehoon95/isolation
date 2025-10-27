@@ -6,16 +6,19 @@ using UnityEngine.UI;
 public class UICommunicationBox : UIBehaviour, ICommunicationBoxUI
 {
     [SerializeField]
-    UILobbySO _uiso;
-    [SerializeField]
     ScrollRect _userList;
     [SerializeField]
     ScrollRect _messageList;
 	[SerializeField]
     TMP_InputField _inputMessageField;
 
+	UILobbySO _uiso;
+
 	protected override void Start()
 	{
+        base.Start();
+
+		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.CommunicationBox = this;
 
 		_inputMessageField.onEndEdit.AddListener(OnEndEdit);

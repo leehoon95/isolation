@@ -7,5 +7,5 @@ public interface INGOTestButtonUI
 
 public interface INGOTextUI
 {
-	public void SetText(string text);
+	public void ShowText(string text);
 }

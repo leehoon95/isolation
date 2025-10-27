@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 public class MaterialLeakTest : EditorWindow
 {
 	Material mat;
@@ -41,3 +42,4 @@ public class MaterialLeakTest : EditorWindow
 		}
 	}
 }
+#endif

@@ -4,6 +4,7 @@ using System;
 using Unity.VisualScripting;
 using System.Collections.Generic;
 
+#if UNITY_EDITOR
 public class MaterialLeakMemoryTest : EditorWindow
 {
 	List<Material> _mat;
@@ -89,3 +90,4 @@ public class MaterialLeakMemoryTest : EditorWindow
 		// 여기서는 관리 메모리만 출력
 	}
 }
+#endif

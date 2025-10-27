@@ -14,9 +14,9 @@ public class UINotification : UIBehaviour, INotificationUI
 	TMP_Text _noticeContent;
 	[SerializeField]
 	UINotificationBackground _notificationBackground;
-	[SerializeField]
-	[InterfaceType(typeof(ISupportNotificationUI))]
-	ScriptableObject _SOSupportNotification;
+	//[SerializeField]
+	//[InterfaceType(typeof(ISupportNotificationUI))]
+	//ScriptableObject _SOSupportNotification;
 
 	ISupportNotificationUI _notification;
 
@@ -25,16 +25,22 @@ public class UINotification : UIBehaviour, INotificationUI
 
 	protected override void Awake()
 	{
-		_notification = _SOSupportNotification as ISupportNotificationUI;
-		if (_notification == null && _SOSupportNotification != null)
-		{
-			Debug.LogError("할당된 오브젝트가 ISupportNotificationUI를 구현하지 않음", this);
-		}
-		else
-		{
-			_notification.Notification = this;
-		}
+		//_notification = _SOSupportNotification as ISupportNotificationUI;
+		//if (_notification == null && _SOSupportNotification != null)
+		//{
+		//	Debug.LogError("할당된 오브젝트가 ISupportNotificationUI를 구현하지 않음", this);
+		//}
+		//else
+		//{
+		//	_notification.Notification = this;
+		//}
 	}
+
+	protected override void Start()
+	{
+		base.Start();
+	}
+
 	protected override void OnDestroy()
 	{
 		if (_processing && _cachedCoroutin != null)
@@ -44,7 +50,7 @@ public class UINotification : UIBehaviour, INotificationUI
 			_obj.SetActive(false);
 		}
 
-		_notification.Notification = null;
+		//_notification.Notification = null;
 	}
 
 	public void ShowNotification(string content)

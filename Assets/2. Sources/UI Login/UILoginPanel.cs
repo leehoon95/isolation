@@ -14,8 +14,6 @@ public class UILoginPanel : UIBehaviour, ILoginUI
 	[SerializeField]
 	TMP_InputField _nickNameInputField;
 	[SerializeField]
-	UILoginSO _uiso;
-	[SerializeField]
 	Button _enterButton;
 	[SerializeField]
 	Button _disconnectButton;
@@ -24,9 +22,14 @@ public class UILoginPanel : UIBehaviour, ILoginUI
 	[SerializeField]
 	Button _notifyButton;
 
+	UILoginSO _uiso;
+
 	protected override void Start()
 	{
+		_uiso = FindAnyObjectByType<UILoginSOHolder>().Data;
+
 		_nickNameInputField.onValueChanged.AddListener(OnNickNameValueChanged);
+
 		//_nickNameInputField.onSubmit.AddListener(OnSubmit);
 
 		//_sdl = FindAnyObjectByType<SaveDataLoader>();

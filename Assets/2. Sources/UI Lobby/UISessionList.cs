@@ -1,11 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UISessionList : UIBehaviour, ISessionListUI
 {
-	[SerializeField]
-	UILobbySO _uiso;
+	
 	[SerializeField]
 	ScrollRect _scrollRect;
 	[SerializeField]
@@ -18,12 +18,14 @@ public class UISessionList : UIBehaviour, ISessionListUI
 	Button _exitButton;
 	[SerializeField]
 	SessionItem _sessionPrefap;
+	[SerializeField]
+	GameObject _emptySessionListNotification;
 
-	//Dictionary<int, SessionItem> _roomListCache = new();
-	//int _tempIndex = 0;
+	UILobbySO _uiso;
 
 	protected override void Start()
 	{
+		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.SessionList = this;
 
 		_createSessionButton.onClick.AddListener(() => _uiso.RaiseOnClickCreateSession());
@@ -52,11 +54,11 @@ public class UISessionList : UIBehaviour, ISessionListUI
 		_scrollRect.verticalNormalizedPosition = 1f;
 	}
 
-	void OnClickSessionEntry(int sessionIndex)
+	void OnClickSessionEntry(string lobbyId)
 	{
-		print($"OnClickRoomEntry {sessionIndex}");
+		print($"OnClickSessionEntry {lobbyId}");
 
-		_uiso.RaiseOnClickSession(sessionIndex);
+		_uiso.RaiseOnClickSession(lobbyId);
 	}
 
 	protected override void OnRectTransformDimensionsChange()
@@ -87,23 +89,18 @@ public class UISessionList : UIBehaviour, ISessionListUI
 
 	public void SetSessionInfoIndex(
 		int index,
-		int sessionIndex,
 		string name,
-		int maxClientCount,
-		int clientCount,
-		string password,
-		string joinCode)
+		int maxPlayerCount,
+		int playerCount,
+		string lobbyId)
 	{
 		var sitem = _scrollRect.content.GetChild(index).GetComponent<SessionItem>();
 
 		sitem.SetSessionInfo(
-			sessionIndex,
 			name,
-			maxClientCount,
-			clientCount,
-			password,
-			joinCode
-			);
+			maxPlayerCount,
+			playerCount,
+			lobbyId);
 	}
 
 	/*
@@ -111,6 +108,7 @@ public class UISessionList : UIBehaviour, ISessionListUI
 	 */
 	public void ResizeSessionList(int minimumSession)
 	{
+		Debug.Log($"ResizeSessionList {minimumSession}");
 		if (minimumSession > _scrollRect.content.childCount)
 		{
 			int countToAdd = minimumSession - _scrollRect.content.childCount;
@@ -141,6 +139,11 @@ public class UISessionList : UIBehaviour, ISessionListUI
 		}
 	}
 
+	public void ShowEmptySessionListNotification(bool show)
+	{
+		_emptySessionListNotification.SetActive(show);
+	}
+
 #if UNITY_EDITOR
 	public void AddTempSession()
 	{
@@ -150,13 +153,10 @@ public class UISessionList : UIBehaviour, ISessionListUI
 
 		SetSessionInfoIndex(
 			count,
-			-1,
 			$"temp {count + 1}",
 			0,
 			0,
-			"",
-			""
-			);
+			"");
 	}
 #endif
 }

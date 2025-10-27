@@ -15,11 +15,8 @@ using UnityEditor;
 [CreateAssetMenu(fileName = "TCPClientSO", menuName = "Scriptable Objects/TCPClientSO")]
 public class TCPClientSO : ScriptableObject
 {
-	[SerializeField]
-	public string ServerAddress;
-	[SerializeField]
-	public int Port;
-
+	[SerializeField] public string ServerAddress;
+	[SerializeField] public int Port;
 	TcpClient _tcpClient;
 	NetworkStream _networkStream;
 	CancellationTokenSource _cancelToken;
@@ -31,7 +28,6 @@ public class TCPClientSO : ScriptableObject
 		add { _onReceived += value; } 
 		remove { _onReceived -= value; }
 	}
-
 
 	public bool Connnected
 	{
@@ -110,7 +106,7 @@ public class TCPClientSO : ScriptableObject
 					{
 						Debug.LogWarning("TCPClient.ReceivingTask Call ");
 						
-						_ = _onReceived.Invoke(null, 0);
+						_onReceived.Invoke(null, 0).Forget();
 					}
 					else
 					{
@@ -132,7 +128,7 @@ public class TCPClientSO : ScriptableObject
 
 				if (_onReceived != null)
 				{
-					_ = _onReceived.Invoke(buffer, bytesRead);
+					_onReceived.Invoke(buffer, bytesRead).Forget();
 				}
 
 				//string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -251,8 +247,18 @@ public class TCPClientSO : ScriptableObject
 		return false;
 	}
 
-	private void OnDestroy()
+}
+
+/*
+ * 필드 초기화는 Awake에서 할 것.
+ */
+public class TCPClientHolder : SOHolderSinglton<TCPClientSO, TCPClientHolder>
+{
+	protected override void Awake()
 	{
-		Debug.Log("TCPClientSO.OnDestroy() called.");
+		base.Awake();
+
+		Data.ServerAddress = "172.24.107.87";
+		Data.Port = 51010;
 	}
 }

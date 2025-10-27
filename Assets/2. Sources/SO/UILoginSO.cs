@@ -11,8 +11,6 @@ public class UILoginSO : ScriptableObject, ISupportNotificationUI
 	ILoginUI _loginUI;
 	INotificationUI _notification;
 	ILoginDialogManager _dialogManager;
-	//IDialogOkCancelUI _dialogUI;
-
 
 	public event Action<string> OnLoginEnter;
 
@@ -52,4 +50,12 @@ public class UILoginSO : ScriptableObject, ISupportNotificationUI
 
 	// Login Pannel
 	public void SetNickname(string nickname) => _loginUI.SetNickname(nickname);
+}
+
+public class UILoginSOHolder : SOHolderSinglton<UILoginSO, UILoginSOHolder>
+{
+	protected override void Awake()
+	{
+		base.Awake();
+	}
 }

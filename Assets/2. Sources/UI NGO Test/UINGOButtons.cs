@@ -6,29 +6,27 @@ using UnityEngine.UI;
 
 public class UINGOButton : UIBehaviour, INGOTestButtonUI
 {
-	[SerializeField]
-	UINGOTestSO _uiso;
-	[SerializeField]
-	Button _startHostButton;
-	[SerializeField]
-	Button _startClientButton;
-	[SerializeField]
-	Button _spawn1;
-	[SerializeField]
-	Button _shutdownButton;
-	[SerializeField]
-	Button _showStatusButton;
+	[SerializeField] Button _1;
+	[SerializeField] Button _2;
+	[SerializeField] Button _3;
+	[SerializeField] Button _4;
+	[SerializeField] Button _5;
+	[SerializeField] Button _6;
 
-	protected override void Awake()
+	UINGOTestSO _uiso;
+
+	protected override void Start()
 	{
+		base.Start();
+
+		_uiso = FindAnyObjectByType<UINGOTestSOHolder>().Data;
 		_uiso.NGOTestButton = this;
 
-		_startHostButton.onClick.AddListener(() => _uiso.RaiseOnClickStartHost());
-		_startClientButton.onClick.AddListener(() => _uiso.RaiseOnClickStartClient());
-		_spawn1.onClick.AddListener(() => _uiso.RaiseOnClickSpawn());
-		_shutdownButton.onClick.AddListener(() => _uiso.RaiseOnClickShutdown());
-		_showStatusButton.onClick.AddListener(() => _uiso.RaiseOnClickShowStatus());
+		_1.onClick.AddListener(() => _uiso.Raise_1());
+		_2.onClick.AddListener(() => _uiso.Raise_2());
+		_3.onClick.AddListener(() => _uiso.Raise_3());
+		_4.onClick.AddListener(() => _uiso.Raise_4());
+		_5.onClick.AddListener(() => _uiso.Raise_5());
+		_6.onClick.AddListener(() => _uiso.Raise_6());
 	}
-
-
 }

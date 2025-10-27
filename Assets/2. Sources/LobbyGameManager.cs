@@ -7,26 +7,32 @@ using WebSocketSharp;
 
 public class LobbyManager : MonoBehaviour
 {
-	[SerializeField] UILobbySO _uiso;
-	[SerializeField] TCPClientSO _tcpClient;
-
-	PlayerInfoHolder _PlayerInfoHolder;
+	UILobbySO _uiso;
+	PlayerInfoSO _playerInfo;
+	TCPClientSO _tcpClient;
 	DateTime _lastRefreshTime = DateTime.MinValue;
+
+	void Awake()
+	{
+		if (FindAnyObjectByType<UILobbySOHolder>() == null)
+		{
+			var obj = new GameObject("[UI Lobby Holder]");
+			obj.AddComponent<UILobbySOHolder>();
+		}
+	}
 
 	void Start()
 	{
-		_PlayerInfoHolder = FindAnyObjectByType<PlayerInfoHolder>();
+		_playerInfo = FindAnyObjectByType<PlayerInfoHolder>().Data;
+		_tcpClient = FindAnyObjectByType<TCPClientHolder>().Data;
+		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
+		_uiso.Notification = FindAnyObjectByType<UINotification>();
 
-		// Lobby Scene에서 실행하지 않은 경우
-		if (_PlayerInfoHolder == null )
+		if (_playerInfo == null
+			|| _tcpClient == null
+			|| _uiso == null)
 		{
-			var obj = new GameObject("[User Info Holder(lobby)]");
-			obj.AddComponent<PlayerInfoHolder>();
-
-			_PlayerInfoHolder = obj.GetComponent<PlayerInfoHolder>();
-			_PlayerInfoHolder.PlayerInfo.Debugging = true;
-			_PlayerInfoHolder.PlayerInfo.PlayerNickname = "TestName001";
-			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = "";
+			throw new Exception("Where is the SO holder in lobby scene");
 		}
 
 		_uiso.OnClickCreateSession += OnClickCreateSession;
@@ -42,16 +48,26 @@ public class LobbyManager : MonoBehaviour
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		_ = InitAndGetLobbyList();
+		if (_playerInfo.MessageFromPreviousScene != null)
+		{
+			_uiso.ShowNotification(_playerInfo.MessageFromPreviousScene);
+			_playerInfo.MessageFromPreviousScene = null;
+		}
+
+		InitAndGetLobbyList();//.Forget("LobbyManager.Start");
 	}
 
-	async Awaitable InitAndGetLobbyList()
+	async void InitAndGetLobbyList()
 	{
-		await UGSManager.InitServices();
+		if (!UGSManager.IsInitialized())
+		{
+			await UGSManager.InitServices();
+		}
 
-		var list = await UGSLobbyManager.GetLobbyList();
+		UGSLobbyManager.PlayerName = _playerInfo.PlayerName;
+		UGSLobbyManager.PlayerLevel = "100";
 
-		Debug.Log($"Got lobby list {list.Count}");
+		OnClickRefresh();
 	}
 
 	void OnClickCreateSession()
@@ -66,27 +82,64 @@ public class LobbyManager : MonoBehaviour
 
 	async void OnClickRefresh()
 	{
+		
 		var duration = DateTime.Now - _lastRefreshTime;
 
 		if (duration.TotalMilliseconds < 1000)
 		{
 			return;
 		}
+		
+		var list = await UGSLobbyManager.GetLobbyList();
+
+		if (list != null)
+		{
+			Debug.Log($"OnClieckRefresh! list count {list.Count}");
+
+			if (list.Count > 0)
+			{
+				_uiso.ShowEmptySessionListNotification(false);
+				_uiso.ResizeSessionList(list.Count);
+
+				for (int i = 0; i < list.Count; ++i)
+				{
+					var lobby = list[i];
+					_uiso.SetSessionInfoIndex(
+						i,
+						lobby.Name,
+						lobby.MaxPlayers,
+						lobby.MaxPlayers - lobby.AvailableSlots,
+						lobby.Id);
+				}
+			}
+			else
+			{
+				_uiso.ShowEmptySessionListNotification(true);
+				_uiso.ResizeSessionList(0);
+			}
 
 #if UNITY_EDITOR
-		if (_PlayerInfoHolder.PlayerInfo.Debugging)
-		{
-			return;
-		}
+			/*
+			 * GameMode와 GamePlaying은 public property다.
+			 */
+			string text = "---Lobby List---\n";
+			foreach (var lobby in list)
+			{
+				text += $"{lobby.Id} {lobby.Name} {lobby.AvailableSlots}/{lobby.MaxPlayers}\n";
+				text += $"	GameMode: {lobby.Data["GameMode"].Value}\n";
+				text += $"	GameStart: {lobby.Data["GamePlaying"].Value}\n";
+			}
+			text += "------";
+			Debug.Log(text);
 #endif
+		}
+		//M_RequestSessionList rrl = new();
 
-		M_RequestSessionList rrl = new();
+		//rrl.Filter = 1;
 
-		rrl.Filter = 1;
+		//var data = rrl.ToByteArray();
 
-		var data = rrl.ToByteArray();
-
-		await _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
+		//await _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
 
 		_lastRefreshTime = DateTime.Now;
 	}
@@ -105,11 +158,20 @@ public class LobbyManager : MonoBehaviour
 		_ = SceneManager.LoadSceneAsync("LoginScene");
 	}
 
-	void OnClickSession(int sessionIndex)
+	void OnClickSession(string lobbyId)
 	{
+		_playerInfo.StartHost = false;
+		_playerInfo.LobbyIdForEntry = lobbyId;
+
+		CleanEvent();
+
+		SceneManager.LoadScene("NGOTestScene");
+
+		return;
+
 		M_RequestSessionEntry rcr = new();
 
-		rcr.SessionIndex = sessionIndex;
+		//rcr.SessionIndex = sessionIndex;
 
 		var data = rcr.ToByteArray();
 
@@ -143,6 +205,26 @@ public class LobbyManager : MonoBehaviour
 			return;
 		}
 
+		_playerInfo.StartHost = true;
+		_playerInfo.LobbyName = sessionName;
+		
+		if (password.Length > 0)
+		{
+			_playerInfo.CreateLobbyWithPassword = true;
+			_playerInfo.LobbyPassword = password;
+		}
+		else
+		{
+			_playerInfo.CreateLobbyWithPassword = false;
+			_playerInfo.LobbyPassword = null;
+		}
+
+		CleanEvent();
+
+		SceneManager.LoadScene("NGOTestScene");
+
+		return;
+
 		M_RequestSessionCreation rcr = new();
 		rcr.SessionName = sessionName;
 		rcr.Password = password;
@@ -163,7 +245,7 @@ public class LobbyManager : MonoBehaviour
 			await Awaitable.MainThreadAsync();
 
 			CleanEvent();
-			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			_playerInfo.MessageFromPreviousScene = "Disconnected from the server.";
 			SceneManager.LoadScene("LoginScene");
 
 			return;
@@ -202,14 +284,14 @@ public class LobbyManager : MonoBehaviour
 				for (int i = 0; i < list.Count; ++i)
 				{
 					var sinfo = list[i];
-					_uiso.SetSessionInfoIndex(
-						i,
-						sinfo.SessionIndex,
-						sinfo.SessionName,
-						sinfo.MaxClientCount,
-						sinfo.ClientCount,
-						sinfo.Password,
-						sinfo.JoinCode);
+					//_uiso.SetSessionInfoIndex(
+					//	i,
+					//	sinfo.SessionIndex,
+					//	sinfo.SessionName,
+					//	sinfo.MaxClientCount,
+					//	sinfo.ClientCount,
+					//	sinfo.Password,
+					//	sinfo.JoinCode);
 				}
 			}
 		}

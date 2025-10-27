@@ -6,14 +6,16 @@ using UnityEngine.UI;
 
 public class UILobbyDialogManager : UIBehaviour, ILobbyDialogManager
 {
-	[SerializeField] UILobbySO _uiso;
+	
 	[SerializeField] Button _cancelButton;
 	[SerializeField] UIDialogCreateRoom _dialogCreateRoom;
 
+	UILobbySO _uiso;
 	GameObject _openedDialog;
 
 	protected override void Start()
 	{
+		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.DialogManager = this;
 		_cancelButton.onClick.AddListener(() => _uiso.RaiseOnCancelDialog());
 	}

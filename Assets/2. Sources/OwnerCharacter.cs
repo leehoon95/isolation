@@ -17,7 +17,11 @@ public class OwnerCharacter : NetworkBehaviour
 	[SerializeField]
 	TMP_Text _text;
 	[SerializeField]
-	NetworkObject _bullet;
+	TMP_Text _text2;
+	[SerializeField]
+	GameObject _triangle;
+	[SerializeField]
+	GameObject _bullet;
 
 	InputSystem _inputSystem;
 	int _pingCount;
@@ -30,11 +34,22 @@ public class OwnerCharacter : NetworkBehaviour
 
 	public override void OnNetworkSpawn()
 	{
-		base.OnNetworkSpawn();
+		if (HasAuthority)
+		{
+			Debug.Log($"{NetworkManager.Singleton.LocalClientId} Has authority");
+		}
+		else
+		{
+			Debug.Log($"{NetworkManager.Singleton.LocalClientId} Has not authority");
+		}
 
-		print("OwnerCharacter.OnNetworkSpawn() called");
 
-		_text.text = OwnerClientId.ToString();
+		Debug.Log($"OwnerCharacter.OnNetworkSpawn() IsHost: {IsHost}");
+		Debug.Log($"OwnerCharacter.OnNetworkSpawn() IsClient: {IsClient}");
+		Debug.Log($"OwnerCharacter.OnNetworkSpawn() IsOwner: {IsOwner}");
+
+		//_text = GetComponentInChildren<TMP_Text>();
+		_text.text = $"{OwnerClientId}";
 
 		_inputSystem = FindAnyObjectByType<InputSystem>();
 
@@ -44,11 +59,10 @@ public class OwnerCharacter : NetworkBehaviour
 			return;
 		}
 
-
-		if (IsLocalPlayer)
+		if (IsOwner)
 		{
-			print("OwnerCharacter. IsLocalPlayer.");
-
+			Debug.Log($"{_text.text} is owner");
+			
 			_inputSystem.Move += OnMove;
 			_inputSystem.Attack += OnAttack;
 			_inputSystem.Attack2 += OnAttack2;
@@ -62,14 +76,20 @@ public class OwnerCharacter : NetworkBehaviour
 		{
 			_spriteRenderer.color = Color.red;
 		}
+
+		base.OnNetworkSpawn();
 	}
 
 	public override void OnDestroy()
 	{
 		base.OnDestroy();
 
-		_inputSystem.Move -= OnMove;
-		_inputSystem.Attack -= OnAttack;
+		if (IsOwner)
+		{
+			_inputSystem.Move -= OnMove;
+			_inputSystem.Attack -= OnAttack;
+			_inputSystem.Attack2 -= OnAttack2;
+		}
 	}
 
 	void OnMove(Vector2 dir)

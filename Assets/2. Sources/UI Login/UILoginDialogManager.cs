@@ -4,12 +4,14 @@ using UnityEngine.EventSystems;
 
 public class UILoginDialogManager : UIBehaviour, ILoginDialogManager
 {
-	[SerializeField] UILoginSO _uiso;
 	[SerializeField] UIDialogOk _dialogOk;
 	[SerializeField] UIDialogYesNo _dialogYesNo;
 
+	UILoginSO _uiso;
+
 	protected override void Start()
 	{
+		_uiso = FindAnyObjectByType<UILoginSOHolder>().Data;
 		_uiso.DialogManager = this;
 	}
 

@@ -22,12 +22,6 @@ public class UGSRelayManager
 		int maxConnections,
 		string connectionType)
 	{
-#if UNITY_EDITOR
-		NetworkManager.Singleton.LogLevel = Unity.Netcode.LogLevel.Developer;
-#else
-		NetworkManager.Singleton.LogLevel = Unity.Netcode.LogLevel.Nothing;
-#endif
-
 		/*
 		 * IRelayService.CreateAllocationAsync
 		 * 적절한 Relay 서버를 지역에서 골라 할당을 생성.
@@ -46,14 +40,14 @@ public class UGSRelayManager
 			Debug.LogError("RealyManager.StartHostWithRelayAndGetJoinCode Exception(RelayServiceException)" +
 				$"reason: {rse.Reason.ToString()}");
 
-			return (false, rse.Reason.ToString());
+			return (false, null);
 		}
 		catch (Exception e)
 		{
 			Debug.LogError($"RealyManager.StartHostWithRelayAndGetJoinCode " +
 				$"Exception: {e.Message}");
 
-			return (false, e.Message);
+			return (false, null);
 		}
 
 		/*
@@ -71,12 +65,12 @@ public class UGSRelayManager
 	/*
 	 * return (result, reason)
 	 */
-	public static async Awaitable<(bool, string)> StartClientWithRelay(string joinCode, string connectionType)
+	public static async Awaitable<bool> StartClientWithRelay(string joinCode, string connectionType)
 	{
 		if (joinCode.IsNullOrEmpty())
 		{
 			Debug.LogError("joinCode is null or empty.");
-			return (false, "joinCode is null or empty");
+			return false;
 		}
 
 #if UNITY_EDITOR
@@ -97,33 +91,28 @@ public class UGSRelayManager
 			if (NetworkManager.Singleton.StartClient())
 			{
 				Debug.Log("start client success");
-				return (true, "ok");
+				return true;
 			}
 			else
 			{
 				Debug.Log("start client failed");
-				return (false, "fail");
+				return false;
 			}
-
 		}
 		catch (RelayServiceException rse)
 		{
 			//Debug.LogException(rse);
 			Debug.LogError("RelayManager.StartHostWithRelayAndGetJoinCode Exception(RelayServiceException)" +
 				"reason: {rse.Reason.ToString()}");
-			Debug.LogError("1!!");
-			return (false, rse.Reason.ToString());
+			
+			return false;
 		}
 		catch (Exception e)
 		{
 			Debug.LogError($"RelayManager.StartHostWithRelayAndGetJoinCode " +
 				"Exception: {e.Message}");
-			Debug.LogError("2!!");
-			return (false, e.Message);
-		}
-		finally
-		{
-			Debug.LogError("something happening!!");
+			
+			return false;
 		}
 	}
 }

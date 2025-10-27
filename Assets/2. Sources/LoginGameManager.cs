@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using System;
+using Unity.Services.Authentication;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,22 +8,47 @@ using WebSocketSharp;
 
 public class LoginGameManager : MonoBehaviour
 {
-	[SerializeField] TCPClientSO _tcpClient;
-	[SerializeField] UILoginSO _uiso;
 	[SerializeField] SaveDataLoader _sdl;
 
-	PlayerInfoHolder _PlayerInfoHolder;
+	PlayerInfoSO _playerInfo;
+	TCPClientSO _tcpClient;
+	UILoginSO _uiso;
+
+	void Awake()
+	{
+		if (FindAnyObjectByType<PlayerInfoHolder>() == null)
+		{
+			var obj = new GameObject("[Player Info Holder]");
+			obj.AddComponent<PlayerInfoHolder>();
+			DontDestroyOnLoad(obj);
+		}
+
+		if (FindAnyObjectByType<TCPClientHolder>() == null)
+		{
+			var obj = new GameObject("[TCP Client Holder]");
+			obj.AddComponent<TCPClientHolder>();
+			DontDestroyOnLoad(obj);
+		}
+
+		if (FindAnyObjectByType<UILoginSOHolder>() == null)
+		{
+			var obj = new GameObject("[UI Login Holder]");
+			obj.AddComponent<UILoginSOHolder>();
+		}
+	}
 
 	void Start()
 	{
-		_PlayerInfoHolder = FindAnyObjectByType<PlayerInfoHolder>();
+		_playerInfo = FindAnyObjectByType<PlayerInfoHolder>().Data;
+		_tcpClient = FindAnyObjectByType<TCPClientHolder>().Data;
+		_uiso = FindAnyObjectByType<UILoginSOHolder>().Data;
+		_uiso.Notification = FindAnyObjectByType<UINotification>();
 
-		if (_PlayerInfoHolder == null)
+		if (_playerInfo == null
+			|| _tcpClient == null
+			|| _uiso == null)
 		{
-			var obj = new GameObject("[User Info Holder]");
-			obj.AddComponent<PlayerInfoHolder>();
-
-			_PlayerInfoHolder = obj.GetComponent<PlayerInfoHolder>();
+			throw new Exception("Where is the SO holder in login scene");
 		}
 
 		_uiso.OnLoginEnter += OnLoginEnter;
@@ -30,10 +56,10 @@ public class LoginGameManager : MonoBehaviour
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		if (_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene != null)
+		if (_playerInfo.MessageFromPreviousScene != null)
 		{
-			_uiso.ShowNotification(_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene);
-			_PlayerInfoHolder.PlayerInfo.MessageFromPreviousScene = null;
+			_uiso.ShowNotification(_playerInfo.MessageFromPreviousScene);
+			_playerInfo.MessageFromPreviousScene = null;
 		}
 
 		if (!_tcpClient.Connnected)
@@ -82,7 +108,7 @@ public class LoginGameManager : MonoBehaviour
 			return;
 		}
 
-		_PlayerInfoHolder.PlayerInfo.PlayerNickname = nickname;
+		_playerInfo.PlayerName = nickname;
 
 		M_RequestLogin msg = new M_RequestLogin();
 		msg.Nickname = nickname;
@@ -146,7 +172,7 @@ public class LoginGameManager : MonoBehaviour
 			}
 			else
 			{
-				_PlayerInfoHolder.PlayerInfo.PlayerNickname = null;
+				_playerInfo.PlayerName = null;
 				_uiso.ShowNotification("Login failed. Please try again.");
 				print($"Login request is Denied. (reason: {msg.Reason})");
 			}
