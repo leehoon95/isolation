@@ -13,7 +13,9 @@ public class NGOGameManager : MonoBehaviour
 	[SerializeField]
 	GameObject _targetPrefab;
 	[SerializeField]
-	NetworkSpawner _spawner;
+	PlayerSpawner _playerSpawner;
+	[SerializeField]
+	PooledDynamicSpawner _pds;
 
 	UINGOTestSO _uiso;
 	PlayerInfoSO _playerInfo;
@@ -52,7 +54,6 @@ public class NGOGameManager : MonoBehaviour
 		}
 
 		var nm = NetworkManager.Singleton;
-
 		
 		nm.OnClientConnectedCallback += (ulong id) =>
 		{
@@ -80,25 +81,12 @@ public class NGOGameManager : MonoBehaviour
 		_uiso.OnClick_1 += () => { };
 		_uiso.OnClick_2 += () => { };
 		//_uiso.OnClick_3 += () => { };
-		_uiso.OnClick_4 += () => {
-			if (nm.IsHost)
-			{
-				_spawner.SpawnPrefab();
-			}
-			else
-			{
-				_spawner.SpawnPrefabWithOwnership();
-			}
+		_uiso.OnClick_4 += () =>
+		{
+			_playerSpawner.Spawn();
 		};
 		_uiso.OnClick_5 += () => {
-			if (nm.IsHost)
-			{
-				_spawner.SpawnPrefab();
-			}
-			else
-			{
-				_spawner.SpawnPrefabWithOwnership();
-			}
+			_playerSpawner.Despawn();
 		};
 		_uiso.OnClick_6 += OnClickShowStatus;
 		_tcpClient.OnReceived += OnTCPDataReceived;
@@ -149,7 +137,7 @@ public class NGOGameManager : MonoBehaviour
 
 			(var successLobby, var lobby, var lobbyEvents) = await UGSLobbyManager.CreateLobby(
 				_playerInfo.LobbyName,
-				2,
+				3,
 				joinCode,
 				callbacks,
 				_playerInfo.LobbyPassword);
@@ -280,29 +268,29 @@ public class NGOGameManager : MonoBehaviour
 
 	void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState state)
 	{
-		switch (state)
-		{
-			case LobbyEventConnectionState.Unsubscribed:
-				/* Update the UI if necessary, as the subscription has been stopped. */
-				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsubscribed");
-				break;
-			case LobbyEventConnectionState.Subscribing:
-				/* Update the UI if necessary, while waiting to be subscribed. */
-				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribing");
-				break;
-			case LobbyEventConnectionState.Subscribed:
-				/* Update the UI if necessary, to show subscription is working. */
-				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribed");
-				break;
-			case LobbyEventConnectionState.Unsynced:
-				/* Update the UI to show connection problems. Lobby will attempt to reconnect automatically. */
-				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsynced");
-				break;
-			case LobbyEventConnectionState.Error:
-				/* Update the UI to show the connection has errored. Lobby will not attempt to reconnect as something has gone wrong. */
-				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Error");
-				break;
-		}
+		//switch (state)
+		//{
+		//	case LobbyEventConnectionState.Unsubscribed:
+		//		/* Update the UI if necessary, as the subscription has been stopped. */
+		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsubscribed");
+		//		break;
+		//	case LobbyEventConnectionState.Subscribing:
+		//		/* Update the UI if necessary, while waiting to be subscribed. */
+		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribing");
+		//		break;
+		//	case LobbyEventConnectionState.Subscribed:
+		//		/* Update the UI if necessary, to show subscription is working. */
+		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribed");
+		//		break;
+		//	case LobbyEventConnectionState.Unsynced:
+		//		/* Update the UI to show connection problems. Lobby will attempt to reconnect automatically. */
+		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsynced");
+		//		break;
+		//	case LobbyEventConnectionState.Error:
+		//		/* Update the UI to show the connection has errored. Lobby will not attempt to reconnect as something has gone wrong. */
+		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Error");
+		//		break;
+		//}
 	}
 
 	void Shutdown()

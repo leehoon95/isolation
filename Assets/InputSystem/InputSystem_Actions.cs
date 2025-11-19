@@ -293,6 +293,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""6b608e21-73a1-4d1c-be94-a0b86a0d7add"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Look"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""ad2eea2f-a1cf-4d01-8328-2567d8da5b45"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",

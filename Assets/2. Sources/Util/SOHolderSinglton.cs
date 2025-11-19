@@ -14,8 +14,6 @@ public abstract class SOHolderSinglton<T, TS> : MonoBehaviour
 	protected T RuntimeInstance;
 	public T Data => RuntimeInstance;
 
-	[SerializeField] protected int aaaa;
-
 	protected virtual void Awake()
 	{
 		if (Instance != null && Instance != null)

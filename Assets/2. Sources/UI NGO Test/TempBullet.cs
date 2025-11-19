@@ -12,15 +12,15 @@ public class TempBullet : NetworkBehaviour
 		{
 			return;
 		}
-
+		
 		await Awaitable.WaitForSecondsAsync(3f);
 
-		DespawnObjectRpc(NetworkObject);
+		//DespawnObjectRpc(NetworkObject);
 	}
 
 	void FixedUpdate()
 	{
-		transform.Translate(Vector2.up * Time.deltaTime);
+		//transform.Translate(Vector2.up * Time.deltaTime);
 	}
 
 	[Rpc(SendTo.Server)]

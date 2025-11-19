@@ -1,6 +1,8 @@
 using Google.Protobuf;
 using System;
+using System.Collections;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
@@ -11,7 +13,7 @@ public class LobbyManager : MonoBehaviour
 	PlayerInfoSO _playerInfo;
 	TCPClientSO _tcpClient;
 	DateTime _lastRefreshTime = DateTime.MinValue;
-
+	bool _refreshing;
 	void Awake()
 	{
 		if (FindAnyObjectByType<UILobbySOHolder>() == null)
@@ -37,15 +39,12 @@ public class LobbyManager : MonoBehaviour
 
 		_uiso.OnClickCreateSession += OnClickCreateSession;
 		_uiso.OnClickSettings += OnClickSettings;
-		_uiso.OnClickRefresh += OnClickRefresh;
+		_uiso.OnClickRefresh += OnClickRefreshWrapper;
 		_uiso.OnClickExit += OnClickExit;
 		_uiso.OnSendMessage += OnSendMessage;
-
 		_uiso.DialogManager.AddOnOk_CR(OnCreateSession);
 		_uiso.OnCancelDialog += OnCancelDialog;
-
-		_uiso.OnClickSession += OnClickSession;
-
+		_uiso.OnClickSession += OnClickSessionWrapper;
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
 		if (_playerInfo.MessageFromPreviousScene != null)
@@ -67,7 +66,7 @@ public class LobbyManager : MonoBehaviour
 		UGSLobbyManager.PlayerName = _playerInfo.PlayerName;
 		UGSLobbyManager.PlayerLevel = "100";
 
-		OnClickRefresh();
+		OnClickRefreshWrapper();
 	}
 
 	void OnClickCreateSession()
@@ -80,15 +79,27 @@ public class LobbyManager : MonoBehaviour
 
 	}
 
-	async void OnClickRefresh()
+	void OnClickRefreshWrapper()
 	{
-		
 		var duration = DateTime.Now - _lastRefreshTime;
 
-		if (duration.TotalMilliseconds < 1000)
+		if (_refreshing || duration.TotalMilliseconds < 1000)
 		{
 			return;
 		}
+
+		_refreshing = true;
+		var task = OnClickRefresh();
+		_refreshing = false;
+
+
+		_lastRefreshTime = DateTime.Now;
+	}
+
+	async Task OnClickRefresh()
+	{
+		
+	
 		
 		var list = await UGSLobbyManager.GetLobbyList();
 
@@ -141,7 +152,6 @@ public class LobbyManager : MonoBehaviour
 
 		//await _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
 
-		_lastRefreshTime = DateTime.Now;
 	}
 
 	void OnClickExit()
@@ -158,8 +168,26 @@ public class LobbyManager : MonoBehaviour
 		_ = SceneManager.LoadSceneAsync("LoginScene");
 	}
 
-	void OnClickSession(string lobbyId)
+	void OnClickSessionWrapper(string lobbyId)
 	{
+		StartCoroutine(OnClickSession(lobbyId));
+	}
+
+	IEnumerator OnClickSession(string lobbyId)
+	{
+		int retryCount = 0;
+		while (_refreshing)
+		{
+			retryCount++;
+
+			yield return new WaitForSeconds(0.1f);
+
+			if (retryCount == 30)
+			{
+				yield return null;
+			}
+		}
+
 		_playerInfo.StartHost = false;
 		_playerInfo.LobbyIdForEntry = lobbyId;
 
@@ -167,7 +195,7 @@ public class LobbyManager : MonoBehaviour
 
 		SceneManager.LoadScene("NGOTestScene");
 
-		return;
+		yield return null;
 
 		M_RequestSessionEntry rcr = new();
 
@@ -363,12 +391,12 @@ public class LobbyManager : MonoBehaviour
 	{
 		_uiso.OnClickCreateSession -= OnClickCreateSession;
 		_uiso.OnClickSettings -= OnClickSettings;
-		_uiso.OnClickRefresh -= OnClickRefresh;
+		_uiso.OnClickRefresh -= OnClickRefreshWrapper;
 		_uiso.OnClickExit -= OnClickExit;
 		_uiso.OnSendMessage -= OnSendMessage;
 		_uiso.DialogManager.RemoveOnOk_CR(OnCreateSession);
 		_uiso.OnCancelDialog -= OnCancelDialog;
-		_uiso.OnClickSession -= OnClickSession;
+		_uiso.OnClickSession -= OnClickSessionWrapper;
 
 		_tcpClient.OnReceived -= OnTCPDataReceived;
 	}

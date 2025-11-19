@@ -27,7 +27,7 @@ public class UISessionList : UIBehaviour, ISessionListUI
 	{
 		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.SessionList = this;
-
+		
 		_createSessionButton.onClick.AddListener(() => _uiso.RaiseOnClickCreateSession());
 		_settingButton.onClick.AddListener(() => _uiso.RaiseOnClickSettings());
 		_refreshButton.onClick.AddListener(() => _uiso.RaiseOnClickRefresh());

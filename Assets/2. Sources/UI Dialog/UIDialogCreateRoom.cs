@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +19,8 @@ public class UIDialogCreateRoom : UIBehaviour
 	protected override void Start()
 	{
         _ok.onClick.AddListener(() => OnOk?.Invoke(_roomName.text, _roomPassword.text));
+
+        _roomName.text = DateTime.Now.ToString(); 
 	}
 
     public void SetTitle(string title) => _title.text = title;
