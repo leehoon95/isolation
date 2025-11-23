@@ -223,7 +223,12 @@ public class UGSLobbyManager : MonoBehaviour
 	 */
 	public static async void DeleteLobby(Lobby lobby)
 	{
-		if (!IsLobbyHost(lobby))
+		if (lobby == null)
+		{
+			return;
+		}
+
+		if (lobby.HostId != AuthenticationService.Instance.PlayerId)
 		{
 			return;
 		}

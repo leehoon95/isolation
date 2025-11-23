@@ -139,7 +139,7 @@ MonoBehaviour:
   _collider: {fileID: 1012433963530159234}
   _layerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
 --- !u!212 &7970020709355959117
 SpriteRenderer:
   m_ObjectHideFlags: 0

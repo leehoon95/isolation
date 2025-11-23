@@ -1,12 +1,10 @@
+using System;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Users;
-using UnityEngine.TextCore.Text;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class OwnerCharacter : NetworkBehaviour
 {
@@ -22,6 +20,9 @@ public class OwnerCharacter : NetworkBehaviour
 	Vector2 _inputReceived;
 	float _angle;
 	PooledDynamicSpawner _dynamicSpawner;
+	float _fireInterval = (60f / 600f) * 1000f;
+	bool _attack;
+	float _lastFiredTime;
 	//NetworkVariable<float> _angle = new NetworkVariable<float>(
 	//	0,
 	//	NetworkVariableReadPermission.Everyone,
@@ -53,7 +54,7 @@ public class OwnerCharacter : NetworkBehaviour
 			}
 
 			_inputSystem.Move += OnMove;
-			_inputSystem.Look += OnLook;
+			//_inputSystem.Look += OnLook;
 			_inputSystem.Attack += OnAttack;
 			_inputSystem.Attack2 += OnAttack2;
 
@@ -82,13 +83,12 @@ public class OwnerCharacter : NetworkBehaviour
 	{
 		if (performed)
 		{
-			_dynamicSpawner.CreateObject(
-				"bullet", 
-				transform.position + transform.up, 
-				transform.rotation);
+
+			_attack = true;
 		}
 		else
 		{
+			_attack = false;
 		}
 	}
 
@@ -114,6 +114,8 @@ public class OwnerCharacter : NetworkBehaviour
 	{
 		if (IsOwner)
 		{
+			OnLook(Input.mousePosition);
+
 			if (_inputDirection.magnitude > float.Epsilon)
 			{
 				_rigidbody.linearDamping = 0f;
@@ -123,7 +125,30 @@ public class OwnerCharacter : NetworkBehaviour
 			{
 				_rigidbody.linearDamping = 30f;
 			}
+
+			long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			if (_attack && (now - _lastFiredTime) > _fireInterval)
+			{
+				var worldUp = transform.TransformDirection(Vector3.up);
+
+				var rq = Quaternion.Euler(0f, 0f, RandomNormal(0f, 5f));
+				var dispersedUp = rq * worldUp;
+				//var dispersedUp = Quaternion.AngleAxis(RandomNormal(0f, 2f), Vector3.forward) * worldUp;
+				
+				_dynamicSpawner.CreateObject(
+					"bullet",
+					transform.position + dispersedUp.normalized,
+					transform.rotation * rq);
+				}
 		}
+	}
+
+	float RandomNormal(float mean, float stdDev)
+	{
+		float u1 = 1.0f - UnityEngine.Random.value; // (0,1] ¹üÀ§
+		float u2 = 1.0f - UnityEngine.Random.value;
+		float randStdNormal = Mathf.Sqrt(-2.0f * Mathf.Log(u1)) * Mathf.Sin(2.0f * Mathf.PI * u2);
+		return mean + stdDev * randStdNormal;
 	}
 
 	//[Rpc(SendTo.Server)]
@@ -140,7 +165,7 @@ public class OwnerCharacter : NetworkBehaviour
 		if (IsOwner)
 		{
 			_inputSystem.Move -= OnMove;
-			_inputSystem.Look += OnLook;
+			//_inputSystem.Look += OnLook;
 			_inputSystem.Attack -= OnAttack;
 			_inputSystem.Attack2 -= OnAttack2;
 		}

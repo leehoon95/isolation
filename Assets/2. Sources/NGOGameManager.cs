@@ -57,32 +57,39 @@ public class NGOGameManager : MonoBehaviour
 		
 		nm.OnClientConnectedCallback += (ulong id) =>
 		{
-			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientConnectedCallback. id: {id}");
+			Debug.LogWarning($"NetworkManager OnClientConnectedCallback. id: {id}");
 			//_ = Spawn();
 		};
 
 		nm.OnClientStarted += () =>
 		{
-			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientStarted.");
+			Debug.LogWarning($"NetworkManager OnClientStarted.");
 
 		};
 
 		nm.OnClientDisconnectCallback += (ulong id) =>
 		{
-			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientDisconnectCallback. id: {id}");
+			Debug.LogWarning($"NetworkManager OnClientDisconnectCallback. id: {id}");
 		};
 
 		nm.OnClientStopped += (bool isHost) =>
 		{
-			Debug.LogWarning($"NetworkManager {nm.LocalClientId} OnClientStopped. isHost: {isHost}");
+			Debug.LogWarning($"NetworkManager OnClientStopped. isHost: {isHost}");
+			OnClientStopped();
+
 		};
-		
+
+		nm.OnServerStopped += (bool isHost) =>
+		{
+			Debug.LogError($"NetworkManager OnServerStopped isHost: {isHost}");
+		};
 
 		_uiso.OnClick_1 += () => { };
 		_uiso.OnClick_2 += () => { };
-		//_uiso.OnClick_3 += () => { };
-		_uiso.OnClick_4 += () =>
-		{
+		_uiso.OnClick_3 += () => {
+			LeaveFromLobby();
+		};
+		_uiso.OnClick_4 += () => {
 			_playerSpawner.Spawn();
 		};
 		_uiso.OnClick_5 += () => {
@@ -113,7 +120,7 @@ public class NGOGameManager : MonoBehaviour
 		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.RequestEnvironment, data);
 	}
 
-	void OnDestroy()
+	async void OnDestroy()
 	{
 		_uiso.ClearEvent();
 
@@ -149,7 +156,7 @@ public class NGOGameManager : MonoBehaviour
 
 				//Spawn();
 
-				StartCoroutine(HeartbeatLobby());
+				_heartbeatCoroutin = StartCoroutine(HeartbeatLobby());
 			}
 			else
 			{
@@ -188,14 +195,14 @@ public class NGOGameManager : MonoBehaviour
 		{
 #if UNITY_EDITOR
 			Debug.Log("Join Lobby Success!!!\n"
-				+ $"Player ID: {AuthenticationService.Instance.PlayerId}"
-				+ $"	{lobby.Id}"
-				+ $"	{lobby.Name}"
-				+ $"	{lobby.Created}"
-				+ $"	{lobby.HostId}"
-				+ $"	{lobby.Data["GameMode"].Value}"
-				+ $"	{lobby.Data["GamePlaying"].Value}"
-				+ $"	{lobby.Data["RelayJoinCode"].Value}"
+				+ $"Player ID: {AuthenticationService.Instance.PlayerId}\n"
+				+ $"	{lobby.Id}\n"
+				+ $"	{lobby.Name}\n"
+				+ $"	{lobby.Created}\n"
+				+ $"	{lobby.HostId}\n"
+				+ $"	{lobby.Data["GameMode"].Value}\n"
+				+ $"	{lobby.Data["GamePlaying"].Value}\n"
+				+ $"	{lobby.Data["RelayJoinCode"].Value}\n"
 				);
 
 #endif
@@ -233,6 +240,16 @@ public class NGOGameManager : MonoBehaviour
 		Debug.LogWarning("Start CLIENT END");
 	}
 
+	async void OnClientStopped()
+	{
+		var (result, lobby) = await UGSLobbyManager.GetLobbyById(_lobby.Id);
+		if (result)
+		{
+			_lobby = lobby;
+
+			Debug.LogWarning($"NGOGameManager.OnClientStopped new host id: {_lobby.HostId} {AuthenticationService.Instance.PlayerId}");
+		}
+	}
 	IEnumerator HeartbeatLobby()
 	{
 		while (true) {
@@ -268,42 +285,38 @@ public class NGOGameManager : MonoBehaviour
 
 	void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState state)
 	{
-		//switch (state)
-		//{
-		//	case LobbyEventConnectionState.Unsubscribed:
-		//		/* Update the UI if necessary, as the subscription has been stopped. */
-		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsubscribed");
-		//		break;
-		//	case LobbyEventConnectionState.Subscribing:
-		//		/* Update the UI if necessary, while waiting to be subscribed. */
-		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribing");
-		//		break;
-		//	case LobbyEventConnectionState.Subscribed:
-		//		/* Update the UI if necessary, to show subscription is working. */
-		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribed");
-		//		break;
-		//	case LobbyEventConnectionState.Unsynced:
-		//		/* Update the UI to show connection problems. Lobby will attempt to reconnect automatically. */
-		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsynced");
-		//		break;
-		//	case LobbyEventConnectionState.Error:
-		//		/* Update the UI to show the connection has errored. Lobby will not attempt to reconnect as something has gone wrong. */
-		//		Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Error");
-		//		break;
-		//}
+		switch (state)
+		{
+			case LobbyEventConnectionState.Unsubscribed:
+				/* Update the UI if necessary, as the subscription has been stopped. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsubscribed");
+				break;
+			case LobbyEventConnectionState.Subscribing:
+				/* Update the UI if necessary, while waiting to be subscribed. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribing");
+				break;
+			case LobbyEventConnectionState.Subscribed:
+				/* Update the UI if necessary, to show subscription is working. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribed");
+				break;
+			case LobbyEventConnectionState.Unsynced:
+				/* Update the UI to show connection problems. Lobby will attempt to reconnect automatically. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsynced");
+				break;
+			case LobbyEventConnectionState.Error:
+				/* Update the UI to show the connection has errored. Lobby will not attempt to reconnect as something has gone wrong. */
+				Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Error");
+				break;
+		}
 	}
 
-	void Shutdown()
+	async void LeaveFromLobby()
 	{
-		var nm = NetworkManager.Singleton;
+		Debug.LogWarning("NGOGameManager.LeaveFromLobby");
+		await UGSLobbyManager.RemovePlayer(_lobby);
+		NetworkManager.Singleton.Shutdown();
 
-		//if (nm.IsHost)
-		{
-			// client¿¡ ÀüÆÄ
-			nm.Shutdown();
-
-			SceneManager.LoadScene("LoginScene");
-		}
+		SceneManager.LoadScene("LobbyScene");
 	}
 
 	async void OnClickShowStatus()

@@ -8,42 +8,12 @@ using UnityEditor.PackageManager;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.UIElements;
 
-/*
- * Pool에 들어가는 object interface
- * PrefabId: 어떤 prefab에서 Instantiate되었는 알 수 있는 값
- * ObjectId: (client id)_(local에서 중복되지 않는 값) => 로컬, 네트워크에서 중복되지 않음
- * SO: prefab 생성시 연결할 ScriptableObject. 생성된 instance는 이 SO를 변경하면 안 됨.
- */
-public interface IDynamicPooledObject
-{
-	string PrefabId { get; set; }
-	string ObjectId { get; set; }
-	ulong ClientId { get; set; }
-	ScriptableObject SO { get; set; }
-	IPooledDynamicSpawner Spawner { set; }
-	IDynamicPooledObject DPO { get; }
-	GameObject GO { get; }
-	NetworkObject NO { get; }
-	bool OnlyInteractInOwnerClient { get; set; }
-	void SetActive(bool active);
-	void SetTransform(Vector2 position, Quaternion rotation);
-	void Clean();
-}
 
-/*
- * Pooled item에서 pool을 참조 목적용 
- */
-public interface IPooledDynamicSpawner
-{
-	void ReleaseObject(IDynamicPooledObject obj);
-	//void Despawn(IDynamicPooledObject go);
-}
 
 /*
  * scene에 GameObject 생성(또는 spawn)하는 pool
- * 외부에서 identifier(string)으로 prefab을 생성 요청
+ * 외부에서 objectId(string)으로 prefab을 생성 요청
  */
 public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 {
@@ -94,27 +64,25 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 			while (_poolConfig.Count > index)
 			{
 				var poolConfig = _poolConfig[index];
-				//var key = poolConfig.Prefab.GetComponent<NetworkObject>().PrefabIdHash;
 				var prefabId = poolConfig.PrefabId;
-				var pool = new ObjectPool<IDynamicPooledObject>(
+				var pool = new UnityEngine.Pool.ObjectPool<IDynamicPooledObject>(
 				createFunc: () =>
 				{
 					var obj = GameObject.Instantiate(poolConfig.Prefab);
-					var instance = obj.GetComponent<IDynamicPooledObject>();
+					var pdo = obj.GetComponent<IDynamicPooledObject>();
 					
 #if UNITY_EDITOR
-					if (instance == null)
+					if (pdo == null)
 					{
 						throw new NullReferenceException("No IDynamicPooledObject component fonded");
 					}
 #endif
-					//instance.SetActive(false);
 
-					return instance;
+					return pdo;
 				},
 				actionOnGet: (instance) =>
 				{
-					instance.GO.SetActive(true);
+
 				},
 				actionOnRelease: (instance) =>
 				{
@@ -191,21 +159,6 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		CreateObjectImplementation(clientId, prefabId, objectId, position, rotation);
 	}
 
-	/*
-	 * (Unreliable 버전)
-	 */
-	//[Rpc(SendTo.NotMe, Delivery = RpcDelivery.Unreliable)]
-	//void CreateObejctWithAnotherClientUnreliableRpc(
-	//	string prefabIdHash,
-	//	string guid,
-	//	Vector2 pos,
-	//	Quaternion rotation,
-	//	bool destroyWithScene = true,
-	//	RpcParams rpcParams = default)
-	//{
-	//	CreateObjectImplementation(prefabIdHash, guid, pos, rotation);
-	//}
-
 	void CreateObjectImplementation(
 		ulong clientId,
 		string prefabId,
@@ -226,6 +179,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 			dpo = pool.Get();
 		}
 
+		dpo.GO.SetActive(true);
 		dpo.ClientId = clientId;
 		dpo.PrefabId = prefabId;
 		dpo.ObjectId = objectId;
@@ -233,7 +187,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		dpo.OnlyInteractInOwnerClient = true;
 		dpo.SO = _configs[prefabId].SO;
 		dpo.SetTransform(position, rotation);
-		dpo.SetActive(true);
+		dpo.SetLifeTime(true, 2f);
 
 		lock (_activatedObjects)
 		{
@@ -305,7 +259,6 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		IDynamicPooledObject dpo;
 		lock(_activatedObjects)
 		{
-			Debug.Log($"release {objectId}");
 			if (_activatedObjects.TryGetValue(objectId, out var obj))
 			{
 				dpo = obj;
@@ -340,7 +293,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 
 		lock(_objectIdPool)
 		{
-			_objectIdPool.Remove(prefabId);
+			_objectIdPool.Remove(objectId);
 		}
 	}
 

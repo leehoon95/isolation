@@ -7,7 +7,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class TempProjectile : MonoBehaviour, IDynamicPooledObject
+public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInteractable
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
@@ -25,6 +25,8 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 	float _velocity;
 	bool _onlyInteractInOwnerClient;
 	Coroutine _coroutineLifetime;
+	float _lifeTime;
+	Vector2 _startFrom;
 
 	public LayerMask CollisionLayerMask
 	{
@@ -60,7 +62,7 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 		{
 			if (value)
 			{
-				_collider.includeLayers = _layerMask.value;
+				_collider.includeLayers = _layerMask;
 			}
 			else
 			{
@@ -74,12 +76,13 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 	public string PrefabId { get => _prefabId; set => _prefabId = value; }
 	public string ObjectId { get => _objectId; set => _objectId = value; }
 	public ulong ClientId { get => _clientId; set => _clientId = value; }
+	public Vector2 StartFrom { get => _startFrom; set => _startFrom = value; }
 
 	IEnumerator LifeTimer()
 	{
 		try
 		{
-			yield return new WaitForSeconds(3f);
+			yield return new WaitForSeconds(2f);
 		}
 		finally
 		{
@@ -100,19 +103,21 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 			_spawner.ReleaseObject(this);
 		}
 	}
-
-	void OnTriggerEnter(Collider other)
+	void OnTriggerEnter2D(Collider2D collision)
 	{
-		Debug.Log("TempProjectile.OnTriggerEnter");
-		//if (!HasAuthority)
-		//{
-		//	return;
-		//}
-
-		if ((other.gameObject.layer & _layerMask.value) != 0)
+		//Debug.Log($"TempProjectile.OnTriggerEnter2D {collision.gameObject.layer} {_collider.includeLayers.value}");
+		if (((1 << collision.gameObject.layer) & _layerMask.value) != 0)
 		{
-			Debug.Log($"TempProjectile collided layer: {other.gameObject.layer}");
-			//_pool.Release(this);
+			//Debug.Log($"TempProjectile.OnTriggerEnter2D addforce {collision.gameObject.name}");
+			var ci = collision.gameObject.GetComponentInParent<IColliderInteractable>();
+			if (ci != null)
+			{
+				//var force = collision.transform.position - transform.position;
+				ci.AddForce(_rigidbody.linearVelocity.normalized * 1f);
+
+				SetLifeTime(false);
+				Release();
+			}
 		}
 	}
 
@@ -122,23 +127,23 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 		{
 			case ProjectileFlyingType.Direct:
 				_rigidbody.linearVelocity = transform.up * _so.Velocity;
+				
 				break;
 		}
 	}
 
-	public void SetActive(bool active)
+	public void SetLifeTime(bool active, float time = 0f)
 	{
 		if (NetworkManager.Singleton.LocalClientId != ClientId)
 		{
 			return;
 		}
 
-		gameObject.SetActive(active);
-
 		if (active)
 		{
 			if (_coroutineLifetime == null)
 			{
+				_lifeTime = time;
 				_coroutineLifetime = StartCoroutine(LifeTimer());
 			}
 		}
@@ -159,5 +164,10 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 
 	public void Clean()
 	{
+	}
+
+	public void AddForce(Vector2 force)
+	{
+		// nothing
 	}
 }

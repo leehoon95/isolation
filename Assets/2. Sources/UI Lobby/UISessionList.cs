@@ -108,7 +108,7 @@ public class UISessionList : UIBehaviour, ISessionListUI
 	 */
 	public void ResizeSessionList(int minimumSession)
 	{
-		Debug.Log($"ResizeSessionList {minimumSession}");
+		//Debug.Log($"ResizeSessionList {minimumSession}");
 		if (minimumSession > _scrollRect.content.childCount)
 		{
 			int countToAdd = minimumSession - _scrollRect.content.childCount;
