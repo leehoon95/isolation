@@ -3,9 +3,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UISessionList : UIBehaviour, ISessionListUI
+public class UISessionList : UIBehaviour, IUISessionList
 {
-	
 	[SerializeField]
 	ScrollRect _scrollRect;
 	[SerializeField]

@@ -5,22 +5,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UILobbySO", menuName = "Scriptable Objects/UILobbySO")]
 public class UILobbySO : ScriptableObject, ISupportNotificationUI
 {
-	ISessionListUI _sessionList;
-	ICommunicationBoxUI _communicationBox;
-	ILobbyDialogManager _dialogManager;
+	IUISessionList _sessionList;
+	IUICommunicationBox _communicationBox;
+	IUILobbyDialogManager _dialogManager;
 	INotificationUI _notification;
 
-	public ISessionListUI SessionList
+	public IUISessionList SessionList
 	{
 		get => _sessionList;
 		set => _sessionList = value;
 	}
-	public ICommunicationBoxUI CommunicationBox
+	public IUICommunicationBox CommunicationBox
 	{
 		get => _communicationBox;
 		set => _communicationBox = value;
 	}
-	public ILobbyDialogManager DialogManager
+	public IUILobbyDialogManager DialogManager
 	{
 		get => _dialogManager;
 		set => _dialogManager = value;

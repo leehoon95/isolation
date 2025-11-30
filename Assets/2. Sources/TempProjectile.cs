@@ -108,6 +108,7 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 		//Debug.Log($"TempProjectile.OnTriggerEnter2D {collision.gameObject.layer} {_collider.includeLayers.value}");
 		if (((1 << collision.gameObject.layer) & _layerMask.value) != 0)
 		{
+		
 			//Debug.Log($"TempProjectile.OnTriggerEnter2D addforce {collision.gameObject.name}");
 			var ci = collision.gameObject.GetComponentInParent<IColliderInteractable>();
 			if (ci != null)
@@ -127,7 +128,10 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 		{
 			case ProjectileFlyingType.Direct:
 				_rigidbody.linearVelocity = transform.up * _so.Velocity;
-				
+				break;
+			case ProjectileFlyingType.Homing:
+				break;
+			case ProjectileFlyingType.Registed:
 				break;
 		}
 	}

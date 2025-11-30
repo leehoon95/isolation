@@ -114,7 +114,7 @@ public class OwnerCharacter : NetworkBehaviour
 	{
 		if (IsOwner)
 		{
-			OnLook(Input.mousePosition);
+			OnLook(Mouse.current.position.ReadValue());
 
 			if (_inputDirection.magnitude > float.Epsilon)
 			{

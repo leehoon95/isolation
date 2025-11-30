@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UILobbyDialogManager : UIBehaviour, ILobbyDialogManager
+public class UILobbyDialogManager : UIBehaviour, IUILobbyDialogManager
 {
 	
 	[SerializeField] Button _cancelButton;

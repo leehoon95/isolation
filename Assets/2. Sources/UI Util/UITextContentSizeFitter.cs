@@ -10,27 +10,35 @@ enum TargetSizeAxis
 	Horizontal = 1,
 	Vertical = 2,
 }
+/*
+ * 자식 오브젝트(Text Mesh Pro)의 가변 크기에 따라 부모 오브젝트 크기를 맞추고 싶을 때 사용함
+ * 해당 자식 오브젝트는 UITextSizeNotifier 컴포넌트를 포함해야 함
+ */
 
 [ExecuteAlways]
 [RequireComponent(typeof(RectTransform))]
 [DisallowMultipleComponent]
-public class UISizeFitter : UIBehaviour
+public class UITextContentSizeFitter : UIBehaviour
 {
-	[SerializeField] RectTransform _rt;
-	[SerializeField] RectTransform _targetRT;
-	[SerializeField] UISizeNotifier _notifier;
+	[SerializeField] UITextPreferredSizeNotifier _notifier;
 	[SerializeField] float _minWidth;
 	[SerializeField] float _minHeight;
 	[SerializeField] TargetSizeAxis _targetSizeAxis;
 
-	protected override void Start()
+	RectTransform _rt;
+	float _textPreferredWidth, _textPreferredHeight;
+
+	protected override void OnEnable()
 	{
-		_notifier.OnRectTransformChanged += FitSize;
+		base.OnEnable();
+		_rt = (RectTransform)transform;
+		_notifier.OnTextPreferredSizeChanged += OnTextPreferredSizeChanged;
 	}
 
 	protected override void OnDisable()
 	{
-		_notifier.OnRectTransformChanged -= FitSize;
+		base.OnDisable();
+		_notifier.OnTextPreferredSizeChanged -= OnTextPreferredSizeChanged;
 	}
 
 #if UNITY_EDITOR
@@ -39,6 +47,13 @@ public class UISizeFitter : UIBehaviour
 		EditorApplication.delayCall += () => FitSize();
 	}
 #endif
+
+	void OnTextPreferredSizeChanged(float preferredWidth, float preferredHeight)
+	{
+		_textPreferredWidth = preferredWidth;
+		_textPreferredHeight = preferredHeight;
+		FitSize();
+	}
 
 	void FitSize()
 	{
@@ -56,16 +71,14 @@ public class UISizeFitter : UIBehaviour
 		{
 			_rt.SetSizeWithCurrentAnchors(
 				RectTransform.Axis.Horizontal,
-				_targetRT.rect.width < _minWidth ? _minWidth : _targetRT.rect.width
-				);
+				_textPreferredWidth < _minWidth ? _minWidth : _textPreferredWidth);
 		}
 
 		if ((_targetSizeAxis | TargetSizeAxis.Vertical) != TargetSizeAxis.None)
 		{
 			_rt.SetSizeWithCurrentAnchors(
 				RectTransform.Axis.Vertical,
-				_targetRT.rect.height >= _minHeight ? _targetRT.rect.height : _minHeight
-				);
+				_textPreferredHeight < _minHeight ? _minHeight : _textPreferredHeight);
 		}
 	}
 }

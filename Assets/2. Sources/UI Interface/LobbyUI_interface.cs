@@ -1,6 +1,6 @@
 using UnityEngine.Events;
 
-public interface ISessionListUI
+public interface IUISessionList
 {
 	public void ResizeSessionList(int minimumSession);
 	public void SetSessionInfoIndex(
@@ -16,12 +16,12 @@ public interface ISessionListUI
 #endif
 }
 
-public interface ICommunicationBoxUI
+public interface IUICommunicationBox
 {
 
 }
 
-public interface ILobbyDialogManager
+public interface IUILobbyDialogManager
 {
 	// Common
 	public void CloseDialog();

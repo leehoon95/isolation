@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Net.Http;
+
 
 
 #if UNITY_EDITOR
@@ -49,7 +51,14 @@ public class TCPClientSO : ScriptableObject
 
 			Debug.Log("ConnectToServer");
 			_tcpClient = new TcpClient();
-			await _tcpClient.ConnectAsync(ServerAddress, Port);
+
+			await Task.Run(() => 
+			{
+				using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(3.0)))
+				{
+					_tcpClient.ConnectAsync(ServerAddress, Port).Wait(cancellationTokenSource.Token);
+				}
+			});
 
 			_tcpClient.NoDelay = true;
 			_tcpClient.LingerState = new LingerOption(false, 0);

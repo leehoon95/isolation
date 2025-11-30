@@ -29,6 +29,7 @@ public class NGOGameManager : MonoBehaviour
 	Lobby _lobby;
 	ILobbyEvents _lobbyEvents;
 	Coroutine _heartbeatCoroutin;
+	int _maxPeerConnection = 2;
 
 	void Awake()
 	{
@@ -54,34 +55,62 @@ public class NGOGameManager : MonoBehaviour
 		}
 
 		var nm = NetworkManager.Singleton;
-		
-		nm.OnClientConnectedCallback += (ulong id) =>
-		{
-			Debug.LogWarning($"NetworkManager OnClientConnectedCallback. id: {id}");
-			//_ = Spawn();
-		};
 
+		// deprecated
+		//nm.OnClientConnectedCallback += (ulong id) =>
+		//{
+		//};
+
+		// deprecated
+		//nm.OnClientDisconnectCallback += (ulong id) =>
+		//{
+		//};
+
+		// once the local client is ready
 		nm.OnClientStarted += () =>
 		{
 			Debug.LogWarning($"NetworkManager OnClientStarted.");
-
 		};
-
-		nm.OnClientDisconnectCallback += (ulong id) =>
-		{
-			Debug.LogWarning($"NetworkManager OnClientDisconnectCallback. id: {id}");
-		};
-
+	
+		// once the local client stops
 		nm.OnClientStopped += (bool isHost) =>
 		{
 			Debug.LogWarning($"NetworkManager OnClientStopped. isHost: {isHost}");
 			OnClientStopped();
-
 		};
 
 		nm.OnServerStopped += (bool isHost) =>
 		{
 			Debug.LogError($"NetworkManager OnServerStopped isHost: {isHost}");
+		};
+
+		nm.OnConnectionEvent += (NetworkManager nm, ConnectionEventData ced) =>
+		{
+			string log = $"NetworkManager.OnConnectionEvent {ced.ClientId} ====\n";
+			
+			log += "--- Peer Client Ids ---\n";
+			foreach (var peer in ced.PeerClientIds)
+			{
+				log += $"{peer}\n";
+			}
+		
+			switch (ced.EventType)
+			{
+				case ConnectionEvent.ClientConnected:
+					log += "ClientConnected";
+					break;
+				case ConnectionEvent.ClientDisconnected:
+					log += "ClientDisconnected";
+					break;
+				case ConnectionEvent.PeerConnected:
+					log += "PeerConnected";
+					break;
+				case ConnectionEvent.PeerDisconnected:
+					log += "PeerDisconnected";
+					break;
+			}
+
+			Debug.Log(log);
 		};
 
 		_uiso.OnClick_1 += () => { };
@@ -120,7 +149,7 @@ public class NGOGameManager : MonoBehaviour
 		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.RequestEnvironment, data);
 	}
 
-	async void OnDestroy()
+	void OnDestroy()
 	{
 		_uiso.ClearEvent();
 
@@ -132,9 +161,10 @@ public class NGOGameManager : MonoBehaviour
 
 	async Awaitable StartHost()
 	{
-		Debug.Log($"START HOST");
-		(var successRelay, var joinCode) = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(1, "dtls");
-
+		Debug.Log($"START HOST max peer connection: {_maxPeerConnection}");
+		// relay 최대 연결수 (p2p. host 제외)
+		(var successRelay, var joinCode) = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(_maxPeerConnection, "dtls");
+		
 		if (successRelay)
 		{
 			var callbacks = new LobbyEventCallbacks();
@@ -144,7 +174,7 @@ public class NGOGameManager : MonoBehaviour
 
 			(var successLobby, var lobby, var lobbyEvents) = await UGSLobbyManager.CreateLobby(
 				_playerInfo.LobbyName,
-				3,
+				_maxPeerConnection + 1, // lobby 최대 인원(host + client)
 				joinCode,
 				callbacks,
 				_playerInfo.LobbyPassword);
@@ -153,8 +183,6 @@ public class NGOGameManager : MonoBehaviour
 			{
 				_lobby = lobby;
 				_lobbyEvents = lobbyEvents;
-
-				//Spawn();
 
 				_heartbeatCoroutin = StartCoroutine(HeartbeatLobby());
 			}
@@ -204,9 +232,8 @@ public class NGOGameManager : MonoBehaviour
 				+ $"	{lobby.Data["GamePlaying"].Value}\n"
 				+ $"	{lobby.Data["RelayJoinCode"].Value}\n"
 				);
-
 #endif
-
+			
 			_lobby = lobby;
 
 			await UGSRelayManager.StartClientWithRelay(lobby.Data["RelayJoinCode"].Value, "dtls");

@@ -76,7 +76,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	 */
 	public NetworkObject Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
 	{
-		Debug.Log($"PlayerSpawner.Instantiate	client id: {ownerClientId} {position} {rotation.eulerAngles}");
+		//Debug.Log($"PlayerSpawner.Instantiate	client id: {ownerClientId} {position} {rotation.eulerAngles}");
 		if (_clientInstances.TryGetValue(ownerClientId, out var p))
 		{
 			p.gameObject.SetActive(true);
@@ -112,7 +112,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	 */
 	public void Destroy(NetworkObject networkObject)
 	{
-		Debug.Log("PlayerSpawner.Destroy");
+		//Debug.Log("PlayerSpawner.Destroy");
 		if (_clientInstances.TryGetValue(networkObject.NetworkObjectId, out var p))
 		{
 			p.gameObject.SetActive(false);
@@ -156,13 +156,13 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	{
 		if (!HasAuthority)
 		{
-			Debug.LogWarning("PlayerSpawner.SpawnObject You don't have the authority!");
+			//Debug.LogWarning("PlayerSpawner.SpawnObject You don't have the authority!");
 			return;
 		}
 
 		if (_clientInstances.TryGetValue(clientId, out var p))
 		{
-			Debug.Log("PlayerSpawner.SpawnPlaeyer found client object");
+			//Debug.Log("PlayerSpawner.SpawnPlaeyer found client object");
 			p.gameObject.SetActive(true);
 			p.SpawnWithOwnership(clientId, destroyWithScene);
 		}
@@ -235,7 +235,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 
 	void DespawnPlayer(ulong clientId)
 	{
-		Debug.Log($"PlayerSpawner.Despawn clientId: {clientId}");
+		//Debug.Log($"PlayerSpawner.Despawn clientId: {clientId}");
 		if (_clientInstances.TryGetValue(clientId, out var p))
 		{
 			p.Despawn(false);
@@ -249,7 +249,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	[Rpc(SendTo.Everyone)]
 	void NotifyPlayerSpawnedRpc(ulong clientId, ulong spawnedObjectId, RpcParams rpcParams = default)
 	{
-		Debug.Log($"PlayerSpawner.NotifyPlayerSpawned {clientId} {spawnedObjectId} {rpcParams.Receive.SenderClientId}");
+		//Debug.Log($"PlayerSpawner.NotifyPlayerSpawned {clientId} {spawnedObjectId} {rpcParams.Receive.SenderClientId}");
 		if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(spawnedObjectId, out var obj))
 		{
 			_clientInstances[clientId] = obj;
@@ -262,7 +262,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 
 	void SetPlayerShape(ulong ownerClientId, OwnerCharacter oc)
 	{
-		Debug.Log("PlayerSpawner.SetPlayerShape");
+		//Debug.Log("PlayerSpawner.SetPlayerShape");
 		if (NetworkManager.ServerClientId == ownerClientId)
 		{
 			oc.BodyColor = Color.red;

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UICommunicationBox : UIBehaviour, ICommunicationBoxUI
+public class UICommunicationBox : UIBehaviour, IUICommunicationBox
 {
     [SerializeField]
     ScrollRect _userList;

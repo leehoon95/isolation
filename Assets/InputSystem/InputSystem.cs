@@ -1,4 +1,4 @@
-	using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
@@ -51,12 +51,12 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 		Move?.Invoke(context.ReadValue<Vector2>());
 	}
 
-	void InputSystem_Actions.IPlayerActions.OnLook(InputAction.CallbackContext context)
-	{
-		//print($"OnLook: {Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>())}");
-		MousePos = context.ReadValue<Vector2>();
-		Look?.Invoke(context.ReadValue<Vector2>());
-	}
+	//void InputSystem_Actions.IPlayerActions.OnLook(InputAction.CallbackContext context)
+	//{
+	//	//print($"OnLook: {Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>())}");
+	//	MousePos = context.ReadValue<Vector2>();
+	//	Look?.Invoke(context.ReadValue<Vector2>());
+	//}
 
 	void InputSystem_Actions.IPlayerActions.OnAttack(InputAction.CallbackContext context)
 	{

@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 /*
- * scene 범위에 싱글턴을 구현하면서 
- * Multiplayer Play Mode의 가상 player 마다 런타임 인스턴스를 생성하기 위함 base class
+ * scene에 싱글턴을 구현하면서 
+ * Multiplayer Play Mode의 가상 player 마다 런타임 인스턴스를 생성하기 위한 base class
  * DontDestroyOnLoad는 GameManager가 결정
  */
 public abstract class SOHolderSinglton<T, TS> : MonoBehaviour 
@@ -29,5 +29,10 @@ public abstract class SOHolderSinglton<T, TS> : MonoBehaviour
 		}
 
 		RuntimeInstance = ScriptableObject.CreateInstance<T>();
+	}
+
+	void OnDestroy()
+	{
+		
 	}
 }

@@ -170,7 +170,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 40}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &959435506375876432
 CanvasRenderer:
@@ -298,7 +298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
-  m_VerticalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &939120150225362136
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +550,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: -80, y: 40}
-  m_SizeDelta: {x: 80, y: 40}
+  m_SizeDelta: {x: 80, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7438554691795646610
 CanvasRenderer:
@@ -668,8 +668,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f9137475f37d094c809f770692d4dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rt: {fileID: 4288646087913147519}
-  _targetRT: {fileID: 567651981451767811}
   _notifier: {fileID: 1595185016352765209}
   _minWidth: 80
   _minHeight: 0
@@ -713,7 +711,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 80, y: 40}
-  m_SizeDelta: {x: 80, y: 40}
+  m_SizeDelta: {x: 80, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7209116175927474719
 CanvasRenderer:
@@ -831,8 +829,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f9137475f37d094c809f770692d4dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rt: {fileID: 1793842080618040274}
-  _targetRT: {fileID: 7036907144561103510}
   _notifier: {fileID: 3706146635424561981}
   _minWidth: 80
   _minHeight: 0
@@ -1253,7 +1249,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 40}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7359048055558755406
 CanvasRenderer:
@@ -1379,7 +1375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
-  m_VerticalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &8165809507183774771
 GameObject:
   m_ObjectHideFlags: 0
