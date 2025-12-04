@@ -30,7 +30,6 @@ public class UIChildTextSizeFitter : UIBehaviour
 
 	public void FitSize()
 	{
-		Debug.Log("fitsize");
 		var rt = (RectTransform)transform;
 
 		rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _child.preferredHeight);

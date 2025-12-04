@@ -7,14 +7,13 @@ public class UIPlayerSlot : UIBehaviour
     [SerializeField]
     GameObject _slotParent;
     [SerializeField]
-    GameObject _slotPrefab;
-    [SerializeField]
-    List<UISlot> _slots;
-
-	protected override void OnRectTransformDimensionsChange()
-	{
-		
-	}
+    UISlot _slot0;
+	[SerializeField]
+	UISlot _slot1;
+	[SerializeField]
+	UISlot _slot2;
+	[SerializeField]
+	UISlot _slot3;
 
 	public void AddPlayerSlot(string slotName)
     {

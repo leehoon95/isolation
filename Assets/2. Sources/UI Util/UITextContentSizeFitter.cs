@@ -66,15 +66,15 @@ public class UITextContentSizeFitter : UIBehaviour
 		{
 			return;
 		}
-
-		if ((_targetSizeAxis | TargetSizeAxis.Horizontal) != TargetSizeAxis.None)
+		
+		if ((_targetSizeAxis & TargetSizeAxis.Horizontal) != TargetSizeAxis.None)
 		{
 			_rt.SetSizeWithCurrentAnchors(
 				RectTransform.Axis.Horizontal,
 				_textPreferredWidth < _minWidth ? _minWidth : _textPreferredWidth);
 		}
 
-		if ((_targetSizeAxis | TargetSizeAxis.Vertical) != TargetSizeAxis.None)
+		if ((_targetSizeAxis & TargetSizeAxis.Vertical) != TargetSizeAxis.None)
 		{
 			_rt.SetSizeWithCurrentAnchors(
 				RectTransform.Axis.Vertical,

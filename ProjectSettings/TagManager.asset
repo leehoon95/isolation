@@ -38,14 +38,17 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: FormostSortingLayer 1
+    uniqueID: 699810149
+    locked: 0
+  - name: BackgroundLayer
+    uniqueID: 2548025625
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: CSLT
-    uniqueID: 1083327703
-    locked: 0
-  - name: OVER
-    uniqueID: 699810149
+  - name: FowardLayer
+    uniqueID: 2229508713
     locked: 0
   m_RenderingLayers:
   - Default
