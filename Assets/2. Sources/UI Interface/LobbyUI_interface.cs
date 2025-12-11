@@ -1,6 +1,7 @@
+using System.Drawing;
 using UnityEngine.Events;
 
-public interface IUISessionList
+public interface IUILobbySessionList
 {
 	public void ResizeSessionList(int minimumSession);
 	public void SetSessionInfoIndex(
@@ -16,9 +17,10 @@ public interface IUISessionList
 #endif
 }
 
-public interface IUICommunicationBox
+public interface IUILobbyPlayerList
 {
-
+	public void AddPlayer(string playerName, Color color);
+	public void RemovePlayer(string playerName);
 }
 
 public interface IUILobbyDialogManager

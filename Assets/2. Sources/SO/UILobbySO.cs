@@ -5,26 +5,29 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UILobbySO", menuName = "Scriptable Objects/UILobbySO")]
 public class UILobbySO : ScriptableObject, ISupportNotificationUI
 {
-	IUISessionList _sessionList;
-	IUICommunicationBox _communicationBox;
+	IUILobbySessionList _sessionList;
+	IUILobbyPlayerList _playerList;
 	IUILobbyDialogManager _dialogManager;
 	INotificationUI _notification;
 
-	public IUISessionList SessionList
+	public IUILobbySessionList SessionList
 	{
 		get => _sessionList;
 		set => _sessionList = value;
 	}
-	public IUICommunicationBox CommunicationBox
+
+	public IUILobbyPlayerList PlayerList
 	{
-		get => _communicationBox;
-		set => _communicationBox = value;
+		get => _playerList;
+		set => _playerList = value;
 	}
+
 	public IUILobbyDialogManager DialogManager
 	{
 		get => _dialogManager;
 		set => _dialogManager = value;
 	}
+
 	public INotificationUI Notification
 	{
 		get => _notification;
@@ -44,8 +47,7 @@ public class UILobbySO : ScriptableObject, ISupportNotificationUI
 	public void RaiseOnClickSession(string lobbyId) => OnClickSession?.Invoke(lobbyId);
 	public void RaiseOnClickCreateSession() => OnClickCreateSession?.Invoke();
 	public void RaiseOnClickSettings() => OnClickSettings?.Invoke();
-	public void RaiseOnClickRefresh()
-		=> OnClickRefresh?.Invoke();
+	public void RaiseOnClickRefresh() => OnClickRefresh?.Invoke();
 	public void RaiseOnClickExit() => OnClickExit?.Invoke();
 	public void RaiseOnEndEditMessage(string message) => OnSendMessage?.Invoke(message);
 

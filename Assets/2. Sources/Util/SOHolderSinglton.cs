@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 /*
- * scene에 싱글턴을 구현하면서 
+ * scene에 singlton object를 구현하면서 
  * Multiplayer Play Mode의 가상 player 마다 런타임 인스턴스를 생성하기 위한 base class
  * DontDestroyOnLoad는 GameManager가 결정
  */

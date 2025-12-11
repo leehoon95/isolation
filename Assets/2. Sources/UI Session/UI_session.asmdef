@@ -1,0 +1,21 @@
+{
+    "name": "UI_session",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8add87b30d9750a458f291061c348f24",
+        "GUID:01d3fa72ebbbaf649b2612bce25f3812",
+        "GUID:14dd90aae613ce0488e315c7c921ba24",
+        "GUID:f6af6f051f6adc2449caf94223f9a145",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:3d13a5aac7e10dc4baa8d622b52c2977"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

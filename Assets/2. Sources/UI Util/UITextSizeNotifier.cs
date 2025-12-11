@@ -20,7 +20,6 @@ public class UITextPreferredSizeNotifier : UIBehaviour
 
 	protected override void OnRectTransformDimensionsChange()
 	{
-		base.OnRectTransformDimensionsChange();
 		OnTextPreferredSizeChanged?.Invoke(_targetText.preferredWidth, _targetText.preferredHeight); 
 	}
 }

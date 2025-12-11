@@ -44,6 +44,7 @@ Material:
     - _ColorMask: 15
     - _Horizontal: 1
     - _MoveHorizontal: 1
+    - _PixelResolution: 2
     - _PixelSize: 60
     - _SOFTMASKABLE: 1
     - _SOFTMASK_EDITOR: 1

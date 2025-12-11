@@ -24,6 +24,10 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 		if (material != null)
 		{
 #if UNITY_EDITOR
+			/*
+			 * DestroyImmediate
+			 * 주로 에디터 스크립트에서 오브젝트를 제거할 때 사용한다.
+			 */
 			DestroyImmediate(material);
 #else
 			Destroy(material);
@@ -71,7 +75,7 @@ public class UIMaterialControllerBase : UIBehaviour, IMaterialModifier
 			 * Editor를 껐다 켜도 남아 있지 않음
 			 * 임시 리소소를 만들 때 메모리와 저장 공간 낭비를 방지 한다.
 			 * 
-			 * 즉, 런타임에만 필요한 임시 Material을 생성
+			 * 즉, 런타임용 임시 Material을 생성
 			 */
 		}
 

@@ -34,7 +34,9 @@ public class LobbyManager : MonoBehaviour
 			|| _tcpClient == null
 			|| _uiso == null)
 		{
-			throw new Exception("Where is the SO holder in lobby scene");
+			//throw new Exception("Where is the SO holder in lobby scene");
+			GLogger.LogWarning("Where is the SO holder in lobby scene");
+			return;
 		}
 
 		_uiso.OnClickCreateSession += OnClickCreateSession;

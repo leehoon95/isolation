@@ -44,7 +44,8 @@ Material:
     - _ColorMask: 15
     - _Horizontal: 0
     - _MoveHorizontal: 0
-    - _PixelSize: 60
+    - _PixelResolution: 2
+    - _PixelSize: 4.7
     - _SpeedDenominator: 20
     - _Stencil: 0
     - _StencilComp: 8

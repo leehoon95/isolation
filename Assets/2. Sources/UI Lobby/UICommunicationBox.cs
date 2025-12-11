@@ -3,7 +3,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UICommunicationBox : UIBehaviour, IUICommunicationBox
+
+// deprecated
+public class UICommunicationBox : UIBehaviour//, IUICommunicationBox
 {
     [SerializeField]
     ScrollRect _userList;
@@ -18,8 +20,8 @@ public class UICommunicationBox : UIBehaviour, IUICommunicationBox
 	{
         base.Start();
 
-		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
-		_uiso.CommunicationBox = this;
+		//_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
+		//_uiso.CommunicationBox = this;
 
 		_inputMessageField.onEndEdit.AddListener(OnEndEdit);
 	}

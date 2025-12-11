@@ -1,22 +1,15 @@
-using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UISessionList : UIBehaviour, IUISessionList
+[RequireComponent(typeof(ScrollRect))]
+public class UILobbySessionList : UIBehaviour, IUILobbySessionList
 {
 	[SerializeField]
 	ScrollRect _scrollRect;
 	[SerializeField]
-	Button _createSessionButton;
-	[SerializeField]
-	Button _settingButton;
-	[SerializeField]
-	Button _refreshButton;
-	[SerializeField]
-	Button _exitButton;
-	[SerializeField]
-	SessionItem _sessionPrefap;
+	UISessionItem _sessionPrefap;
 	[SerializeField]
 	GameObject _emptySessionListNotification;
 
@@ -26,11 +19,8 @@ public class UISessionList : UIBehaviour, IUISessionList
 	{
 		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.SessionList = this;
-		
-		_createSessionButton.onClick.AddListener(() => _uiso.RaiseOnClickCreateSession());
-		_settingButton.onClick.AddListener(() => _uiso.RaiseOnClickSettings());
-		_refreshButton.onClick.AddListener(() => _uiso.RaiseOnClickRefresh());
-		_exitButton.onClick.AddListener(() => _uiso.RaiseOnClickExit());
+
+		_scrollRect = GetComponent<ScrollRect>();
 	}
 
 	void OnExit()
@@ -60,31 +50,23 @@ public class UISessionList : UIBehaviour, IUISessionList
 		_uiso.RaiseOnClickSession(lobbyId);
 	}
 
-	protected override void OnRectTransformDimensionsChange()
-	{
-		if (_scrollRect.content.childCount == 0)
-		{
-			return;
-		}
+	//protected override void OnRectTransformDimensionsChange()
+	//{
+	//	if (_scrollRect.content.childCount == 0)
+	//	{
+	//		return;
+	//	}
 
-		RectTransform rectTransform = _scrollRect.content.GetComponent<RectTransform>();
+	//	RectTransform rectTransform = _scrollRect.content.GetComponent<RectTransform>();
 
-		int count = _scrollRect.content.childCount;
+	//	int count = _scrollRect.content.childCount;
 
-		for (int i = 0; i < count; i++)
-		{
-			var si = _scrollRect.content.GetChild(i).GetComponent<SessionItem>();
-			si.FitSize(rectTransform);
-		}
-	}
-
-	protected override void OnDestroy()
-	{
-		_createSessionButton.onClick.RemoveAllListeners();
-		_settingButton.onClick.RemoveAllListeners();
-		_refreshButton.onClick.RemoveAllListeners();
-		_exitButton.onClick.RemoveAllListeners();
-	}
+	//	for (int i = 0; i < count; i++)
+	//	{
+	//		var si = _scrollRect.content.GetChild(i).GetComponent<UISessionItem>();
+	//		si.FitSize(rectTransform);
+	//	}
+	//}
 
 	public void SetSessionInfoIndex(
 		int index,
@@ -93,7 +75,7 @@ public class UISessionList : UIBehaviour, IUISessionList
 		int playerCount,
 		string lobbyId)
 	{
-		var sitem = _scrollRect.content.GetChild(index).GetComponent<SessionItem>();
+		var sitem = _scrollRect.content.GetChild(index).GetComponent<UISessionItem>();
 
 		sitem.SetSessionInfo(
 			name,
@@ -103,11 +85,11 @@ public class UISessionList : UIBehaviour, IUISessionList
 	}
 
 	/*
-	 * session item개수를 조절하고 가능하면 재활용함
+	 * session list item 개수가 변경되었을 때
+	 * item개수를 미리 조절함
 	 */
 	public void ResizeSessionList(int minimumSession)
 	{
-		//Debug.Log($"ResizeSessionList {minimumSession}");
 		if (minimumSession > _scrollRect.content.childCount)
 		{
 			int countToAdd = minimumSession - _scrollRect.content.childCount;
@@ -115,13 +97,10 @@ public class UISessionList : UIBehaviour, IUISessionList
 
 			for (int i = 0; i < countToAdd; i++)
 			{
-				SessionItem sessionItem = Instantiate(_sessionPrefap);
+				var sessionItem = Instantiate(_sessionPrefap, _scrollRect.transform);
 				sessionItem.OnClick += OnClickSessionEntry;
 				sessionItem.transform.SetParent(_scrollRect.content);
-				sessionItem.FitSize(rt);
 				sessionItem.transform.localScale = Vector3.one;
-
-				Debug.Log("add session prefab!");
 			}
 
 			return;
@@ -130,13 +109,21 @@ public class UISessionList : UIBehaviour, IUISessionList
 		{
 			int countToRemove = _scrollRect.content.childCount - minimumSession;
 
+#if UNITY_EDITOR
+			countToRemove--;
+			while (countToRemove >= 0)
+			{
+				DestroyImmediate(_scrollRect.content.GetChild(countToRemove).gameObject);
+				countToRemove--;
+			}
+#else
 			for (int i = 0; i < countToRemove; i++)
 			{
 				Destroy(_scrollRect.content.GetChild(i).gameObject);
-				Debug.Log("destroy session prefab!");
+			}
+#endif
 			}
 		}
-	}
 
 	public void ShowEmptySessionListNotification(bool show)
 	{
@@ -156,6 +143,28 @@ public class UISessionList : UIBehaviour, IUISessionList
 			0,
 			0,
 			"");
+	}
+
+	public void AddTempSession_10()
+	{
+		int count = _scrollRect.content.childCount;
+
+		ResizeSessionList(count + 10);
+
+		for (int i = 0; i < 10; i++)
+		{
+			SetSessionInfoIndex(
+				count + i,
+				$"temp {count + i}",
+				0,
+				0,
+				"");
+		}
+	}
+
+	public void ClearSessionList()
+	{
+		ResizeSessionList(0);
 	}
 #endif
 }

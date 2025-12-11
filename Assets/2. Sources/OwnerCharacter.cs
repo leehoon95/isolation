@@ -52,7 +52,7 @@ public class OwnerCharacter : NetworkBehaviour
 			{
 				return;
 			}
-
+			
 			_inputSystem.Move += OnMove;
 			//_inputSystem.Look += OnLook;
 			_inputSystem.Attack += OnAttack;

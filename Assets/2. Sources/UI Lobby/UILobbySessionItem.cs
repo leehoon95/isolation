@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SessionItem : UIBehaviour
+public class UISessionItem : UIBehaviour
 {
 	[SerializeField]
 	uint _padding;
@@ -53,16 +53,16 @@ public class SessionItem : UIBehaviour
 		_slotText.text = "0 / 4";
 	}
 
-	public void FitSize(RectTransform parentRectTransform)
-	{
-		RectTransform rectTransform = GetComponent<RectTransform>();
+	//public void FitSize(RectTransform parentRectTransform)
+	//{
+	//	RectTransform rectTransform = GetComponent<RectTransform>();
 
-		rectTransform.SetSizeWithCurrentAnchors(
-			RectTransform.Axis.Horizontal,
-			parentRectTransform.rect.width - _padding * 2);
-		rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-			40f);
-	}
+	//	rectTransform.SetSizeWithCurrentAnchors(
+	//		RectTransform.Axis.Horizontal,
+	//		parentRectTransform.rect.width - _padding * 2);
+	//	rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+	//		40f);
+	//}
 
 	public void SetSessionInfo(
 		string name,
