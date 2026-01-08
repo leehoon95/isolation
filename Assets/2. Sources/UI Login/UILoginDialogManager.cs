@@ -1,11 +1,16 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class UILoginDialogManager : UIBehaviour, ILoginDialogManager
+public class UILoginDialogManager : UIBehaviour, IUILoginDialogManager
 {
+	[SerializeField] Button _cancelButton;
 	[SerializeField] UIDialogOk _dialogOk;
 	[SerializeField] UIDialogYesNo _dialogYesNo;
+	[SerializeField] UIDialogCreateAccount _dialogCreateAccount;
+	[SerializeField] CanvasGroup _canvasGroup;
 
 	UILoginSO _uiso;
 
@@ -15,18 +20,79 @@ public class UILoginDialogManager : UIBehaviour, ILoginDialogManager
 		_uiso.DialogManager = this;
 	}
 
-	public void SetActive_Ok(bool active) => _dialogOk.gameObject.SetActive(active);
-	public void SetTitle_Ok(string title) => _dialogOk.SetTitle(title);
-	public void SetContent_Ok(string content) => _dialogOk.SetContent(content);
-	public void SetOkButtonText_Ok(string text) => _dialogOk.SetOkButtonText(text);
-	public void AddOnOk_Ok(UnityAction ua) => _dialogOk.OnOk += ua;
-	public void RemoveOnOk_Ok(UnityAction ua) => _dialogOk.OnOk -= ua;
-	
-	public void SetActive_YesNo(bool active) => _dialogYesNo.gameObject.SetActive(active);
-	public void SetTitle_YesNo(string title) => _dialogYesNo.SetTitle(title);
-	public void SetContent_YesNo(string content) => _dialogYesNo.SetContent(content);
-	public void AddOnYes_YesNo(UnityAction ua) => _dialogYesNo.OnYes += ua;
-	public void RemoveOnYes_YesNo(UnityAction ua) => _dialogYesNo.OnYes -= ua;
-	public void AddOnNo_YesNo(UnityAction ua) => _dialogYesNo.OnNo += ua;
-	public void RemoveOnNo_YesNo(UnityAction ua) => _dialogYesNo.OnNo -= ua;
+	// dialog cancel button action
+	public void SetOnCancelDialog(UnityAction onCancel)
+	{
+		_cancelButton.onClick.RemoveAllListeners();
+		if (onCancel != null)
+		{
+			_cancelButton.onClick.AddListener(onCancel);
+		}
+	}
+
+	public void ShowOkDialog(
+		string title, 
+		string content, 
+		string okButton, 
+		UnityAction onOk)
+	{
+		_cancelButton.gameObject.SetActive(true);
+		_dialogOk.gameObject.SetActive(true);
+		_dialogOk.SetTitle(title);
+		_dialogOk.SetContent(content);
+		_dialogOk.SetOkButtonText(okButton);
+		_dialogOk.OnOk += onOk;
+	}
+
+	public void HideOkDialog()
+	{
+		_cancelButton.gameObject.SetActive(false);
+		_dialogOk.gameObject.SetActive(false);
+	}
+
+	public void ShowYesNoDialog(
+		string title, 
+		string content, 
+		string yesButton, 
+		string noButton, 
+		UnityAction onYes, 
+		UnityAction onNo)
+	{
+		_dialogYesNo.gameObject.SetActive(true);
+		_dialogYesNo.SetTitle(title);
+		_dialogYesNo.SetContent(content);
+		_dialogYesNo.SetYesButtonText(yesButton);
+		_dialogYesNo.SetNoButtonText(noButton);
+		_dialogYesNo.OnYes += onYes;
+		_dialogYesNo.OnNo += onNo;
+	}
+
+	public void HideYesNoDialog()
+	{
+		_dialogYesNo.gameObject.SetActive(false);
+	}
+
+	public void ShowAccountCreationDialog(
+		UnityAction<AccountCreationApplication> onSubmit)
+	{
+		_cancelButton.gameObject.SetActive(true);
+		_dialogCreateAccount.gameObject.SetActive(true);
+		_dialogCreateAccount.OnSubmit += onSubmit;
+	}
+
+	public void HideAccountCreationDialog()
+	{
+		_cancelButton.gameObject.SetActive(false);
+		_dialogCreateAccount.gameObject.SetActive(false);
+	}
+
+	public void SetAccountCreationDialogOkButtonWaiting(bool waiting)
+	{
+		_dialogCreateAccount.SetOkButtonWaiting(waiting);
+	}
+
+	public void SetInteractable(bool interactable)
+	{
+		_canvasGroup.interactable = interactable;
+	}
 }

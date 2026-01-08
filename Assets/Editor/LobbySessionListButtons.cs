@@ -2,7 +2,7 @@ using NUnit.Framework.Internal;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(UILobbySessionList))]
+[CustomEditor(typeof(UILobbyList))]
 public class LobbySessionListButtons : Editor
 {
 	public override void OnInspectorGUI()
@@ -11,7 +11,7 @@ public class LobbySessionListButtons : Editor
 
 		EditorGUILayout.LabelField("Test", EditorStyles.boldLabel);
 
-		UILobbySessionList component = (UILobbySessionList)target;
+		UILobbyList component = (UILobbyList)target;
 		
 		//if (Selection.objects.Length > 0 )
 		//{

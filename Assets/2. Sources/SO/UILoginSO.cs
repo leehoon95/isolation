@@ -6,19 +6,13 @@ using UnityEngine.Playables;
 
 [Serializable]
 [CreateAssetMenu(fileName = "UILoginSO", menuName = "Scriptable Objects/UILoginSO")]
-public class UILoginSO : ScriptableObject, ISupportNotificationUI
+public class UILoginSO : ScriptableObject
 {
-	ILoginUI _loginUI;
+	IUILoginPannel _loginUI;
 	INotificationUI _notification;
-	ILoginDialogManager _dialogManager;
+	IUILoginDialogManager _dialogManager;
 
-	public event Action<string> OnLoginEnter;
-
-	// test
-	public event Action OnDisconnect;
-	public event Action OnSendUDPData;
-
-	public ILoginUI LoginUI
+	public IUILoginPannel LoginUI
 	{
 		get { return _loginUI; }
 		set { _loginUI = value; }
@@ -30,26 +24,47 @@ public class UILoginSO : ScriptableObject, ISupportNotificationUI
 		set { _notification = value; }
 	}
 
-	public ILoginDialogManager DialogManager
+	public IUILoginDialogManager DialogManager
 	{
 		get { return _dialogManager; }
 		set { _dialogManager = value; }
 	}
 
+	public event Action<string, string> OnLogin;
+	public event Action OnRegister;
+
+	// test
+	public event Action OnTest_1;
+	public event Action OnTest_2;
+
+	public void ClearEvent()
+	{
+		OnLogin = null;
+		OnRegister = null;
+	}
+
 	// UI Event service
-	public void RaiseOnLoginEnter(string nickName) 
-		=> OnLoginEnter?.Invoke(nickName);
-	public void RaiseOnDisconnect() 
-		=> OnDisconnect?.Invoke();
-	public void RaiseOnSendUDPData() 
-		=> OnSendUDPData?.Invoke();
+	public void RaiseOnLogin(string nickName, string password) 
+		=> OnLogin?.Invoke(nickName, password);
+	public void RaiseOnRegister()
+		=> OnRegister?.Invoke();
+	public void RaiseTestEvent_1() 
+		=> OnTest_1?.Invoke();
+	public void RaiseTestEvent_2() 
+		=> OnTest_2?.Invoke();
 
 	// Notice service
 	public void ShowNotification(string text) 
 		=> _notification?.ShowNotification(text);
-
+	
 	// Login Pannel
-	public void SetNickname(string nickname) => _loginUI.SetNickname(nickname);
+	public void SetId(string id) => _loginUI.SetId(id);
+	public void SetPassword(string password) => _loginUI.SetPassword(password);
+	public void SetInteractable(bool interactable)
+	{
+		_loginUI.SetInteractable(interactable);
+		_dialogManager.SetInteractable(interactable);
+	}
 }
 
 public class UILoginSOHolder : SOHolderSinglton<UILoginSO, UILoginSOHolder>

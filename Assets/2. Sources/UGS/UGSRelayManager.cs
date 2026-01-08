@@ -1,8 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
@@ -18,7 +17,7 @@ public class UGSRelayManager
 	 * 
 	 * return (result, joincode(or reason if failed))
 	 */
-	public static async Awaitable<(bool, string)> StartHostWithRelayAndGetJoinCode(
+	public static async Task<(bool, string)> StartHostWithRelayAndGetJoinCode(
 		int maxConnections,
 		string connectionType)
 	{
@@ -58,14 +57,14 @@ public class UGSRelayManager
 		NetworkManager.Singleton.GetComponent<UnityTransport>()
 			.SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, connectionType));
 		var joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
+		
 		return (true, NetworkManager.Singleton.StartHost() ? joinCode : null);
 	}
 
 	/*
 	 * return (result, reason)
 	 */
-	public static async Awaitable<bool> StartClientWithRelay(string joinCode, string connectionType)
+	public static async Task<bool> StartClientWithRelay(string joinCode, string connectionType)
 	{
 		if (joinCode.IsNullOrEmpty())
 		{
@@ -84,7 +83,7 @@ public class UGSRelayManager
 		try
 		{
 			allocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
-
+			
 			NetworkManager.Singleton.GetComponent<UnityTransport>()
 				.SetRelayServerData(AllocationUtils.ToRelayServerData(allocation, connectionType));
 
@@ -101,9 +100,8 @@ public class UGSRelayManager
 		}
 		catch (RelayServiceException rse)
 		{
-			//Debug.LogException(rse);
-			Debug.LogError("RelayManager.StartHostWithRelayAndGetJoinCode Exception(RelayServiceException)" +
-				"reason: {rse.Reason.ToString()}");
+			Debug.Log("RelayManager.StartHostWithRelayAndGetJoinCode Exception(RelayServiceException)" +
+				$"reason: {rse.Reason.ToString()}");
 			
 			return false;
 		}
@@ -115,4 +113,9 @@ public class UGSRelayManager
 			return false;
 		}
 	}
+
+	//public static int GetConnectedClientCount()
+	//{
+		
+	//}
 }

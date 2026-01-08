@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SessionGameManager : MonoBehaviour
 {
 	UISessionSO _uiso;
 	TCPClientSO _tcpClient;
 	PlayerInfoSO _playerInfo;
+	SessionParameterSO _sessionParameter;
 
 	void Awake()
 	{
@@ -14,28 +16,47 @@ public class SessionGameManager : MonoBehaviour
 			obj.AddComponent<UISessionSOHolder>();
 		}
 
-		if (FindAnyObjectByType<TCPClientHolder>() == null)
+		if (FindAnyObjectByType<TCPClientSOHolder>() == null)
 		{
 			var obj = new GameObject("[TCP Client Holder]");
-			obj.AddComponent<TCPClientHolder>();
+			obj.AddComponent<TCPClientSOHolder>();
 			DontDestroyOnLoad(obj);
 		}
 
-		if (FindAnyObjectByType<PlayerInfoHolder>() == null)
+		if (FindAnyObjectByType<PlayerInfoSOHolder>() == null)
 		{
 			var obj = new GameObject("[Player Info Holder]");
-			obj.AddComponent<PlayerInfoHolder>();
+			obj.AddComponent<PlayerInfoSOHolder>();
 			DontDestroyOnLoad(obj);
 		}
+
+		if (FindAnyObjectByType<SessionParameterSOHolder>() == null)
+		{
+			GLogger.LogError("SessionGameManger.Awake This session is invalid");
+			SceneManager.sceneLoaded += SceneLoadedOnInvalidSession;
+		}
+
+		
 	}
 
 	void Start()
 	{
-		_playerInfo = FindAnyObjectByType<PlayerInfoHolder>().Data;
-		_tcpClient = FindAnyObjectByType<TCPClientHolder>().Data;
+		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
+		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UISessionSOHolder>().Data;
+		_sessionParameter = FindAnyObjectByType<SessionParameterSOHolder>().Data;
 
 		_uiso.OnSubmitMessage += OnSubmitMessage;
+	}
+
+	void OnDisable()
+	{
+		SceneManager.sceneLoaded -= SceneLoadedOnInvalidSession;
+	}
+
+	void SceneLoadedOnInvalidSession(Scene scene, LoadSceneMode mode)
+	{
+		SceneManager.LoadScene("LobbyScene");
 	}
 
 	void OnSubmitMessage(string message)

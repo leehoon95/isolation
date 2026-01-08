@@ -1,19 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using Unity.Multiplayer.Center.NetcodeForGameObjectsExample.DistributedAuthority;
 using Unity.Netcode;
-using UnityEditor;
-using UnityEditor.PackageManager;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Pool;
 
 
-
 /*
- * scene¿¡ GameObject »ı¼º(¶Ç´Â spawn)ÇÏ´Â pool
- * ¿ÜºÎ¿¡¼­ objectId(string)À¸·Î prefabÀ» »ı¼º ¿äÃ»
+ * sceneì— GameObject ìƒì„±(ë˜ëŠ” spawn)í•˜ëŠ” pool
+ * ì™¸ë¶€ì—ì„œ objectId(string)ìœ¼ë¡œ prefabì„ ìƒì„± ìš”ì²­
  */
 public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 {
@@ -21,9 +15,9 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	List<PoolConfig> _poolConfig;
 
 	/*
-	 * pool ¼³Á¤°ªÀÌ¸ç 1:1 ´ëÀÀ
-	 * PrefabId: prefab Á¾·ù. ³×Æ®¿öÅ©¿¡¼­ ¾î¶² prefabÀÎÁö ¾Ë±â À§ÇØ »ç¿ëÇÔ
-	 * SO: object »ı¼º½Ã¿¡¸¸ »ç¿ëµÇ°í, ÀÌ¹Ì »ı¼ºµÈ object¿¡´Â Àû¿ëµÇÁö ¾ÊÀ½
+	 * pool ì„¤ì •ê°’ì´ë©° 1:1 ëŒ€ì‘
+	 * PrefabId: prefab ì¢…ë¥˜. ë„¤íŠ¸ì›Œí¬ì—ì„œ ì–´ë–¤ prefabì¸ì§€ ì•Œê¸° ìœ„í•´ ì‚¬ìš©í•¨
+	 * SO: object ìƒì„±ì‹œì—ë§Œ ì‚¬ìš©ë˜ê³ , ì´ë¯¸ ìƒì„±ëœ objectì—ëŠ” ì ìš©ë˜ì§€ ì•ŠìŒ
 	 */
 	[Serializable]
 	public class PoolConfig
@@ -36,7 +30,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * string: identifier. PoolConfig.Identifier¿Í °°Àº °ª
+	 * string: identifier. PoolConfig.Identifierì™€ ê°™ì€ ê°’
 	 */
 	Dictionary<string, PoolConfig> _configs = new();
 
@@ -51,7 +45,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	Dictionary<string, IDynamicPooledObject> _activatedObjects = new(); // guid, GameObject
 
 	/*
-	 * ³×Æ®¿öÅ©¿¡¼­ »ç¿ëµÇ´Â identifier ÀÏºÎÀÇ °ªÀ» ´ã´çÇÏ´Â pool
+	 * ë„¤íŠ¸ì›Œí¬ì—ì„œ ì‚¬ìš©ë˜ëŠ” identifier ì¼ë¶€ì˜ ê°’ì„ ë‹´ë‹¹í•˜ëŠ” pool
 	 */
 	HashSet<string> _objectIdPool = new HashSet<string>();
 	uint _objectIdCounter;
@@ -123,7 +117,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡°Ô effect¸¸ º¸¿©ÁÙ ¶§ »ç¿ë
+	 * ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì—ê²Œ effectë§Œ ë³´ì—¬ì¤„ ë•Œ ì‚¬ìš©
 	 */
 	public void CreateObject(
 		string prefabId,
@@ -144,7 +138,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * obejct¸¦ »ı¼º. ´Ù¸¥ client¿¡°Ô´Â effect¸¸ º¸ÀÏ ¼ö ÀÖ´Ù
+	 * obejctë¥¼ ìƒì„±. ë‹¤ë¥¸ clientì—ê²ŒëŠ” effectë§Œ ë³´ì¼ ìˆ˜ ìˆë‹¤
 	 */
 	[Rpc(SendTo.Everyone)]
 	void CreateObejctWithAnotherClientRpc(
@@ -166,7 +160,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		Vector2 position, 
 		Quaternion rotation)
 	{
-		// prefab Ã£±â
+		// prefab ì°¾ê¸°
 		if (!_pools.TryGetValue(prefabId, out var pool))
 		{
 			Debug.LogWarning($"PooledDynamicSpawner.CreateObject unknown prefab{prefabId}");
@@ -196,7 +190,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * object¸¦ spawn
+	 * objectë¥¼ spawn
 	 */
 	public void SpawnObjectWithOwnership(
 		Vector2 pos,
@@ -207,7 +201,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * obejct¸¦ spawn
+	 * obejctë¥¼ spawn
 	 */
 	[Rpc(SendTo.Server)]
 	void SpawnObejctaRpc(
@@ -240,7 +234,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * ÀÏ¹İ GameObject¸¦ »ç¿ëÇÏ´Â °æ¿ì
+	 * ì¼ë°˜ GameObjectë¥¼ ì‚¬ìš©í•˜ëŠ” ê²½ìš°
 	 */
 	public void ReleaseObject(IDynamicPooledObject dpo)
 	{
@@ -298,7 +292,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * NetworkObject¸¦ »ç¿ëÇÏ´Â °æ¿ì
+	 * NetworkObjectë¥¼ ì‚¬ìš©í•˜ëŠ” ê²½ìš°
 	 */
 	public void Despawn(IDynamicPooledObject go)
 	{

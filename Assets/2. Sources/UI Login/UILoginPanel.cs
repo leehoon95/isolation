@@ -3,109 +3,131 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 [DisallowMultipleComponent]
-public class UILoginPanel : UIBehaviour, ILoginUI
+public class UILoginPanel : UIBehaviour, IUILoginPannel
 {
 	[SerializeField]
-	TMP_InputField _nickNameInputField;
+	TMP_InputField _id;
 	[SerializeField]
-	Button _enterButton;
+	TMP_InputField _password;
+	[SerializeField]
+	GameObject _tooltipPrefab;
+	[SerializeField]
+	Button _loginButton;
+	[SerializeField]
+	Button _registerButton;
+
+	// test ui
 	[SerializeField]
 	Button _disconnectButton;
 	[SerializeField]
-	Button _sendUDPDataButton;
+	Button _sendAccountCreationMessage;
 	[SerializeField]
 	Button _notifyButton;
+	[SerializeField] 
+	CanvasGroup _canvasGroup;
 
 	UILoginSO _uiso;
+	UITooltip _tooltip;
 
 	protected override void Start()
 	{
 		_uiso = FindAnyObjectByType<UILoginSOHolder>().Data;
+		_uiso.LoginUI = this;
+		_tooltip = Instantiate(_tooltipPrefab, transform).GetComponent<UITooltip>();
 
-		_nickNameInputField.onValueChanged.AddListener(OnNickNameValueChanged);
-
-		//_nickNameInputField.onSubmit.AddListener(OnSubmit);
-
-		//_sdl = FindAnyObjectByType<SaveDataLoader>();
-		//if (_sdl != null)
-		//{
-		//	_nickNameInputField.text = _sdl.SaveData.nickName;
-		//}
-
-		_enterButton.onClick.AddListener(OnClickEnter);
-		_disconnectButton.onClick.AddListener(OnClickDisconnect);
+		_id.onValueChanged.AddListener(OnIdValueChanged);
+		_password.onValueChanged.AddListener(OnPasswordValueChanged);
+		
+		_loginButton.onClick.AddListener(OnClickLogin);
+		_registerButton.onClick.AddListener(OnClickRegister);
 
 		//test
-		_sendUDPDataButton.onClick.AddListener(() => {
-			_uiso.RaiseOnSendUDPData();
+		_disconnectButton.onClick.AddListener(() => {
+			_uiso.RaiseTestEvent_1();
 		});
 
-		_notifyButton.onClick.AddListener(() =>
-		{
-			_uiso.ShowNotification("fkdjskfjkdf000000000");
+		_sendAccountCreationMessage.onClick.AddListener(() => {
+			_uiso.RaiseTestEvent_2();
 		});
 
-		_uiso.LoginUI = this;
+		_notifyButton.onClick.AddListener(() => {
+			_uiso.ShowNotification($"fkdjskfjkdf {Random.Range(0f, 130f)}");
+		});
 	}
 	protected override void OnDestroy()
 	{
 		_uiso.LoginUI = null;
 	}
-	public void SetNickname(string nickname)
+	public void SetId(string id)
 	{
-		_nickNameInputField.text = nickname;
+		_id.text = id;
 	}
 
-	public void OnClickEnter()
+	public void SetPassword(string password)
 	{
-		if (_nickNameInputField.text.Length < 2)
+		_password.text = password;
+	}
+
+	void OnClickLogin()
+	{
+		GLogger.Log("onclicklogin");
+		if (_id.text.Length < 2)
 		{
-			_uiso.ShowNotification("´Ð³×ÀÓÀº 2±ÛÀÚ ÀÌ»ó ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			_tooltip.ShowTooltip(
+				"DefaultStringTable",
+				"warning-id-too-short",
+				_id.transform.position,
+				UITooltip.AnchorPreset.MiddleTop);
 			return;
 		}
 
-		//print("OnEnter() called input text: " + _nickNameInputField.text);
-		//_sdl.SaveData.nickName = _nickNameInputField.text;
-		//_sdl.WriteSaveDataAsync().ContinueWith(task =>
-		//{
-		//	if (task.IsFaulted)
-		//	{
-		//		Debug.LogError("Failed to write save data: " + task.Exception);
-		//	}
-		//	else
-		//	{
-		//		Debug.Log("Save data written successfully.");
-		//	}
-		//});
-
-		_uiso.RaiseOnLoginEnter(_nickNameInputField.text);
-	}
-	public void OnClickDisconnect()
-	{
-		print("Disconnect From the server.");
-		_uiso.RaiseOnDisconnect();
-	}
-	void OnNickNameValueChanged(string value)
-	{
-		//print("OnNickNameValueChanged() called with value: " + value);
-		FilteringNickName(value);
-	}
-
-
-	void FilteringNickName(string value)
-	{
-		string filtered = Regex.Replace(value, @"[^0-9a-zA-Z°¡-ÆR¤¡-¤¾¤¿-¤Ó]", "");
-		if (_nickNameInputField.text != filtered)
+		if (_password.text.Length < 2)
 		{
-			_nickNameInputField.text = filtered;
-			//_nickNameInputField.
-			//_nickNameInputField.caretPosition = filtered.Length;
+			_tooltip.ShowTooltip(
+				"DefaultStringTable",
+				"warning-password-too-short",
+				_password.transform.position,
+				UITooltip.AnchorPreset.MiddleTop);
+			return;
 		}
+
+		_uiso.RaiseOnLogin(_id.text, _password.text);
+	}
+
+	void OnClickRegister()
+	{
+		_uiso.RaiseOnRegister();
+	}
+
+	void OnIdValueChanged(string value)
+	{
+		_id.text = FilterText(value);
+	}
+
+	void OnPasswordValueChanged(string value)
+	{
+		_password.text = FilterText(value);
+	}
+
+	string FilterText(string value)
+	{
+		return Regex.Replace(value, @"[^0-9a-zA-Z°¡-ÆR¤¡-¤¾¤¿-¤Ó]", "");
+	}
+
+	public void SetInteractable(bool interactable)
+	{
+		_canvasGroup.interactable = interactable;
+		//_id.interactable = interactable;
+		//_password.interactable = interactable;
+		//_loginButton.interactable = interactable;
+		//_registerButton.interactable = interactable;
 	}
 }

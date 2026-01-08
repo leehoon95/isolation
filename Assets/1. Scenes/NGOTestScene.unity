@@ -640,10 +640,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3996e10d02cb19a4cb31b5bce2febe71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _obj: {fileID: 1809422644}
+  _mask: {fileID: 0}
   _animator: {fileID: 1809422646}
   _noticeContent: {fileID: 880715206}
-  _notificationBackground: {fileID: 1656627010}
 --- !u!114 &528223234
 MonoBehaviour:
   m_ObjectHideFlags: 0

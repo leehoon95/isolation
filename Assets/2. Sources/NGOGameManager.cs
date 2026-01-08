@@ -1,10 +1,14 @@
 using Google.Protobuf;
 using System;
 using System.Collections;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -42,8 +46,8 @@ public class NGOGameManager : MonoBehaviour
 
 	void Start()
 	{
-		_playerInfo = FindAnyObjectByType<PlayerInfoHolder>().Data;
-		_tcpClient = FindAnyObjectByType<TCPClientHolder>().Data;
+		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
+		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UINGOTestSOHolder>().Data;
 		_uiso.Notification = FindAnyObjectByType<UINotification>();
 
@@ -55,63 +59,14 @@ public class NGOGameManager : MonoBehaviour
 		}
 
 		var nm = NetworkManager.Singleton;
-
-		// deprecated
-		//nm.OnClientConnectedCallback += (ulong id) =>
-		//{
-		//};
-
-		// deprecated
-		//nm.OnClientDisconnectCallback += (ulong id) =>
-		//{
-		//};
-
-		// once the local client is ready
-		nm.OnClientStarted += () =>
-		{
-			Debug.LogWarning($"NetworkManager OnClientStarted.");
-		};
-	
-		// once the local client stops
-		nm.OnClientStopped += (bool isHost) =>
-		{
-			Debug.LogWarning($"NetworkManager OnClientStopped. isHost: {isHost}");
-			OnClientStopped();
-		};
-
-		nm.OnServerStopped += (bool isHost) =>
-		{
-			Debug.LogError($"NetworkManager OnServerStopped isHost: {isHost}");
-		};
-
-		nm.OnConnectionEvent += (NetworkManager nm, ConnectionEventData ced) =>
-		{
-			string log = $"NetworkManager.OnConnectionEvent {ced.ClientId} ====\n";
-			
-			log += "--- Peer Client Ids ---\n";
-			foreach (var peer in ced.PeerClientIds)
-			{
-				log += $"{peer}\n";
-			}
+		var ut = nm.GetComponent<UnityTransport>();
 		
-			switch (ced.EventType)
-			{
-				case ConnectionEvent.ClientConnected:
-					log += "ClientConnected";
-					break;
-				case ConnectionEvent.ClientDisconnected:
-					log += "ClientDisconnected";
-					break;
-				case ConnectionEvent.PeerConnected:
-					log += "PeerConnected";
-					break;
-				case ConnectionEvent.PeerDisconnected:
-					log += "PeerDisconnected";
-					break;
-			}
-
-			Debug.Log(log);
-		};
+		nm.OnServerStarted += OnServerStarted;
+		nm.OnServerStopped += OnServerStopped;
+		nm.OnClientStarted += OnClientStarted;
+		nm.OnClientStopped += OnClientStopped;
+		nm.OnConnectionEvent += OnConnectionEvent;
+		nm.OnPreShutdown += OnPreShutdown;
 
 		_uiso.OnClick_1 += () => { };
 		_uiso.OnClick_2 += () => { };
@@ -129,7 +84,7 @@ public class NGOGameManager : MonoBehaviour
 
 		//if (!_playerInfoHolder.Instance.Debugging)
 		{
-			if (_playerInfo.StartHost)
+			if (_playerInfo.Host)
 			{
 				_isHost = true;
 
@@ -137,41 +92,95 @@ public class NGOGameManager : MonoBehaviour
 			}
 			else
 			{
-				StartClient(_playerInfo.LobbyIdForEntry).Forget();
+				//_ = StartClient(_playerInfo.LobbyIdForEntry);
+				StartCoroutine(StartClientCo(_playerInfo.LobbyIdForEntry));
 			}
 		}
 
 		return;
-
-		M_RequestEnvironment re = new();
-		re.Filter = 1;
-		var data = re.ToByteArray();
-		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.RequestEnvironment, data);
 	}
 
 	void OnDestroy()
 	{
-		_uiso.ClearEvent();
-
 		if (_heartbeatCoroutin != null)
 		{
 			StopCoroutine(_heartbeatCoroutin);
 		}
 	}
 
+	void OnServerStarted() => GLogger.LogWarning($"NetworkManager OnServerStarted.");
+	void OnServerStopped(bool isHost) => GLogger.LogWarning($"NetworkManager OnServerStopped. isHost: {isHost}");
+	void OnClientStarted() => GLogger.LogWarning($"NetworkManager OnClientStarted. {NetworkManager.Singleton.LocalTime.Time} {NetworkManager.Singleton.ServerTime.Time}");
+	void OnClientStopped(bool isHost) => Debug.LogWarning($"NetworkManager OnClientStopped. isHost: {isHost}");
+
+	void OnConnectionEvent(NetworkManager nm, ConnectionEventData ced)
+	{
+		string eventLog = $"CE {ced.ClientId}";
+		switch (ced.EventType)
+		{
+			case ConnectionEvent.ClientConnected: // This event is set on the client-side of the newly connected client and on the server-side.
+				eventLog += "ClientConnected";
+				break;
+			case ConnectionEvent.ClientDisconnected: // This event is set on the client-side of the client that disconnected client and on the server-side.
+				eventLog += "ClientDisconnected";
+				break;
+			case ConnectionEvent.PeerConnected: // This event is set on clients that are already connected to the session.
+				eventLog += "PeerConnected";
+				break;
+			case ConnectionEvent.PeerDisconnected: // This event is set on clients that are already connected to the session.
+				eventLog += "PeerDisconnected";
+				break;
+		}
+
+		eventLog += '\n';
+
+		eventLog += "--- Peer Client Ids ---\n";
+		foreach (var peer in ced.PeerClientIds)
+		{
+			eventLog += $"{peer}\n";
+		}
+		GLogger.LogWarning(eventLog);
+	}
+
+	void OnPreShutdown() => GLogger.LogWarning("OnPreShutdown");
+
 	async Awaitable StartHost()
 	{
 		Debug.Log($"START HOST max peer connection: {_maxPeerConnection}");
-		// relay 최대 연결수 (p2p. host 제외)
-		(var successRelay, var joinCode) = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(_maxPeerConnection, "dtls");
+		//NetworkManager.Singleton.ConnectionApprovalCallback = (request, response) => {
+		//	GLogger.Log($"ConnectionApprovalCallback request client id: {request.ClientNetworkId}");
+		//	var reqClientId = request.ClientNetworkId;
+			
+		//	if (NetworkManager.Singleton.ConnectedClientsIds.Count >= _maxPeerConnection + 1)
+		//	{
+		//		GLogger.LogWarning($"Decline the peer connection request.(connected: {NetworkManager.Singleton.ConnectedClientsIds.Count})");
+		//		response.Approved = false;
+		//	}
+		//	else
+		//	{
+		//		GLogger.LogWarning($"Approved the peer connection request.(connected: {NetworkManager.Singleton.ConnectedClientsIds.Count})");
+		//		response.Approved = true;
+		//	}
+		//};
+		
+		// relay 최대 연결수 (host.에게 연결될 수 있는 client 수)
+		(var successRelay, var joinCode) = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(_maxPeerConnection - 1, "dtls");
 		
 		if (successRelay)
 		{
 			var callbacks = new LobbyEventCallbacks();
-			callbacks.LobbyChanged += OnLobbyChanged;
-			callbacks.KickedFromLobby += OnKickedFromLobby;
+			callbacks.LobbyChanged += (changes) =>
+			{
+				GLogger.LogWarning($"LobbyChanged");
+			};
+			callbacks.KickedFromLobby += () =>
+			{
+				GLogger.LogWarning("KickedFromLobby");
+			};
+			
 			callbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
-
+			
+			
 			(var successLobby, var lobby, var lobbyEvents) = await UGSLobbyManager.CreateLobby(
 				_playerInfo.LobbyName,
 				_maxPeerConnection + 1, // lobby 최대 인원(host + client)
@@ -188,37 +197,29 @@ public class NGOGameManager : MonoBehaviour
 			}
 			else
 			{
-				_playerInfo.MessageFromPreviousScene = "Lobby 생성 실패";
-
-				SceneManager.LoadScene("LobbyScene");
+				GLogger.LogError("Lobby 생성 실패");
+				LoadScene("LobbyScene");
 			}
 		}
 		else
 		{
-			_playerInfo.MessageFromPreviousScene = "Host 시작 실패";
-
-			SceneManager.LoadScene("LobbyScene");
+			GLogger.LogError("Host 시작 실패");
+			LoadScene("LobbyScene");
 		}
 
 		return;
-
-		M_JoinCode j = new();
-
-		j.JoinCode = joinCode;
-
-		var data = j.ToByteArray();
-
-		_ = _tcpClient.SendDataAsync((int)SessionMessage_Type.Joincode, data); // activate session
 	}
 
-	async Awaitable StartClient(string joinCode, string password = null)
+
+
+	async Task StartClient(string lobbyId, string password = null)
 	{
 		Debug.LogWarning("Start CLIENT");
 
 		(var lobby, var reason) = await UGSLobbyManager.JoinLobbyById(
-			joinCode, 
+			lobbyId, 
 			password);
-
+		
 		if (lobby != null)
 		{
 #if UNITY_EDITOR
@@ -237,35 +238,76 @@ public class NGOGameManager : MonoBehaviour
 			_lobby = lobby;
 
 			await UGSRelayManager.StartClientWithRelay(lobby.Data["RelayJoinCode"].Value, "dtls");
-
+			await Awaitable.MainThreadAsync();
 			//Spawn();
 		}
 		else
 		{
-			if (reason == LobbyExceptionReason.LobbyFull)
-			{
-				_playerInfo.MessageFromPreviousScene = "Session is full";
-			}
-			else
-			{
-				_playerInfo.MessageFromPreviousScene = "세션에 들어갈 수 없습니다";
-			}
-
-			SceneManager.LoadScene("NGOTestScene");
+			GLogger.LogError("StartClient failed to join lobby. reason: {reason}");
+			LoadScene("NGOTestScene");
 		}
 
 		return;
-		try
+	}
+
+	IEnumerator StartClientCo(string lobbyId, string password = null)
+	{
+		Debug.LogWarning("START CLIENT COROUTINE");
+		//NetworkManager.Singleton.ConnectionApprovalCallback = (request, response) => {
+		//	GLogger.Log($"ConnectionApprovalCallback request client id: {request.ClientNetworkId}");
+		//	var reqClientId = request.ClientNetworkId;
+
+		//	if (NetworkManager.Singleton.ConnectedClientsIds.Count >= _maxPeerConnection + 1)
+		//	{
+		//		GLogger.LogWarning($"Client: Decline the peer connection request.(connected: {NetworkManager.Singleton.ConnectedClientsIds.Count})");
+		//		response.Approved = false;
+		//	}
+		//	else
+		//	{
+		//		GLogger.LogWarning($"Client: Approved the peer connection request.(connected: {NetworkManager.Singleton.ConnectedClientsIds.Count})");
+		//		response.Approved = true;
+		//	}
+		//};
+		var joiningTask = UGSLobbyManager.JoinLobbyById(lobbyId, password);
+
+		while (!joiningTask.IsCompleted)
 		{
-			await UGSRelayManager.StartClientWithRelay(joinCode, "dtls");
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"외부 로그 {e.Message}");
+			yield return new WaitForSeconds(0.02f);
 		}
 
-		Debug.LogWarning("Start CLIENT END");
-	}
+		(var lobby, var reason) = joiningTask.Result;
+
+		if (lobby != null)
+		{
+#if UNITY_EDITOR
+			Debug.Log("Join Lobby Success!!!\n"
+				+ $"Player ID: {AuthenticationService.Instance.PlayerId}\n"
+				+ $"	{lobby.Id}\n"
+				+ $"	{lobby.Name}\n"
+				+ $"	{lobby.Created}\n"
+				+ $"	{lobby.HostId}\n"
+				+ $"	{lobby.Data["GameMode"].Value}\n"
+				+ $"	{lobby.Data["GamePlaying"].Value}\n"
+				+ $"	{lobby.Data["RelayJoinCode"].Value}\n"
+				);
+#endif
+
+			_lobby = lobby;
+
+			var startingRelayTask =  UGSRelayManager.StartClientWithRelay(lobby.Data["RelayJoinCode"].Value, "dtls");
+			while (!startingRelayTask.IsCompleted)
+			{
+				yield return new WaitForSeconds(0.02f);
+			}
+			//Spawn();
+		}
+		else
+		{
+			GLogger.LogError($"StartClientCo JoinLobbyById {reason}");
+			LoadScene("NGOTestScene");
+		}
+
+		yield break;	}
 
 	async void OnClientStopped()
 	{
@@ -292,23 +334,6 @@ public class NGOGameManager : MonoBehaviour
 		}
 	}
 
-	void OnLobbyChanged(ILobbyChanges changes)
-	{
-		if (changes.LobbyDeleted)
-		{
-			Debug.LogWarning("NGOGameManager.OnLobbyChanged LobbyDeleted");
-		}
-		else
-		{
-			changes.ApplyToLobby(_lobby);
-		}
-	}
-
-	void OnKickedFromLobby()
-	{
-		Debug.LogWarning("NGOGameManager.OnKickedFromLobby Kicked");
-		_lobbyEvents = null;
-	}
 
 	void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState state)
 	{
@@ -342,8 +367,7 @@ public class NGOGameManager : MonoBehaviour
 		Debug.LogWarning("NGOGameManager.LeaveFromLobby");
 		await UGSLobbyManager.RemovePlayer(_lobby);
 		NetworkManager.Singleton.Shutdown();
-
-		SceneManager.LoadScene("LobbyScene");
+		LoadScene("LobbyScene");
 	}
 
 	async void OnClickShowStatus()
@@ -386,7 +410,7 @@ public class NGOGameManager : MonoBehaviour
 		Debug.LogWarning(status);
 	}
 
-	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
+	async Task OnTCPDataReceived(byte[] buffer, int length)
 	{
 		if (length == 0)
 		{
@@ -394,8 +418,9 @@ public class NGOGameManager : MonoBehaviour
 
 			await Awaitable.MainThreadAsync();
 
-			_playerInfo.MessageFromPreviousScene = "Disconnected from the server.";
-			_ = SceneManager.LoadSceneAsync("LoginScene");
+			//_playerInfo.MessageFromPreviousScene = "Disconnected from the server.";
+			GLogger.LogError("NGOGameManager.OnTCPDataReceivec Disconnect from server.");
+			SceneManager.LoadScene("LoginScene");
 
 			return;
 		}
@@ -436,5 +461,19 @@ public class NGOGameManager : MonoBehaviour
 			//}
 		}
 
+	}
+
+	void LoadScene(string sceneName)
+	{
+		_uiso.ClearEvent();
+		var nm = NetworkManager.Singleton;
+		nm.OnServerStarted -= OnServerStarted;
+		nm.OnServerStopped -= OnServerStopped;
+		nm.OnClientStarted -= OnClientStarted;
+		nm.OnClientStopped -= OnClientStopped;
+		nm.OnConnectionEvent -= OnConnectionEvent;
+		nm.OnPreShutdown -= OnPreShutdown;
+		_tcpClient.OnReceived -= OnTCPDataReceived;
+		SceneManager.LoadScene(sceneName);
 	}
 }

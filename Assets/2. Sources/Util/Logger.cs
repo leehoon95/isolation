@@ -1,28 +1,40 @@
+using System;
 using UnityEngine;
 
-public static class GLogger
-{
-    public static bool ShowAlways = false;
 
-    public static void Log(string message)
+public sealed class GLogger
+{
+    const string _ENABLE_LOG = "ENABLE_LOG";
+
+	public static bool IsDebugBuild() => Debug.isDebugBuild;
+
+	[System.Diagnostics.Conditional(_ENABLE_LOG)]
+	public static void Log(string message)
     {
-#if UNITY_EDITOR
         Debug.Log(message);
-#endif
     }
 
-    public static void LogWarning(string message)
+	[System.Diagnostics.Conditional(_ENABLE_LOG)]
+	public static void LogWarning(string message)
     {
-#if UNITY_EDITOR
 		Debug.LogWarning(message);
-#endif
 	}
 
-
+    [System.Diagnostics.Conditional(_ENABLE_LOG)]
 	public static void LogError(string message)
 	{
-#if UNITY_EDITOR
 		Debug.LogError(message);
-#endif
+	}
+
+	[System.Diagnostics.Conditional(_ENABLE_LOG)]
+	public static void LogException(Exception e)
+	{
+		Debug.LogException(e);
+	}
+
+	[System.Diagnostics.Conditional(_ENABLE_LOG)]
+	public static void LogException(Exception e, UnityEngine.Object o)
+	{
+		Debug.LogException(e, o);
 	}
 }

@@ -1,0 +1,168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: DefaultStringTable Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: DefaultStringTable
+  m_TableCollectionNameGuidString: 91918a507bae7dc47b3d39959a4cb643
+  m_Entries:
+  - m_Id: 4931590172672
+    m_Key: account-creation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60572031660032
+    m_Key: guide-setting-personal-color
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72517191348224
+    m_Key: test-variable-group
+    m_Metadata:
+      m_Items: []
+  - m_Id: 109338168274944
+    m_Key: localization-korean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 109418757632000
+    m_Key: localization-english
+    m_Metadata:
+      m_Items: []
+  - m_Id: 523346465665024
+    m_Key: id-placeholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 551260196319232
+    m_Key: password-placeholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 554000590974976
+    m_Key: show-password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1278650680467456
+    m_Key: warning-id-too-short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1278925696786432
+    m_Key: warning-password-too-short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1329972184211456
+    m_Key: password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1577471362084864
+    m_Key: register-account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1580616565796864
+    m_Key: login
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1581334555144192
+    m_Key: guide-login
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1651526350024704
+    m_Key: network-connection-error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1651697381158912
+    m_Key: network-connection-error-massage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1651986704248832
+    m_Key: retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1654416493916160
+    m_Key: network-disconnected-from-server
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1672858848604160
+    m_Key: network-connected-from-server
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3505498530656256
+    m_Key: nickname-placeholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3507076721422336
+    m_Key: warning-nickname-too-short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6786013610258432
+    m_Key: account-creation-successful
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6792822756618240
+    m_Key: account-creation-failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6794755043110912
+    m_Key: account-creation-failure-reason-id-aleady-in-use
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6795302345256960
+    m_Key: account-creation-failure-reason-id-length-<2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6795535997349888
+    m_Key: account-creation-failure-reason-password-length-<2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6796014265446400
+    m_Key: account-creation-failure-reason-nickname-length-<2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6819214437265408
+    m_Key: account-creation-failure-reason-unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7170540732035072
+    m_Key: another-task-in-progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7494466511187968
+    m_Key: lobby-entry-error-full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7498919939289088
+    m_Key: lobby-entry-error-unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7862893620899840
+    m_Key: lobby-error-name-<2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7873630204473344
+    m_Key: waiting-account-creation-response
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7873952406712320
+    m_Key: creation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7896385796845568
+    m_Key: retry-connect-server
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5193247786780065825
+  references:
+    version: 2
+    RefIds:
+    - rid: 5193247786780065825
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1765921188403

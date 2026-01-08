@@ -3,17 +3,31 @@ using UnityEngine;
 
 [System.Serializable]
 [CreateAssetMenu(fileName = "UILobbySO", menuName = "Scriptable Objects/UILobbySO")]
-public class UILobbySO : ScriptableObject, ISupportNotificationUI
+public class UILobbySO : ScriptableObject
 {
-	IUILobbySessionList _sessionList;
+	IUILobbyList _lobbyList;
+	IUILobbyPlayerLabel _playerLabel;
+	IUILobbyButtons _buttons;
 	IUILobbyPlayerList _playerList;
 	IUILobbyDialogManager _dialogManager;
 	INotificationUI _notification;
 
-	public IUILobbySessionList SessionList
+	public IUILobbyList LobbyList
 	{
-		get => _sessionList;
-		set => _sessionList = value;
+		get => _lobbyList;
+		set => _lobbyList = value;
+	}
+
+	public IUILobbyPlayerLabel PlayerLabel
+	{
+		get => _playerLabel;
+		set => _playerLabel = value;
+	}
+
+	public IUILobbyButtons Buttons
+	{
+		get => _buttons;
+		set => _buttons = value;
 	}
 
 	public IUILobbyPlayerList PlayerList
@@ -35,54 +49,55 @@ public class UILobbySO : ScriptableObject, ISupportNotificationUI
 	}
 
 	// event
-	public event Action OnClickCreateSession;
+	public event Action OnClickCreateLobby;
 	public event Action OnClickSettings;
 	public event Action OnClickRefresh;
 	public event Action OnClickExit;
-	public event Action<string> OnClickSession;
-	public event Action<string> OnSendMessage;
-	public event Action OnCancelDialog;
+	public event Action<string> OnClickLobby;
+
+	public void ClearEvent()
+	{
+		OnClickSettings = null;
+		OnClickRefresh = null;
+		OnClickExit = null;
+		OnClickLobby = null;
+	}
 
 	// Buttons
-	public void RaiseOnClickSession(string lobbyId) => OnClickSession?.Invoke(lobbyId);
-	public void RaiseOnClickCreateSession() => OnClickCreateSession?.Invoke();
+	public void RaiseOnClickSession(string lobbyId) => OnClickLobby?.Invoke(lobbyId);
+	public void RaiseOnClickCreateLobby() => OnClickCreateLobby?.Invoke();
 	public void RaiseOnClickSettings() => OnClickSettings?.Invoke();
 	public void RaiseOnClickRefresh() => OnClickRefresh?.Invoke();
 	public void RaiseOnClickExit() => OnClickExit?.Invoke();
-	public void RaiseOnEndEditMessage(string message) => OnSendMessage?.Invoke(message);
-
-	// Dialog
-	public void RaiseOnCancelDialog() => OnCancelDialog?.Invoke();
 
 	// Notification
 	public void ShowNotification(string content)
 		=> _notification?.ShowNotification(content);
 
-	// Session List
-	public void ResizeSessionList(int minimumSession = 0) => _sessionList.ResizeSessionList(minimumSession);
-	public void SetSessionInfoIndex(
-		int index,
+	public void ResizeLobbyList(uint size = 0) => _lobbyList.ResizeLobbyList(size);
+	public void SetLobbyInfoByIndex(
+		uint index,
 		string name,
-		int maxPlayerCount,
-		int playerCount,
+		int maxPlayers,
+		int currentPlayer,
 		string lobbyId) 
-		=> _sessionList.SetSessionInfoIndex(
+		=> _lobbyList.SetLobbyInfoIndex(
 			index, 
-			name, 
-			maxPlayerCount, 
-			playerCount, 
+			name,
+			maxPlayers,
+			currentPlayer, 
 			lobbyId);
-	public void ShowEmptySessionListNotification(bool show)
-		=> _sessionList.ShowEmptySessionListNotification(show);
 
-#if UNITY_EDITOR
-	public void AddTempSession() => _sessionList.AddTempSession();
-#endif
+	public void SetPlayerLabel(string nickname, Color personalColor)
+		=> _playerLabel.SetPlayerLabel(nickname, personalColor);
+
+	public void SetInteractable(bool interactable)
+	{
+		_lobbyList.SetInteractable(interactable);
+		_buttons.SetInteractable(interactable);
+	}
 }
+
 public class UILobbySOHolder : SOHolderSinglton<UILobbySO, UILobbySOHolder>
 {
-	protected override void Awake()
-	{
-		base.Awake();
-	}
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 /*
  * scene에 singlton object를 구현하면서 
  * Multiplayer Play Mode의 가상 player 마다 런타임 인스턴스를 생성하기 위한 base class
- * DontDestroyOnLoad는 GameManager가 결정
+ * DontDestroyOnLoad는 해당 object를 참조하는 GameManager가 결정할 것
  */
 public abstract class SOHolderSinglton<T, TS> : MonoBehaviour 
 	where T : ScriptableObject
@@ -18,7 +18,7 @@ public abstract class SOHolderSinglton<T, TS> : MonoBehaviour
 	{
 		if (Instance != null && Instance != null)
 		{
-			Destroy(gameObject);
+			DestroyImmediate(gameObject);
 			return;
 		}
 
@@ -27,12 +27,23 @@ public abstract class SOHolderSinglton<T, TS> : MonoBehaviour
 		{
 			throw new NullReferenceException("SOHolderSinglton.Awake Instance is null");
 		}
-
+		
 		RuntimeInstance = ScriptableObject.CreateInstance<T>();
 	}
 
-	void OnDestroy()
-	{
-		
-	}
+	/*
+	 * 필드 모두 GC대상으로 에디터, 빌드에서 안전하나 명시적 파괴 필요시 참고할 것
+	 */
+	//protected virtual void OnDestroy()
+	//{
+	//	if (RuntimeInstance != null)
+	//	{
+	//		Destroy(RuntimeInstance);
+	//	}
+
+	//	if (Instance == this)
+	//	{
+	//		Instance = null;
+	//	}
+	//}
 }

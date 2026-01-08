@@ -14,10 +14,3 @@ public interface INotificationUI
 {
 	public void ShowNotification(string content);
 }
-
-public interface ISupportNotificationUI
-{
-	public INotificationUI Notification { get; set; }
-	public void ShowNotification(string text);
-}
-

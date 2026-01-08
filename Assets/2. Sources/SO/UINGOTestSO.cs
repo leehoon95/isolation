@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UINGOTestSO", menuName = "Scriptable Objects/UINGOTestSO")]
-public class UINGOTestSO : ScriptableObject, ISupportNotificationUI
+public class UINGOTestSO : ScriptableObject
 {
 	INGOTestButtonUI _ngoTestButton;
 	INGOTextUI _ngoText;

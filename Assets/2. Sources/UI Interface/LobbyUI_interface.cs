@@ -1,20 +1,21 @@
-using System.Drawing;
+using UnityEngine;
 using UnityEngine.Events;
 
-public interface IUILobbySessionList
+public interface IUILobbyList
 {
-	public void ResizeSessionList(int minimumSession);
-	public void SetSessionInfoIndex(
-		int index,
+	public void ResizeLobbyList(uint size, bool detroy = false);
+	public void SetLobbyInfoIndex(
+		uint index,
 		string name,
-		int maxPlayerCount,
-		int playerCount,
-		string lobbyId);
-	public void ShowEmptySessionListNotification(bool show);
+		int maxPlayers,
+		int currentPlayer,
+		string lobbyId); 
+	public void SetInteractable(bool interactable);
+}
 
-#if UNITY_EDITOR
-	public void AddTempSession();
-#endif
+public interface IUILobbyButtons
+{
+	public void SetInteractable(bool interactable);
 }
 
 public interface IUILobbyPlayerList
@@ -25,15 +26,14 @@ public interface IUILobbyPlayerList
 
 public interface IUILobbyDialogManager
 {
-	// Common
-	public void CloseDialog();
+	public void SetOnCancelDialog(UnityAction onCancel);
 
-	// CR: Create Session
-	public void OpenDialog_CR();
-	public void SetTitle_CR(string title);
-	public void SetContent_CR(string content);
-	public void AddOnOk_CR(UnityAction<string, string> ua);
-	public void RemoveOnOk_CR(UnityAction<string, string> ua);
+	public void ShowLobbyCreationDialog(UnityAction<string, string> onSubmit);
+	public void HideLobbyCreationDialog();
+	public void SetInteractable(bool interactable);
+}
 
-
+public interface IUILobbyPlayerLabel
+{
+	public void SetPlayerLabel(string nickname, Color personalColor);
 }

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UISessionSO", menuName = "Scriptable Objects/UISessionSO")]
-public class UISessionSO : ScriptableObject, ISupportNotificationUI
+public class UISessionSO : ScriptableObject
 {
 	INotificationUI _notification;
 	IUIPlayerSlotManager _playerSlotManager;

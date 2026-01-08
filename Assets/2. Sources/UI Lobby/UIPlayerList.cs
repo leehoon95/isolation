@@ -14,7 +14,7 @@ public class UIPlayerList : UIBehaviour, IUILobbyPlayerList
 		_uiso.PlayerList = this;
 	}
 
-	public void AddPlayer(string playerName, System.Drawing.Color color)
+	public void AddPlayer(string playerName, Color color)
 	{
 		throw new System.NotImplementedException();
 	}

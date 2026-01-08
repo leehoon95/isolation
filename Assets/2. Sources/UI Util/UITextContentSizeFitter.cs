@@ -24,9 +24,10 @@ public class UITextContentSizeFitter : UIBehaviour
 	[SerializeField] float _minWidth;
 	[SerializeField] float _minHeight;
 	[SerializeField] TargetSizeAxis _targetSizeAxis;
+	[SerializeField] float _textPreferredWidth;
+	[SerializeField] float _textPreferredHeight;
 
 	RectTransform _rt;
-	float _textPreferredWidth, _textPreferredHeight;
 
 	protected override void OnEnable()
 	{

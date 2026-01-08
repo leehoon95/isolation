@@ -1,26 +1,46 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public interface ILoginUI
+public class AccountCreationApplication
 {
-	public void SetNickname(string nickname);
+	public string id;
+	public string password;
+	public string nickname;
+	public uint h; // hue
+	public uint s; // saturation
+	public uint v; // value
 }
 
-public interface ILoginDialogManager
+public interface IUILoginPannel
 {
-	public void SetActive_Ok(bool active);
-	public void SetTitle_Ok(string title);
-	public void SetContent_Ok(string content);
-	public void SetOkButtonText_Ok(string text);
-	public void AddOnOk_Ok(UnityAction ua);
-	public void RemoveOnOk_Ok(UnityAction ua);
-	public void SetActive_YesNo(bool active);
-	public void SetTitle_YesNo(string title);
-	public void SetContent_YesNo(string content);
-	public void AddOnYes_YesNo(UnityAction ua);
-	public void RemoveOnYes_YesNo(UnityAction ua);
-	public void AddOnNo_YesNo(UnityAction ua);
-	public void RemoveOnNo_YesNo(UnityAction ua);
+	public void SetId(string Id);
+	public void SetPassword(string password);
+	public void SetInteractable(bool interactable);
+}
+
+public interface IUILoginDialogManager
+{
+	public void SetOnCancelDialog(UnityAction onCancel);
+
+	public void ShowOkDialog(
+	string title,
+	string content,
+	string okButton,
+	UnityAction onOk);
+	public void HideOkDialog();
+
+	public void ShowYesNoDialog(
+	string title,
+	string content,
+	string yesButton,
+	string noButton,
+	UnityAction onYes,
+	UnityAction onNo);
+	public void HideYesNoDialog();
+
+	public void ShowAccountCreationDialog(UnityAction<AccountCreationApplication> onSubmit);
+	public void HideAccountCreationDialog();
+	public void SetAccountCreationDialogOkButtonWaiting(bool waiting);
+	public void SetInteractable(bool interactable);
 }
 

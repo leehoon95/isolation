@@ -1,33 +1,31 @@
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 /*
  * In-scene placed NetworkObjects
- * Ç® °ü¸® ½Ã½ºÅÛ
- * »ı¼ºÇÏ´Â °Íº¸´Ù ¹èÄ¡ÇÏ´Â °ÍÀÌ ½±°Å³ª »óÈ£ÀÛ¿ë °¡´ÉÇÑ ¿ÀºêÁ§Æ®
- * ¾ÆÀÌÅÛÀÌ³ª ÇÃ·¹ÀÌ¾î Á¤º¸°¡ Æ÷ÇÔµÈ HUD
- * ÇÃ·¹ÀÌ¾î°¡ Æ®¸®°Å¿¡ ÁøÀÔÇÏ°Å³ª À§Ä¡¸¦ Æ¯Á¤ÇÒ ¼ö ÀÖ´Â ÅÚ·¹Æ÷ÅÍ
- * NetworkManager¿¡ µî·ÏÀÌ ÇÊ¿äÇÏÁö ¾ÊÀ½
- * Scene Management°¡ È°¼ºÈ­µÇ¸é ÃßÀû ¹× ½Äº° ¸ñÀûÀ¸·Î ³»ºÎÀûÀ¸·Î µî·ÏµÊ
+ * í’€ ê´€ë¦¬ ì‹œìŠ¤í…œ
+ * ìƒì„±í•˜ëŠ” ê²ƒë³´ë‹¤ ë°°ì¹˜í•˜ëŠ” ê²ƒì´ ì‰½ê±°ë‚˜ ìƒí˜¸ì‘ìš© ê°€ëŠ¥í•œ ì˜¤ë¸Œì íŠ¸
+ * ì•„ì´í…œì´ë‚˜ í”Œë ˆì´ì–´ ì •ë³´ê°€ í¬í•¨ëœ HUD
+ * í”Œë ˆì´ì–´ê°€ íŠ¸ë¦¬ê±°ì— ì§„ì…í•˜ê±°ë‚˜ ìœ„ì¹˜ë¥¼ íŠ¹ì •í•  ìˆ˜ ìˆëŠ” í…”ë ˆí¬í„°
+ * NetworkManagerì— ë“±ë¡ì´ í•„ìš”í•˜ì§€ ì•ŠìŒ
+ * Scene Managementê°€ í™œì„±í™”ë˜ë©´ ì¶”ì  ë° ì‹ë³„ ëª©ì ìœ¼ë¡œ ë‚´ë¶€ì ìœ¼ë¡œ ë“±ë¡ë¨
  * 
- * È¹µæ °¡´ÉÇÑ ¾ÆÀÌÅÛÀº ÀÏ¹İÀûÀ¸·Î ¹èÄ¡¿Í µ¿Àû »ı¼ºµÈ ³×Æ®¿öÅ© °´Ã¼¸¦ ¸ğµÎ »ç¿ëÇÏ´Â ÇÏÀÌºê¸®µå ¹æ½ÄÀÌ ÁÁÀ½
- * Àå¸é ³»¿¡ ¹èÄ¡µÈ °ÍÀº ¾ÆÀÌÅÛ¿¡ ´ëÇÑ Ãß°¡ Á¤º¸
- * µ¿Àû »ı¼ºµÈ °´Ã¼´Â ¾ÆÀÌÅÛ ÀÚÃ¼
+ * íšë“ ê°€ëŠ¥í•œ ì•„ì´í…œì€ ì¼ë°˜ì ìœ¼ë¡œ ë°°ì¹˜ì™€ ë™ì  ìƒì„±ëœ ë„¤íŠ¸ì›Œí¬ ê°ì²´ë¥¼ ëª¨ë‘ ì‚¬ìš©í•˜ëŠ” í•˜ì´ë¸Œë¦¬ë“œ ë°©ì‹ì´ ì¢‹ìŒ
+ * ì¥ë©´ ë‚´ì— ë°°ì¹˜ëœ ê²ƒì€ ì•„ì´í…œì— ëŒ€í•œ ì¶”ê°€ ì •ë³´
+ * ë™ì  ìƒì„±ëœ ê°ì²´ëŠ” ì•„ì´í…œ ìì²´
  * 
- * °øÅåÀûÀ¸·Î Awake°¡ ¸ÕÀú
+ * ê³µí†¡ì ìœ¼ë¡œ Awakeê°€ ë¨¼ì €
  * ->
  * In-scene placed:		Start	->	OnNetworkSpawn
  * Dynamically spawned:	OnNetworkSpawn	->	Start
  * 
- * µ¿ÀûÀ¸·Î ½ºÆùµÈ NetworkObjects¿¡¼­ DontDestroyOnLoad´Â »ç¿ëÇÏÁö ¸¶¶ó
+ * ë™ì ìœ¼ë¡œ ìŠ¤í°ëœ NetworkObjectsì—ì„œ DontDestroyOnLoadëŠ” ì‚¬ìš©í•˜ì§€ ë§ˆë¼
  */
 
 
 /*
- * host/client °ø¿ë
+ * host/client ê³µìš©
  * 
  * 
  * 
@@ -42,7 +40,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	// client id, player object
 	Dictionary<ulong, NetworkObject> _clientInstances = new();
 
-	// ¼ÒÀ¯ÇÑ playerÀÇ instance
+	// ì†Œìœ í•œ playerì˜ instance
 	//GameObject _instance;
 	//NetworkObject _instanceNO;
 	
@@ -52,9 +50,9 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 
 		/*
 		 * host only!
-		 * host´Â clientÀÌ¸é¼­ server·Î °£ÁÖµÇ¹Ç·Î override¸¦ ¼öµ¿À¸·Î µî·ÏÇØ¾ß ÇÑ´Ù
-		 * sourceNetworkPrefab: ¿À¹ö¶óÀÌµå ´ë»ó
-		 * networkPrefabOverrides: ÇÏ³ª ÀÌ»óÀÇ ¿À¹ö¶óÀÌµå·Î »ç¿ëµÇ´Â ÇÁ¸®Æé
+		 * hostëŠ” clientì´ë©´ì„œ serverë¡œ ê°„ì£¼ë˜ë¯€ë¡œ overrideë¥¼ ìˆ˜ë™ìœ¼ë¡œ ë“±ë¡í•´ì•¼ í•œë‹¤
+		 * sourceNetworkPrefab: ì˜¤ë²„ë¼ì´ë“œ ëŒ€ìƒ
+		 * networkPrefabOverrides: í•˜ë‚˜ ì´ìƒì˜ ì˜¤ë²„ë¼ì´ë“œë¡œ ì‚¬ìš©ë˜ëŠ” í”„ë¦¬í©
 		 */
 		if (!IsHost)
 		{
@@ -66,12 +64,12 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	}
 	
 	/*
-	 * INetworkprefabInstanceHandler.Instantiate ±¸Çö
-	 * Instantiate ¸Ş¼­µå´Â ±ÇÇÑÀÌ ¾ø´Â client¿¡¼­¸¸ È£ÃâµÊ
-	 * ±ÇÇÑ¿¡ ´ëÇÑ ³×Æ®¿öÅ© ÇÁ¸®ÆÕ µ¿ÀÛÀ» ÁöÁ¤ÇÏ·Á¸é prefab override¸¦ »ç¿ë
+	 * INetworkprefabInstanceHandler.Instantiate êµ¬í˜„
+	 * Instantiate ë©”ì„œë“œëŠ” ê¶Œí•œì´ ì—†ëŠ” clientì—ì„œë§Œ í˜¸ì¶œë¨
+	 * ê¶Œí•œì— ëŒ€í•œ ë„¤íŠ¸ì›Œí¬ í”„ë¦¬íŒ¹ ë™ì‘ì„ ì§€ì •í•˜ë ¤ë©´ prefab overrideë¥¼ ì‚¬ìš©
 	 * 
-	 * Authority(±ÇÇÑ)¿¡¼­ ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿Í ´Ù¸¥ prefab instance¸¦ »ç¿ëÇÏ·Á¸é
-	 * prefab override¸¦ °í·ÁÇÑ´Ù.
+	 * Authority(ê¶Œí•œ)ì—ì„œ ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì™€ ë‹¤ë¥¸ prefab instanceë¥¼ ì‚¬ìš©í•˜ë ¤ë©´
+	 * prefab overrideë¥¼ ê³ ë ¤í•œë‹¤.
 	 * 
 	 */
 	public NetworkObject Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
@@ -107,8 +105,8 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	}
 
 	/*
-	 * INetworkprefabInstanceHandler.Destroy ±¸Çö
-	 * ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡¼­ È£ÃâµÊ
+	 * INetworkprefabInstanceHandler.Destroy êµ¬í˜„
+	 * ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ì„œ í˜¸ì¶œë¨
 	 */
 	public void Destroy(NetworkObject networkObject)
 	{
@@ -149,8 +147,8 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	}
 
 	/*
-	 * ¸í½ÃÀûÀ¸·Î owner id¸¦ ÁöÁ¤ÇÏÁö ¾ÊÀ» °æ¿ì authorityÀ» °¡Áø client(host)°¡ owner°¡ µÈ´Ù
-	 * clientId: spawn ´ë»óÀÇ owner client id
+	 * ëª…ì‹œì ìœ¼ë¡œ owner idë¥¼ ì§€ì •í•˜ì§€ ì•Šì„ ê²½ìš° authorityì„ ê°€ì§„ client(host)ê°€ ownerê°€ ëœë‹¤
+	 * clientId: spawn ëŒ€ìƒì˜ owner client id
 	 */
 	void SpawnPlayer(ulong clientId, bool destroyWithScene = true)
 	{
@@ -244,7 +242,7 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	}
 	
 	/*
-	 * clientId ¼ÒÀ¯ÀÇ player°¡ »õ·Î spawnedµÊÀ» ¾Ë¸²(°°Àº player object°¡ µÎ ¹ø spawn µÇ¾îµµ È£ÃâµÇÁö ¾ÊÀ½)
+	 * clientId ì†Œìœ ì˜ playerê°€ ìƒˆë¡œ spawnedë¨ì„ ì•Œë¦¼(ê°™ì€ player objectê°€ ë‘ ë²ˆ spawn ë˜ì–´ë„ í˜¸ì¶œë˜ì§€ ì•ŠìŒ)
 	 */
 	[Rpc(SendTo.Everyone)]
 	void NotifyPlayerSpawnedRpc(ulong clientId, ulong spawnedObjectId, RpcParams rpcParams = default)

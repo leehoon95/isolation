@@ -32,6 +32,6 @@ public class UICommunicationBox : UIBehaviour//, IUICommunicationBox
 
         _inputMessageField.text = "";
 
-        _uiso.RaiseOnEndEditMessage(message);
+        //_uiso.RaiseOnEndEditMessage(message);
     }
 }

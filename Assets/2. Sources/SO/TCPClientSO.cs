@@ -23,9 +23,9 @@ public class TCPClientSO : ScriptableObject
 	NetworkStream _networkStream;
 	CancellationTokenSource _cancelToken;
 
-	Func<byte[], int, Awaitable> _onReceived;
+	Func<byte[], int, Task> _onReceived;
 
-	public event Func<byte[], int, Awaitable> OnReceived
+	public event Func<byte[], int, Task> OnReceived
 	{
 		add { _onReceived += value; } 
 		remove { _onReceived -= value; }
@@ -39,22 +39,21 @@ public class TCPClientSO : ScriptableObject
 		}
 	}
 
-	public async Task<bool> ConnectToServer()
+	public async Task<bool> ConnectToServer(float timeout = 3f)
 	{
 		try
 		{
 			if (_tcpClient != null && _tcpClient.Connected)
 			{
-				Debug.Log("Already connected to server");
+				GLogger.LogWarning("Already connected to server");
 				return true;
 			}
 
-			Debug.Log("ConnectToServer");
 			_tcpClient = new TcpClient();
 
 			await Task.Run(() => 
 			{
-				using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(3.0)))
+				using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds((double)timeout)))
 				{
 					_tcpClient.ConnectAsync(ServerAddress, Port).Wait(cancellationTokenSource.Token);
 				}
@@ -72,18 +71,21 @@ public class TCPClientSO : ScriptableObject
 			EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
 
-			Debug.Log("Connected to server!");
-
 			return true;
 		}
 		catch (SocketException se)
 		{
-			Debug.LogError($"TCP Receiving socket exception: {se.SocketErrorCode}");
+			GLogger.LogError($"TCPClient.ConnectToServer() SocketException: {se.SocketErrorCode}");
+			return false;
+		}
+		catch (OperationCanceledException e)
+		{
+			GLogger.LogError($"TCPClient.ConnectToServer() OperationCanceledException: {e.Message}");
 			return false;
 		}
 		catch (System.Exception ex)
 		{
-			Debug.LogError("ConnectToServer() Exception: " + ex.Message);
+			GLogger.LogError($"TCPClient.ConnectToServer() System.Exception: {ex.Message}");
 			return false;
 		}
 	}
@@ -109,47 +111,45 @@ public class TCPClientSO : ScriptableObject
 				int bytesRead = await _networkStream.ReadAsync(buffer, 0, buffer.Length, _cancelToken.Token);
 				if (bytesRead == 0)
 				{
-					Debug.LogWarning("TCPClient.ReceivingTask Receive 0 byte");
+					GLogger.Log("TCPClient.ReceivingTask Receive 0 byte");
 
 					if (_onReceived != null)
 					{
-						Debug.LogWarning("TCPClient.ReceivingTask Call ");
-						
-						_onReceived.Invoke(null, 0).Forget();
+						GLogger.Log("TCPClient.ReceivingTask Call ");
+
+						_onReceived.Invoke(null, 0).Wait();
 					}
 					else
 					{
-						Debug.LogWarning("TCPClient.ReceivingTask _onReceived is null");
+						GLogger.Log("TCPClient.ReceivingTask _onReceived is null");
 					}
 
 					break; // Connection closed
 				}
 
 				string header = System.Text.Encoding.UTF8.GetString(buffer, 0, 4);
-
+				
 				if (header != "prot")
 				{
-					Debug.Log("Received a invalid message from server...");
+					GLogger.Log("Received a invalid message from server...");
 					continue;
 				}
 
-				Debug.Log($"tcp data received! {bytesRead}");
-
 				if (_onReceived != null)
 				{
-					_onReceived.Invoke(buffer, bytesRead).Forget();
+					_onReceived.Invoke(buffer, bytesRead).Wait();
 				}
 
 				//string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
 			}
 			catch (OperationCanceledException e)
 			{
-				Debug.Log($"TCPClientSO.ReceivingTask() cancelled. {e.Message}");
+				GLogger.Log($"TCPClientSO.ReceivingTask() cancelled. {e.Message}");
 				break;
 			}
 			catch (Exception ex)
 			{
-				Debug.Log("TCPClientSO.ReceivingTask() Exception: " + ex.Message);
+				GLogger.Log("TCPClientSO.ReceivingTask() Exception: " + ex.Message);
 				break;
 			}
 		}
@@ -189,7 +189,7 @@ public class TCPClientSO : ScriptableObject
 		}
 		catch (System.Exception ex)
 		{
-			Debug.Log("CloseConnection() Exception: " + ex.Message);
+			GLogger.Log("CloseConnection() Exception: " + ex.Message);
 		}
 	}
 
@@ -224,7 +224,7 @@ public class TCPClientSO : ScriptableObject
 		return await SendDataAsync(type, Encoding.UTF8.GetBytes(str));
 	}
 
-	public async Task<bool> SendDataAsync(int type, byte[] data)
+	public async Task<bool> SendDataAsync(int type, byte[] data, float timeout = 3f)
 	{
 		if (_tcpClient != null && _tcpClient.Connected)
 		{
@@ -243,13 +243,20 @@ public class TCPClientSO : ScriptableObject
 				MemoryMarshal.Write(buffer.AsSpan(8), ref length);
 				data.CopyTo(buffer.AsSpan(12));
 
-				await _networkStream.WriteAsync(buffer, 0, length);
+				using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout)))
+				{
+					await _networkStream.WriteAsync(buffer, 0, length, cancellationTokenSource.Token);
+				}
 
 				return true;
 			}
-			catch (Exception ex)
+			catch (OperationCanceledException e)
 			{
-				Debug.LogError("WriteByteAsync() Exception: " + ex.Message);
+				GLogger.LogError($"SendDataAsync Exception {e.Message}");
+			}
+			catch (Exception e)
+			{
+				GLogger.LogError($"SendDataAsync Exception: {e.Message}");
 			}
 		}
 
@@ -261,7 +268,7 @@ public class TCPClientSO : ScriptableObject
 /*
  * 필드 초기화는 Awake에서 할 것.
  */
-public class TCPClientHolder : SOHolderSinglton<TCPClientSO, TCPClientHolder>
+public class TCPClientSOHolder : SOHolderSinglton<TCPClientSO, TCPClientSOHolder>
 {
 	protected override void Awake()
 	{

@@ -1,19 +1,26 @@
 using Google.Protobuf;
 using System;
 using System.Collections;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using Unity.VisualScripting;
 
-public class LobbyManager : MonoBehaviour
+public class LobbyGameManager : MonoBehaviour
 {
 	UILobbySO _uiso;
 	PlayerInfoSO _playerInfo;
 	TCPClientSO _tcpClient;
 	DateTime _lastRefreshTime = DateTime.MinValue;
-	bool _refreshing;
+	//bool _refreshing;
+
+	Coroutine _taskCo;
+	Coroutine _notifyCo;
+	bool _playerDataReceived;
+
 	void Awake()
 	{
 		if (FindAnyObjectByType<UILobbySOHolder>() == null)
@@ -21,14 +28,26 @@ public class LobbyManager : MonoBehaviour
 			var obj = new GameObject("[UI Lobby Holder]");
 			obj.AddComponent<UILobbySOHolder>();
 		}
+
+		// lobby를 시작했을 때 로비생성에 관여하는 SO는 있으면 안 됨
+		var lobbyInfoSO = FindAnyObjectByType<SessionParameterSOHolder>();
+		Destroy(lobbyInfoSO);
+
+		//if (FindAnyObjectByType<PlayerInfoSOHolder>() == null)
+		//{
+		//	var obj = new GameObject("[Player Info Holder]");
+		//	obj.AddComponent<PlayerInfoSOHolder>();
+		//	DontDestroyOnLoad(obj);
+		//}
 	}
 
 	void Start()
 	{
-		_playerInfo = FindAnyObjectByType<PlayerInfoHolder>().Data;
-		_tcpClient = FindAnyObjectByType<TCPClientHolder>().Data;
+		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
+		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.Notification = FindAnyObjectByType<UINotification>();
+		_uiso.ClearEvent();
 
 		if (_playerInfo == null
 			|| _tcpClient == null
@@ -39,41 +58,145 @@ public class LobbyManager : MonoBehaviour
 			return;
 		}
 
-		_uiso.OnClickCreateSession += OnClickCreateSession;
+		_uiso.OnClickCreateLobby += OnClickCreateLobby;
 		_uiso.OnClickSettings += OnClickSettings;
-		_uiso.OnClickRefresh += OnClickRefreshWrapper;
-		_uiso.OnClickExit += OnClickExit;
-		_uiso.OnSendMessage += OnSendMessage;
-		_uiso.DialogManager.AddOnOk_CR(OnCreateSession);
-		_uiso.OnCancelDialog += OnCancelDialog;
-		_uiso.OnClickSession += OnClickSessionWrapper;
+		_uiso.OnClickRefresh += OnClickRefresh;
+		_uiso.OnClickLobby += OnClickLobby;
+
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		if (_playerInfo.MessageFromPreviousScene != null)
-		{
-			_uiso.ShowNotification(_playerInfo.MessageFromPreviousScene);
-			_playerInfo.MessageFromPreviousScene = null;
-		}
-
-		InitAndGetLobbyList();//.Forget("LobbyManager.Start");
+		_taskCo = StartCoroutine(WaitForLobbyReady());
 	}
 
-	async void InitAndGetLobbyList()
+	void OnDisable()
+	{
+		if (_taskCo != null)
+		{
+			StopCoroutine(_taskCo);
+		}
+	}
+
+	/*
+	 * player data를 수신할 때까지 UI잠그고 대기
+	 * 수신하면 lobby 리스트
+	 */
+	IEnumerator WaitForLobbyReady()
+	{
+		// Start에 호출되는 메서드이므로 다른 오브젝트 초기화를 위해 한 프레임 대기
+		yield return null;
+
+		_uiso.SetInteractable(false);
+
+		var t = RequestPlayerData();
+		yield return new WaitUntil(() => t.IsCompleted);
+		yield return new WaitUntil(() => _playerDataReceived);
+
+		GLogger.Log("Received player data");
+
+		_uiso.SetPlayerLabel(_playerInfo.Nickname, PlayerInfoSO.DeserializePersonalColor(_playerInfo.PersonalColor));
+
+		var t2 = UpdateLobbyList();
+		yield return new WaitUntil(() => t2.IsCompleted);
+
+		_uiso.SetInteractable(true);
+		_taskCo = null;
+	}
+
+	async Task RequestPlayerData()
 	{
 		if (!UGSManager.IsInitialized())
 		{
 			await UGSManager.InitServices();
 		}
 
-		UGSLobbyManager.PlayerName = _playerInfo.PlayerName;
-		UGSLobbyManager.PlayerLevel = "100";
+		PMRequestPlayerData request = new()
+		{
+			Token = _playerInfo.Token
+		};
 
-		OnClickRefreshWrapper();
+		var data = request.ToByteArray();
+		await _tcpClient.SendDataAsync(
+			(int)ProtoAuthenticationMessage.RequestPlayerData, data);
+		GLogger.LogWarning("Request Player Data And Lobby");
 	}
 
-	void OnClickCreateSession()
+	/*
+	 * 먼저 서버에서 ResponsePlayerData 응답을 받고 호출할 것
+	 */
+	async Task UpdateLobbyList()
 	{
-		_uiso.DialogManager.OpenDialog_CR();
+		if (!_playerDataReceived)
+		{
+			GLogger.LogWarning("LobbyGameManager.GetLobbyList 플레이어 데이터 수신 전");
+			return;
+		}
+
+		var duration = DateTime.Now - _lastRefreshTime;
+
+		if (duration.TotalMilliseconds <= 1000)
+		{
+			GLogger.Log($"LobbyGameManager.GetLobbyList Too many lobby update requests");
+			return;
+		}
+
+		var list = await UGSLobbyManager.GetLobbyList();
+
+		if (list != null)
+		{
+			GLogger.Log($"GetLobbyList lobby count: {list.Count}");
+
+			if (list.Count == 0)
+			{
+				_uiso.ResizeLobbyList(0);
+				return;
+			}
+
+			_uiso.ResizeLobbyList((uint)list.Count);
+
+			for (int i = 0; i < list.Count; ++i)
+			{
+				var lobby = list[i];
+				_uiso.SetLobbyInfoByIndex(
+					(uint)i,
+					lobby.Name,
+					lobby.MaxPlayers,
+					lobby.MaxPlayers - lobby.AvailableSlots,
+					lobby.Id);
+			}
+
+#if UNITY_EDITOR
+			string text = "---Lobby List---\n";
+			foreach (var lobby in list)
+			{
+				text += $"{lobby.Id} {lobby.Name} {lobby.AvailableSlots}/{lobby.MaxPlayers}\n";
+			}
+			text += "----------------\n";
+			GLogger.Log(text);
+#endif
+		}
+		else
+		{
+			_uiso.ResizeLobbyList(0);
+		}
+
+		_lastRefreshTime = DateTime.Now;
+	}
+
+	/*
+	 * 네트워크 작업을 대기
+	 * 완료할 때 까지 ui를 잠금
+	 */
+	IEnumerator LockInteractabilityUntilTaskComplete(Task task)
+	{
+		_uiso.SetInteractable(false);
+
+		while (!task.IsCompleted)
+		{
+			yield return new WaitForSeconds(0.02f);
+		}
+
+		_uiso.SetInteractable(true);
+		_taskCo = null;
 	}
 
 	void OnClickSettings()
@@ -81,325 +204,207 @@ public class LobbyManager : MonoBehaviour
 
 	}
 
-	void OnClickRefreshWrapper()
+	void OnClickRefresh()
 	{
-		var duration = DateTime.Now - _lastRefreshTime;
-
-		if (_refreshing || duration.TotalMilliseconds < 1000)
+		if (_taskCo != null)
 		{
 			return;
 		}
 
-		_refreshing = true;
-		var task = OnClickRefresh();
-		_refreshing = false;
-
-
-		_lastRefreshTime = DateTime.Now;
+		_taskCo = StartCoroutine(LockInteractabilityUntilTaskComplete(UpdateLobbyList()));
 	}
 
-	async Task OnClickRefresh()
+	void OnClickLobby(string lobbyId)
 	{
-		
-	
-		
-		var list = await UGSLobbyManager.GetLobbyList();
-
-		if (list != null)
+		if (_taskCo != null)
 		{
-			Debug.Log($"OnClieckRefresh! list count {list.Count}");
+			GLogger.LogWarning("LobbyGameManager.OnClickLobby 다른 작업 처리 중");
+			return;
+		}
 
-			if (list.Count > 0)
+		_taskCo = StartCoroutine(AttemptToEnterLobby(lobbyId));
+
+		return;
+		////
+		_playerInfo.LobbyIdForEntry = lobbyId;
+
+		LoadScene("NGOTestScene");
+	}
+
+	void OnClickCreateLobby()
+	{
+		if (_taskCo != null)
+		{
+			GLogger.LogWarning("LobbyGameManager.OnClickCreateLobby 다른 작업이 진행 중");
+			return;
+		}
+
+		_uiso.DialogManager.SetOnCancelDialog(() =>
+		{
+			_uiso.DialogManager.HideLobbyCreationDialog();
+		});
+
+		_uiso.DialogManager.ShowLobbyCreationDialog((lobbyName, lobbyPassword) =>
+		{
+			print($"OnCreateRoom {lobbyName} {lobbyPassword}");
+
+			if (_taskCo != null)
 			{
-				_uiso.ShowEmptySessionListNotification(false);
-				_uiso.ResizeSessionList(list.Count);
+				GLogger.LogWarning("LobbyGameManager.OnClickCreateLobby");
+				return;
+			}
 
-				for (int i = 0; i < list.Count; ++i)
-				{
-					var lobby = list[i];
-					_uiso.SetSessionInfoIndex(
-						i,
-						lobby.Name,
-						lobby.MaxPlayers,
-						lobby.MaxPlayers - lobby.AvailableSlots,
-						lobby.Id);
-				}
+
+
+			_taskCo = StartCoroutine(CreateLobbyAsHostAndEnter(lobbyName, lobbyPassword));
+
+
+
+			return;
+			_playerInfo.Host = true;
+			_playerInfo.LobbyName = lobbyName;
+			_playerInfo.LobbyPassword = lobbyPassword.IsNullOrEmpty() ? null : lobbyPassword;
+
+			LoadScene("NGOTestScene");
+		});
+	}
+
+	// client가 로비 진입 시도
+	IEnumerator AttemptToEnterLobby(string lobbyId)
+	{
+		var taskJoinLobby = UGSLobbyManager.JoinLobbyById(lobbyId, null);
+		yield return new WaitUntil(() => taskJoinLobby.IsCompleted);
+
+		(var lobby, var reason ) = taskJoinLobby.Result;
+		if (lobby == null)
+		{
+			if (reason == "lobbyFull")
+			{
+				ShowNotification("account-creation-successful");
 			}
 			else
 			{
-				_uiso.ShowEmptySessionListNotification(true);
-				_uiso.ResizeSessionList(0);
+				ShowNotification("account-creation-successful");
 			}
 
-#if UNITY_EDITOR
-			/*
-			 * GameMode와 GamePlaying은 public property다.
-			 */
-			string text = "---Lobby List---\n";
-			foreach (var lobby in list)
-			{
-				text += $"{lobby.Id} {lobby.Name} {lobby.AvailableSlots}/{lobby.MaxPlayers}\n";
-				text += $"	GameMode: {lobby.Data["GameMode"].Value}\n";
-				text += $"	GameStart: {lobby.Data["GamePlaying"].Value}\n";
-			}
-			text += "------";
-			Debug.Log(text);
-#endif
-		}
-		//M_RequestSessionList rrl = new();
-
-		//rrl.Filter = 1;
-
-		//var data = rrl.ToByteArray();
-
-		//await _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionList, data);
-
-	}
-
-	void OnClickExit()
-	{
-		CleanEvent();
-
-		M_RequestLobbyExit rle = new();
-		rle.Reason = "ok";
-
-		var data = rle.ToByteArray();
-
-		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestLobbyExit, data);
-
-		_ = SceneManager.LoadSceneAsync("LoginScene");
-	}
-
-	void OnClickSessionWrapper(string lobbyId)
-	{
-		StartCoroutine(OnClickSession(lobbyId));
-	}
-
-	IEnumerator OnClickSession(string lobbyId)
-	{
-		int retryCount = 0;
-		while (_refreshing)
-		{
-			retryCount++;
-
-			yield return new WaitForSeconds(0.1f);
-
-			if (retryCount == 30)
-			{
-				yield return null;
-			}
-		}
-
-		_playerInfo.StartHost = false;
-		_playerInfo.LobbyIdForEntry = lobbyId;
-
-		CleanEvent();
-
-		SceneManager.LoadScene("NGOTestScene");
-
-		yield return null;
-
-		M_RequestSessionEntry rcr = new();
-
-		//rcr.SessionIndex = sessionIndex;
-
-		var data = rcr.ToByteArray();
-
-		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
-
-		//_PlayerInfoHolder.UserInfo.StartHost = false;
-	}
-
-	void OnSendMessage(string message)
-	{
-
-	}
-
-	void OnCancelDialog()
-	{
-		_uiso.DialogManager.CloseDialog();
-	}
-
-	void OnCreateSession(string sessionName, string password)
-	{
-		print($"OnCreateRoom {sessionName} {password}");
-
-		if (sessionName == null)
-		{
-			return;
-		}
-
-		if (sessionName.Length < 1)
-		{
-			_uiso.ShowNotification("방 이름은 두 글자 이상이어야 합니다");
-			return;
-		}
-
-		_playerInfo.StartHost = true;
-		_playerInfo.LobbyName = sessionName;
-		
-		if (password.Length > 0)
-		{
-			_playerInfo.CreateLobbyWithPassword = true;
-			_playerInfo.LobbyPassword = password;
+			yield break;
 		}
 		else
 		{
-			_playerInfo.CreateLobbyWithPassword = false;
-			_playerInfo.LobbyPassword = null;
+			GLogger.Log("Successful Lobby Entry");
+
+			var obj = new GameObject("[Game Parameter]");
+			var gp = obj.AddComponent<SessionParameterSOHolder>().Data;
+			DontDestroyOnLoad(obj);
+
+			gp.LobbyId = lobbyId;
+			gp.LobbyName = lobby.Name;
+			gp.LobbyPassword = null;
+			gp.MaxPlayers = 4;
+
+			LoadScene("GameReadyScene");
 		}
-
-		CleanEvent();
-
-		SceneManager.LoadScene("NGOTestScene");
-
-		return;
-
-		M_RequestSessionCreation rcr = new();
-		rcr.SessionName = sessionName;
-		rcr.Password = password;
-
-		print($"Request to create session {sessionName} / {password}");
-
-		var data = rcr.ToByteArray();
-		_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionCreation, data);
-		_uiso.DialogManager.CloseDialog();
 	}
 
-	async Awaitable OnTCPDataReceived(byte[] buffer, int length)
+	// host가 game 생성시
+	IEnumerator CreateLobbyAsHostAndEnter(string lobbyName, string lobbyPassword)
+	{
+		if (lobbyName == null)
+		{
+			GLogger.LogError("CreateLobbyAsHostAndEnter lobbyName is null");
+			yield break;
+		}
+
+		if (lobbyName.Length < 1)
+		{
+			ShowNotification("lobby-error-name-<2");
+
+			yield break;
+		}
+
+		var obj = new GameObject("[Game Parameter]");
+		var gp = obj.AddComponent<SessionParameterSOHolder>().Data;
+		DontDestroyOnLoad(obj);
+
+		gp.LobbyName = lobbyName;
+		gp.LobbyPassword = lobbyPassword;
+		gp.MaxPlayers = 4;
+
+		LoadScene("GameReadyScene");
+	}
+
+	async Task OnTCPDataReceived(byte[] buffer, int length)
 	{
 		if (length == 0)
 		{
-			// Disconnected from server.
-
 			await Awaitable.MainThreadAsync();
-
-			CleanEvent();
-			_playerInfo.MessageFromPreviousScene = "Disconnected from the server.";
-			SceneManager.LoadScene("LoginScene");
+			LoadScene("LoginScene");
 
 			return;
 		}
 
-		LobbyMessage_Type type = (LobbyMessage_Type)BitConverter.ToInt32(buffer, 4);
+		ProtoAuthenticationMessage type = (ProtoAuthenticationMessage)BitConverter.ToInt32(buffer, 4);
 		Debug.Log($"LobbyGameManager.OnDataReceivecFromServer(type: {type}, len: {length})");
 
-		if (type == LobbyMessage_Type.ResponseSessionList)
+		if (type == ProtoAuthenticationMessage.ResponsePlayerData)
 		{
-			M_ResponseSessionList rsl;
+			PMResponsePlayerData response;
 
 			try
 			{
-				rsl = M_ResponseSessionList.Parser.ParseFrom(buffer, 12, length - 12);
+				response = PMResponsePlayerData.Parser.ParseFrom(buffer, 12, length - 12);
 			}
 			catch (InvalidProtocolBufferException e)
 			{
-				Debug.LogError($"M_ResponseSessionList ParseFrom error: {e.Message}");
+				GLogger.LogError($"ResonsePlayerData Message Parsing Exception!! {e.Message}");
 				return;
 			}
 
-			if (rsl.List.Count == 0)
+			if (response.Result)
 			{
-				_uiso.ShowNotification("공개된 Session이 없습니다");
-				return;
+				_playerInfo.Nickname = response.Nickname;
+				_playerInfo.PersonalColor = response.PersonalColor;
+
+				UGSLobbyManager.nickname = response.Nickname;
+				UGSLobbyManager.PersonalColor = response.PersonalColor;
+				_playerDataReceived = true;
 			}
 			else
 			{
 				await Awaitable.MainThreadAsync();
-
-				var list = rsl.List;
-
-				_uiso.ResizeSessionList(list.Count);
-
-				for (int i = 0; i < list.Count; ++i)
-				{
-					var sinfo = list[i];
-					//_uiso.SetSessionInfoIndex(
-					//	i,
-					//	sinfo.SessionIndex,
-					//	sinfo.SessionName,
-					//	sinfo.MaxClientCount,
-					//	sinfo.ClientCount,
-					//	sinfo.Password,
-					//	sinfo.JoinCode);
-				}
-			}
-		}
-		else if (type == LobbyMessage_Type.ResponseSessionCreation)
-		{
-			M_ResponseSessionCreation rcr;
-
-			try
-			{
-				rcr = M_ResponseSessionCreation.Parser.ParseFrom(buffer, 12, length - 12);
-			}
-			catch (InvalidProtocolBufferException e)
-			{
-				Debug.LogError($"M_ResponseSessionCreation ParseFrom error: {e.Message}");
-				return;
-			}
-
-			var sessionIndex = rcr.SessionIndex;
-			var reason = rcr.Reason;
-
-			await Awaitable.MainThreadAsync();
-			if (sessionIndex < 0)
-			{
-				_uiso.ShowNotification($"Failed to create room. {reason}");
-				return;
-			}
-
-			_uiso.ShowNotification($"Room created {sessionIndex}, {reason}");
-
-			M_RequestSessionEntry res = new();
-			res.SessionIndex = sessionIndex;
-
-			var data = res.ToByteArray();
-			_ = _tcpClient.SendDataAsync((int)LobbyMessage_Type.RequestSessionEntry, data);
-
-			//_PlayerInfoHolder.UserInfo.StartHost = true;
-		}
-		else if (type == LobbyMessage_Type.ResponseSessionEntry)
-		{
-			M_ResponseSessionEntry res;
-
-			try
-			{
-				res = M_ResponseSessionEntry.Parser.ParseFrom(buffer, 12, length - 12);
-			}
-			catch (InvalidProtocolBufferException e)
-			{
-				Debug.LogError($"M_ResponseSessionEntry ParseFrom error: {e.Message}");
-				return;
-			}
-
-			await Awaitable.MainThreadAsync();
-			
-
-			if (res.Result)
-			{
-				
-				_ = SceneManager.LoadSceneAsync("NGOTestScene");
-			}
-			else
-			{
-				Debug.LogError($"M_ResponseEnterSession {res.Result}, {res.Reason}");
-				//_uiso.ShowNotification($"세션에 들어갈 수 없습니다. {res.Reason}");
+				GLogger.LogError($"Received ResponsePlayerData Error : {response.Message}");
+				LoadScene("LoginScene");
 			}
 		}
 	}
 
-	void CleanEvent()
+	void LoadScene(string sceneName)
 	{
-		_uiso.OnClickCreateSession -= OnClickCreateSession;
-		_uiso.OnClickSettings -= OnClickSettings;
-		_uiso.OnClickRefresh -= OnClickRefreshWrapper;
-		_uiso.OnClickExit -= OnClickExit;
-		_uiso.OnSendMessage -= OnSendMessage;
-		_uiso.DialogManager.RemoveOnOk_CR(OnCreateSession);
-		_uiso.OnCancelDialog -= OnCancelDialog;
-		_uiso.OnClickSession -= OnClickSessionWrapper;
-
+		_uiso.ClearEvent();
 		_tcpClient.OnReceived -= OnTCPDataReceived;
+		SceneManager.LoadScene(sceneName);
+	}
+
+
+	// 메인 스레드에서 호출할 것
+	void ShowNotification(string localizationKey)
+	{
+		if (_notifyCo != null)
+		{
+			StopCoroutine(_notifyCo);
+		}
+
+		_notifyCo = StartCoroutine(ShowNotificationCo(localizationKey));
+	}
+
+	IEnumerator ShowNotificationCo(string localizationKey)
+	{
+		var task =  LocalizationSettings.StringDatabase.GetLocalizedStringAsync(
+			"DefaultStringTable", localizationKey, LocalizationSettings.SelectedLocale);
+		yield return task;
+
+		_uiso.Notification.ShowNotification(task.Result);
+
+		_notifyCo = null;
 	}
 }

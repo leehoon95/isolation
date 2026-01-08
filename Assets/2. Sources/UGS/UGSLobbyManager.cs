@@ -1,4 +1,3 @@
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,9 +8,33 @@ using UnityEngine;
 
 public class UGSLobbyManager : MonoBehaviour
 {
-	public static string PlayerName { get; set; }
-	public static string PlayerLevel { get; set; }
-	public static string HeartBeatTargetId { get; set; }
+	static Lobby _cacheLobby;
+	static string _nickname;
+	static string _personalColor;
+
+	public static string nickname
+	{
+		get => _nickname;
+		set
+		{
+			_nickname = value;
+			var p = GetPlayer();
+			p.Data["Nickname"].Value = value;
+		}
+	}
+	public static string PersonalColor
+	{
+		get => _personalColor;
+		set
+		{
+			_personalColor = value;
+			var p = GetPlayer();
+			p.Data["PersonalColor"].Value = value;
+		}
+	}
+
+	static Player _player;
+
 	//public static Action<ILobbyChanges> OnLobbyChanged;
 	//public static Action OnKickedFromLobby;
 	//public static Action<LobbyEventConnectionState> OnLobbyEventConnectionStateChanged;
@@ -19,17 +42,27 @@ public class UGSLobbyManager : MonoBehaviour
 
 	static Player GetPlayer()
 	{
-		return new Player
+		if (_player == null)
 		{
-			Data = new Dictionary<string, PlayerDataObject>
+			_player = new Player
 			{
-				{ "PlayerName",
-					new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerName)},
-				{ "PlayerLevel",
-					new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, PlayerLevel)}
-			},
-			Profile = new PlayerProfile(PlayerName)
-		};
+				Data = new Dictionary<string, PlayerDataObject>
+				{
+					{"Nickname",
+						new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _nickname)},
+					{"PersonalColor",
+						new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, _personalColor)},
+				},
+				//Profile = new PlayerProfile(_nickname)
+			};
+		}
+
+		return _player;
+	}
+
+	static void CreatePlayer()
+	{
+		
 	}
 
 	/*
@@ -89,19 +122,19 @@ public class UGSLobbyManager : MonoBehaviour
 		catch (ArgumentNullException e)
 		{
 			// Thrown when lobbyName is null or only contains whitespaces.
-			Debug.LogError($"UGSLobbyManager.CreateLobby ArgumentNullException. message: {e.Message}");
+			GLogger.LogError($"UGSLobbyManager.CreateLobby ArgumentNullException. message: {e.Message}");
 			return (false, null, null);
 		}
 		catch (InvalidOperationException e)
 		{
 			// Thrown when maxPlayers is less than one.
-			Debug.LogError($"UGSLobbyManager.CreateLobby InvalidOperationException. message: {e.Message}");
+			GLogger.LogError($"UGSLobbyManager.CreateLobby InvalidOperationException. message: {e.Message}");
 			return (false, null, null);
 		}
 		catch (LobbyServiceException e)
 		{
 			// Thrown when the lobby service returns an error.
-			Debug.LogError($"UGSLobbyManager.CreateLobby LobbyServiceException. message: {e.Message}");
+			GLogger.LogError($"UGSLobbyManager.CreateLobby LobbyServiceException. message: {e.Message}");
 			switch (e.Reason)
 			{
 				case LobbyExceptionReason.AlreadySubscribedToLobby:
@@ -171,7 +204,7 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 		catch (LobbyServiceException e)
 		{
-			Debug.LogError($"UGSLobbyManager.GetLobbyList LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}" +
+			Debug.LogError($"UGSLobbyManager.GetLobbyList LobbyServiceException. Reason: {e.Reason}" +
 				$"Message: {e.Message}");
 
 			return null;
@@ -184,7 +217,7 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task<(Lobby, LobbyExceptionReason)> JoinLobbyById(string lobbyId, string password)
+	public static async Task<(Lobby, string)> JoinLobbyById(string lobbyId, string password)
 	{
 		var options = new JoinLobbyByIdOptions
 		{
@@ -194,12 +227,23 @@ public class UGSLobbyManager : MonoBehaviour
 
 		try
 		{
-			return (await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, options), LobbyExceptionReason.Unknown);
+			return (await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, options), "ok");
 		}
 		catch (LobbyServiceException e)
 		{
-			Debug.LogError($"UGSLobbyManager.JoinLobbyById Exception. ErrorCode: {e.ErrorCode}. message: {e.Message}");
-			return (null, e.Reason);
+			GLogger.LogError($"UGSLobbyManager.JoinLobbyById Exception. Reason: {e.Reason}");
+			string reason = "unknown";
+
+			switch(e.Reason)
+			{
+				case LobbyExceptionReason.LobbyFull: reason = "lobbyFull";
+					break;
+				default:
+					reason = e.Reason.ToString(); 
+					break;
+			}
+
+			return (null, reason);
 		}
 	}
 
@@ -265,33 +309,40 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task MigrateHost(Lobby from, string to)
-	{
+	//public static async Task MigrateHost(Lobby from, string to)
+	//{
 
-		try
-		{
-			var joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(from.Id,
-				new UpdateLobbyOptions
-				{
-					HostId = to,
-				});
-		}
-		catch (LobbyServiceException e)
-		{
-			Debug.LogError($"UGSLobbyManager.MigrateHost LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}");
-		}
-	}
+	//	try
+	//	{
+	//		var joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(from.Id,
+	//			new UpdateLobbyOptions
+	//			{
+	//				HostId = to,
+	//			});
+	//	}
+	//	catch (LobbyServiceException e)
+	//	{
+	//		Debug.LogError($"UGSLobbyManager.MigrateHost LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}");
+	//	}
+	//}
 
-	public static async Awaitable<Lobby> Reconnect(Lobby lobby)
+	public static async Task<Lobby> Reconnect(Lobby lobby)
 	{
 		return await LobbyService.Instance.ReconnectToLobbyAsync(lobby.Id);
 	}
 
-	public static async Awaitable<(bool result, List<string>)> GetJoinedLobbie()
+	public static async Task<(bool result, List<string>)> GetJoinedLobby()
 	{
 		try
 		{
-			return (true, await LobbyService.Instance.GetJoinedLobbiesAsync());
+			var lobbyList = await LobbyService.Instance.GetJoinedLobbiesAsync();
+			if (lobbyList == null || lobbyList.Count == 0)
+			{
+				GLogger.LogWarning("GetJoinedLobby 참가한 로비는 없다");
+				return (false, null);
+			}
+
+			return (true, lobbyList);
 		}
 		catch (LobbyServiceException e)
 		{

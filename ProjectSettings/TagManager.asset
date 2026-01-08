@@ -38,7 +38,7 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: FormostSortingLayer 1
+  - name: FormostSortingLayer
     uniqueID: 699810149
     locked: 0
   - name: BackgroundLayer
@@ -46,9 +46,6 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: FowardLayer
-    uniqueID: 2229508713
     locked: 0
   m_RenderingLayers:
   - Default

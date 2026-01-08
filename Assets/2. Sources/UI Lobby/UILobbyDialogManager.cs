@@ -6,53 +6,42 @@ using UnityEngine.UI;
 
 public class UILobbyDialogManager : UIBehaviour, IUILobbyDialogManager
 {
-	
 	[SerializeField] Button _cancelButton;
-	[SerializeField] UIDialogCreateRoom _dialogCreateRoom;
+	[SerializeField] UIDialogCreateLobby _dialogCreateLobby;
+	[SerializeField] CanvasGroup _canvasGroup;
 
 	UILobbySO _uiso;
-	GameObject _openedDialog;
 
 	protected override void Start()
 	{
 		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.DialogManager = this;
-		_cancelButton.onClick.AddListener(() => _uiso.RaiseOnCancelDialog());
 	}
 
-	public void CloseDialog()
+	public void SetOnCancelDialog(UnityAction onCancel)
 	{
-		if (_openedDialog != null)
+		_cancelButton.onClick.RemoveAllListeners();
+		if (onCancel != null)
 		{
-			_openedDialog.SetActive(false);
-			_cancelButton.gameObject.SetActive(false);
-
-			_openedDialog = null;
+			_cancelButton.onClick.AddListener(onCancel);
 		}
 	}
 
-	public void OpenDialog_CR()
+	public void ShowLobbyCreationDialog(UnityAction<string, string> onSubmit)
 	{
-		if (_openedDialog != null)
-		{
-			return;
-		}
-		else
-		{
-			_openedDialog = _dialogCreateRoom.gameObject;
-		}
-
-		_dialogCreateRoom.gameObject.SetActive(true);
 		_cancelButton.gameObject.SetActive(true);
+		_dialogCreateLobby.gameObject.SetActive(true);
+		_dialogCreateLobby.OnSubmit += onSubmit;
 	}
 
-	public void SetTitle_CR(string title) => _dialogCreateRoom.SetTitle(title);
+	public void HideLobbyCreationDialog()
+	{
+		_cancelButton.gameObject.SetActive(false);
+		_dialogCreateLobby.gameObject.SetActive(false);
+	}
 
-	public void SetContent_CR(string content) => _dialogCreateRoom.SetContent(content);
-
-	public void AddOnOk_CR(UnityAction<string, string> ua) => _dialogCreateRoom.OnOk += ua;
-
-	public void RemoveOnOk_CR(UnityAction<string, string> ua) => _dialogCreateRoom.OnOk -= ua;
-
-
+	public void SetInteractable(bool interactable)
+	{
+		_canvasGroup.interactable = interactable;
+	}
 }

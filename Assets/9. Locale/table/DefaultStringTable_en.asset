@@ -1,0 +1,171 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: DefaultStringTable_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 91918a507bae7dc47b3d39959a4cb643, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 5193247791777841247
+  m_TableData:
+  - m_Id: 4931590172672
+    m_Localized: "Account Creation\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 60572031660032
+    m_Localized: Set yout personal color
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72517191348224
+    m_Localized: 'eng vg: {global.eng-var}'
+    m_Metadata:
+      m_Items:
+      - rid: 5193247791777841247
+  - m_Id: 109338168274944
+    m_Localized: korean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 109418757632000
+    m_Localized: english
+    m_Metadata:
+      m_Items: []
+  - m_Id: 523346465665024
+    m_Localized: ID(up to 8 characters)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 551260196319232
+    m_Localized: Password(up to 12 characters)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 554000590974976
+    m_Localized: Show password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1278650680467456
+    m_Localized: ID must be at least 2 characters long
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1278925696786432
+    m_Localized: Password must be at least 2 characters long
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1329972184211456
+    m_Localized: Password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1577471362084864
+    m_Localized: Register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1580616565796864
+    m_Localized: Login
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1581334555144192
+    m_Localized: Please register an account first
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1651526350024704
+    m_Localized: Network Connection Error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1651697381158912
+    m_Localized: Unableb to connect to server
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1651986704248832
+    m_Localized: Retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1654416493916160
+    m_Localized: Connection to server lost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1672858848604160
+    m_Localized: Connected to server
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3505498530656256
+    m_Localized: nickname (up to 12 characters)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3507076721422336
+    m_Localized: Nickname must be at least 2 characters long
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6786013610258432
+    m_Localized: Account creation has been completed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6792822756618240
+    m_Localized: Account creation failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6794755043110912
+    m_Localized: The ID is already in use
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6795302345256960
+    m_Localized: ID is less than 2 characters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6795535997349888
+    m_Localized: Password is less than 2 characters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6796014265446400
+    m_Localized: Nickname is less than 2 characters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6819214437265408
+    m_Localized: Unknown reason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7170540732035072
+    m_Localized: Another task is in progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7494466511187968
+    m_Localized: No empty slots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7498919939289088
+    m_Localized: An unknown error has occurred
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7862893620899840
+    m_Localized: Session name must be at least 2 characters long
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7873630204473344
+    m_Localized: Waiting for server response
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7873952406712320
+    m_Localized: Creation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7896385796845568
+    m_Localized: Retry server connection
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5193247791777841247
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 72517191348224

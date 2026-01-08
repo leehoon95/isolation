@@ -21,18 +21,34 @@ public class SaveDataLoader : MonoBehaviour
 		set { _SDCached = value; }
 	}
 
+	void Awake()
+	{
+		var obj = FindAnyObjectByType<SaveDataLoader>();
+
+		if (obj != null && obj != this)
+		{
+			Destroy(obj.gameObject);
+			return;
+		}
+		else
+		{
+			_saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
+
+			LoadSaveData();
+
+			DontDestroyOnLoad(gameObject);
+		}
+	}
+
 	public void LoadSaveData()
 	{
 		try
 		{
-			print("LoadSaveData() called");
-
 			if (File.Exists(_saveFilePath))
 			{
 				var json = File.ReadAllText(_saveFilePath);
 				_SDOrigin = JsonUtility.FromJson<SaveData>(json);
-
-				print(json);
+				GLogger.Log($"Save Data\n{json}");
 			}
 			else
 			{
@@ -110,25 +126,5 @@ public class SaveDataLoader : MonoBehaviour
 		}
 	}
 
-	void Awake()
-	{
-		var obj = FindAnyObjectByType<SaveDataLoader>();
 
-		if (obj != null && obj != this)
-		{
-			Destroy(obj.gameObject);
-			return;
-		}
-		else
-		{
-#if UNITY_EDITOR
-			_saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
-#else
-			_saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
-#endif
-			LoadSaveData();
-
-			DontDestroyOnLoad(gameObject);
-		}
-	}
 }

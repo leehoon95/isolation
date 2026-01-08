@@ -1,91 +1,33 @@
-using JetBrains.Annotations;
 using UnityEngine;
+using WebSocketSharp;
 
 [CreateAssetMenu(fileName = "PlayerInfoSO", menuName = "Scriptable Objects/PlayerInfoSO")]
 public class PlayerInfoSO : ScriptableObject
 {
-    [SerializeField]
-    string _playerName;
-    [SerializeField]
-    ulong _token;
-    [SerializeField]
-    int _sessionIndex;
-    [SerializeField]
-    string _messageFromPreviousScene;
-    [SerializeField]
-    bool _startHost;
-    [SerializeField]
-    bool _debugging;
-    [SerializeField]
-    string _lobbyId;
-    [SerializeField]
-    string _lobbyName;
-    [SerializeField]
-    bool _createLobbyWithPassword;
-    [SerializeField]
-    string _lobbyPassword;
-    [SerializeField]
-    int _maxPlayers;
+    public ulong Token;
+    public string Nickname;
+    public string PersonalColor;
+    public bool Host;
+    public string LobbyName;
+    public string LobbyIdForEntry;
+    public string LobbyPassword;
 
-    public string PlayerName
+    public static Color DeserializePersonalColor(string personalColor)
     {
-        get => _playerName;
-        set => _playerName = value;
-    }
+        if (personalColor.IsNullOrEmpty())
+        {
+            return Color.white; // invalid color
+        }
 
-    public ulong Token
-    {
-        get => _token;
-        set => _token = value;
-    }
+        var colors = personalColor.Split('/');
+        if (colors.Length != 3)
+        {
+            return Color.white;
+        }
 
-    public string MessageFromPreviousScene
-    {
-        get => _messageFromPreviousScene;
-        set => _messageFromPreviousScene = value;
-    }
-
-    public bool StartHost
-    {
-        get => _startHost;
-        set => _startHost = value;
-    }
-
-    //public bool Debugging
-    //{
-    //    get => _debugging;
-    //    set => _debugging = value;
-    //}
-
-    public string LobbyIdForEntry
-    {
-        get => _lobbyId;
-        set => _lobbyId = value;
-    }
-
-    public string LobbyName
-    {
-        get => _lobbyName;
-        set => _lobbyName = value;
-    }
-
-    public bool CreateLobbyWithPassword
-    {
-        get => _createLobbyWithPassword;
-        set => _createLobbyWithPassword = value;
-    }
-
-    public string LobbyPassword
-    {
-        get => _lobbyPassword;
-        set => _lobbyPassword = value;
+        return Color.HSVToRGB(uint.Parse(colors[0]) / 255f, uint.Parse(colors[1]) / 255f, uint.Parse(colors[2]) / 255f);
     }
 }
 
-public class PlayerInfoHolder : SOHolderSinglton<PlayerInfoSO, PlayerInfoHolder>
-{
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-}
+public class PlayerInfoSOHolder : SOHolderSinglton<PlayerInfoSO, PlayerInfoSOHolder>
+{}

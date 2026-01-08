@@ -14,8 +14,8 @@ public class UITextPreferredSizeNotifier : UIBehaviour
 
 	protected override void OnEnable()
 	{
-		base.OnEnable();
 		_targetText = GetComponent<TMP_Text>();
+		OnTextPreferredSizeChanged?.Invoke(_targetText.preferredWidth, _targetText.preferredHeight);
 	}
 
 	protected override void OnRectTransformDimensionsChange()
