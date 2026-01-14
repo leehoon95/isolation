@@ -7,7 +7,6 @@ public class PlayerInfoSO : ScriptableObject
     public ulong Token;
     public string Nickname;
     public string PersonalColor;
-    public bool Host;
     public string LobbyName;
     public string LobbyIdForEntry;
     public string LobbyPassword;

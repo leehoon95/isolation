@@ -84,7 +84,7 @@ public class NGOGameManager : MonoBehaviour
 
 		//if (!_playerInfoHolder.Instance.Debugging)
 		{
-			if (_playerInfo.Host)
+			if (true)
 			{
 				_isHost = true;
 
@@ -164,7 +164,7 @@ public class NGOGameManager : MonoBehaviour
 		//};
 		
 		// relay 최대 연결수 (host.에게 연결될 수 있는 client 수)
-		(var successRelay, var joinCode) = await UGSRelayManager.StartHostWithRelayAndGetJoinCode(_maxPeerConnection - 1, "dtls");
+		(var successRelay, var joinCode) = await UGSRelayManager.StartHostAndGetJoinCode(_maxPeerConnection - 1, "dtls");
 		
 		if (successRelay)
 		{
@@ -237,7 +237,7 @@ public class NGOGameManager : MonoBehaviour
 			
 			_lobby = lobby;
 
-			await UGSRelayManager.StartClientWithRelay(lobby.Data["RelayJoinCode"].Value, "dtls");
+			await UGSRelayManager.StartClient(lobby.Data["RelayJoinCode"].Value, "dtls");
 			await Awaitable.MainThreadAsync();
 			//Spawn();
 		}
@@ -294,7 +294,7 @@ public class NGOGameManager : MonoBehaviour
 
 			_lobby = lobby;
 
-			var startingRelayTask =  UGSRelayManager.StartClientWithRelay(lobby.Data["RelayJoinCode"].Value, "dtls");
+			var startingRelayTask =  UGSRelayManager.StartClient(lobby.Data["RelayJoinCode"].Value, "dtls");
 			while (!startingRelayTask.IsCompleted)
 			{
 				yield return new WaitForSeconds(0.02f);
@@ -311,14 +311,15 @@ public class NGOGameManager : MonoBehaviour
 
 	async void OnClientStopped()
 	{
-		var (result, lobby) = await UGSLobbyManager.GetLobbyById(_lobby.Id);
-		if (result)
+		var lobby = await UGSLobbyManager.GetLobbyById(_lobby.Id);
+		if (lobby != null)
 		{
 			_lobby = lobby;
 
 			Debug.LogWarning($"NGOGameManager.OnClientStopped new host id: {_lobby.HostId} {AuthenticationService.Instance.PlayerId}");
 		}
 	}
+
 	IEnumerator HeartbeatLobby()
 	{
 		while (true) {
@@ -330,7 +331,7 @@ public class NGOGameManager : MonoBehaviour
 				continue;
 			}
 
-			_ = UGSLobbyManager.MaintainLobbyAlive(_lobby);
+			_ = UGSLobbyManager.MaintainLobbyAlive(_lobby.Id);
 		}
 	}
 
@@ -365,7 +366,7 @@ public class NGOGameManager : MonoBehaviour
 	async void LeaveFromLobby()
 	{
 		Debug.LogWarning("NGOGameManager.LeaveFromLobby");
-		await UGSLobbyManager.RemovePlayer(_lobby);
+		await UGSLobbyManager.RemovePlayer(_lobby.Id);
 		NetworkManager.Singleton.Shutdown();
 		LoadScene("LobbyScene");
 	}

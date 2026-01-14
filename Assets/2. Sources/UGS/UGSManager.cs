@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class UGSManager : MonoBehaviour
 {
+	public string PlayerId
+	{
+		get => IsInitialized() ? AuthenticationService.Instance.PlayerId : null;
+	}
+
 	public static bool IsInitialized()
 		=> (UnityServices.State == ServicesInitializationState.Initialized)
 		&& AuthenticationService.Instance.IsSignedIn;

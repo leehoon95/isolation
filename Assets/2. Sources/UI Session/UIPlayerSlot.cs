@@ -3,65 +3,82 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-/*
- * Slot status
- * 0: empty
- * 1: occupied
- * 2: ready
- * 3: host
- */
 [ExecuteAlways]
 [RequireComponent(typeof(RectTransform))]
 public class UIPlayerSlot : UIBehaviour
 {
-    [SerializeField]
+	[SerializeField]
     TMP_Text _slotText;
+	[SerializeField] 
+	TMP_Text _hostSign;
 	[SerializeField]
 	UIPlayerSlotBackground _background;
 	[SerializeField]
 	Image _borderImage;
+	[SerializeField]
+	PlayerSlotStatus _status = PlayerSlotStatus.Empty;
 
+	public PlayerSlotStatus SlotStatus
+	{
+		get => _status;
+		set
+		{
+			SetSlotStatus(value);
+		}
+	}
+
+	public string SlotText
+	{
+		set => _slotText.text = value;
+	}
+
+	public Color SlotTextColor
+	{
+		set => _slotText.color = value;
+	}
 
 #if UNITY_EDITOR
-	[SerializeField]
-	[Range(0, 3)]
-	int _slotStatus;
 	protected override void OnValidate()
 	{
-		SetSlotStatus(_slotStatus);
+		SetSlotStatus(_status);
 	}
 #endif
 
 	protected override void OnEnable()
 	{
-		_slotText.text = "EMPTY";
+		_slotText.text = "";
 		SetSlotStatus(0);
 	}
 
-	public void SetSlotText(string slotName) => _slotText.text = slotName;
-	public void SetSlotStatus(int status)
+	void SetSlotStatus(PlayerSlotStatus status)
 	{
+		_status = status;
 		switch (status)
 		{
-			case 0:
+			case PlayerSlotStatus.Empty:
+				_slotText.text = "";
 				_background.PatternColor = Color.gray;
 				_background.Offset = 0.5f;
 				_borderImage.color = Color.gray;
+				_hostSign.gameObject.SetActive(false);
 				break;
-			case 1:
+			case PlayerSlotStatus.InUse:
 				_background.PatternColor = new Color(1f, 127f / 255f, 0f);
 				_background.Offset = 0.5f;
 				_borderImage.color = new Color(1f, 127f / 255f, 0f);
+				_hostSign.gameObject.SetActive(false);
 				break;
-			case 2:
+			case PlayerSlotStatus.Ready:
 				_background.PatternColor = Color.green;
 				_background.Offset = 0.3f;
-				_borderImage.color = new Color(0f, 218f/255f, 255f);
+				_borderImage.color = new Color(0f, 218f / 255f, 255f);
+				_hostSign.gameObject.SetActive(false);
 				break;
-			case 3:
+			case PlayerSlotStatus.Host:
 				_background.PatternColor = new Color(1f, 69f / 255f, 0f);
 				_background.Offset = 0.3f;
 				_borderImage.color = new Color(1f, 69f / 255f, 0f);
+				_hostSign.gameObject.SetActive(true); ;
 				break;
 			default:
 				GLogger.LogWarning("UIPlayerSlot.SetSlotStatus Unknown status argument {status}");

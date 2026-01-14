@@ -6255,22 +6255,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 869961868}
     m_Modifications:
-    - target: {fileID: 1474878627613054196, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2271840296824070774, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
-      propertyPath: _targetSizeAxis
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674795447772077552, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674795447772077552, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6358471535204236690, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
       propertyPath: m_Name
       value: Notification Panel
@@ -6354,14 +6338,6 @@ PrefabInstance:
     - target: {fileID: 6777278326952260559, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6821486565346562272, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6821486565346562272, guid: 20fd9c3d4ed2095408f616f6f265ba79, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

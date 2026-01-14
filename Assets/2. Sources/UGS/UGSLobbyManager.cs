@@ -5,6 +5,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using WebSocketSharp;
 
 public class UGSLobbyManager : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class UGSLobbyManager : MonoBehaviour
 		{
 			_nickname = value;
 			var p = GetPlayer();
-			p.Data["Nickname"].Value = value;
+			p.Profile = new PlayerProfile(_nickname);
 		}
 	}
 	public static string PersonalColor
@@ -34,11 +35,6 @@ public class UGSLobbyManager : MonoBehaviour
 	}
 
 	static Player _player;
-
-	//public static Action<ILobbyChanges> OnLobbyChanged;
-	//public static Action OnKickedFromLobby;
-	//public static Action<LobbyEventConnectionState> OnLobbyEventConnectionStateChanged;
-
 
 	static Player GetPlayer()
 	{
@@ -60,20 +56,6 @@ public class UGSLobbyManager : MonoBehaviour
 		return _player;
 	}
 
-	static void CreatePlayer()
-	{
-		
-	}
-
-	/*
-	 * 
-	 */
-	//static void InvokeOnLobbyChanged(ILobbyChanges changes) => OnLobbyChanged?.Invoke(changes);
-	//static void InvokeOnKickedFromLobby() => OnKickedFromLobby?.Invoke();
-	//static void InvokeOnLobbyEventConnectionStateChanged(LobbyEventConnectionState changes)
-	//	=> OnLobbyEventConnectionStateChanged?.Invoke(changes);
-
-
 	public static async Task<(bool, Lobby, ILobbyEvents)> CreateLobby(
 		string lobbyName,
 		int maxPlayers,
@@ -92,8 +74,7 @@ public class UGSLobbyManager : MonoBehaviour
 			Password = password,
 			Data = new Dictionary<string, DataObject>
 			{
-				{ "GameMode", new DataObject(DataObject.VisibilityOptions.Public, "Default")},
-				{ "GamePlaying", new DataObject(DataObject.VisibilityOptions.Public, "StandBy")},
+				{ "Playing", new DataObject(DataObject.VisibilityOptions.Public, "false")},
 				{ "RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode)}
 			}
 		};
@@ -152,10 +133,11 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task MaintainLobbyAlive(Lobby lobby)
+	public static async Task MaintainLobbyAlive(string lobbyId)
 	{
-		if (lobby == null)
+		if (lobbyId.IsNullOrEmpty())
 		{
+			GLogger.LogWarning("MaintainLobbyAlive lobbyId is null or empty");
 			return;
 		}
 
@@ -164,7 +146,7 @@ public class UGSLobbyManager : MonoBehaviour
 		 * 주기적 하트비트 필요
 		 * 사용하지 않는 lobby는 삭제해야 함
 		 */
-		await LobbyService.Instance.SendHeartbeatPingAsync(lobby.Id);
+		await LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
 	}
 
 	public static bool IsLobbyHost(Lobby lobby)
@@ -247,18 +229,18 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task<(bool result, Lobby lobby)> GetLobbyById(string id)
+	public static async Task<Lobby> GetLobbyById(string id, string version = null)
 	{
 		try
 		{
-			var lobby = await LobbyService.Instance.GetLobbyAsync(id);
+			var lobby = await LobbyService.Instance.GetLobbyAsync(id, version);
 
-			return (true, lobby);
+			return lobby;
 		}
 		catch (LobbyServiceException e)
 		{
 			Debug.LogError($"UGSLobbyManager.GetLobbyById LobbyServiceException. errorCode: {e.ErrorCode}. message: {e.Message}");
-			return (false, null);
+			return null;
 		}
 	}
 
@@ -292,12 +274,12 @@ public class UGSLobbyManager : MonoBehaviour
 	 * host가 나가면 남아있는 player 중에서 host로 무작위 지정
 	 * 마지막 player가 나가면 lobby 자동으로 삭제됨
 	 */
-	public static async Task<(bool result, string reason)> RemovePlayer(Lobby lobby, string playerId = "")
+	public static async Task<(bool result, string reason)> RemovePlayer(string lobbyId, string playerId = "")
 	{
 		try
 		{
 			await LobbyService.Instance.RemovePlayerAsync(
-				lobby.Id,
+				lobbyId,
 				playerId == "" ? AuthenticationService.Instance.PlayerId : playerId);
 
 			return (true, "ok");

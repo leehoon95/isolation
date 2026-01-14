@@ -32,26 +32,17 @@ public class UILobbyList : UIBehaviour, IUILobbyList
 		_uiso.RaiseOnClickSession(lobbyId);
 	}
 
-	public void SetLobbyInfoIndex(
-		uint index,
-		string name,
-		int maxPlayers,
-		int currentPlayers,
-		string lobbyId)
+	public void SetLobby(LobbySettings settings)
 	{
-		if (_scrollRect.content.childCount <= index)
+		if (_scrollRect.content.childCount <= settings.Index)
 		{
-			Debug.LogError($"UILobbyList.SetLobbyInfoIndex - index out of range: {index}");
+			Debug.LogError($"UILobbyList.SetLobbyInfoIndex - index out of range: {settings.Index}");
 			return;
 		}
 
-		var sitem = _scrollRect.content.GetChild((int)index)?.GetComponent<UISessionItem>();
+		var sitem = _scrollRect.content.GetChild((int)settings.Index).GetComponent<UISessionItem>();
 
-		sitem.SetLobbyInfo(
-			name,
-			maxPlayers,
-			currentPlayers,
-			lobbyId);
+		sitem.SetLobbyInfo(settings);
 	}
 
 	/*
@@ -108,13 +99,16 @@ public class UILobbyList : UIBehaviour, IUILobbyList
 		int count = _scrollRect.content.childCount;
 
 		ResizeLobbyList((uint)count + 1);
+		var ls = new LobbySettings()
+		{
+			Index = (uint)count,
+			Name = $"=Test Lobby {count + 1}=",
+			MaxPlayers = 0,
+			AvailableSlots = 0,
+			IsPlaying = false,
+		};
 
-		SetLobbyInfoIndex(
-			(uint)count,
-			$"temp {count + 1}",
-			0,
-			0,
-			"");
+		SetLobby(ls);
 	}
 
 	public void AddTempSession_10()
@@ -123,14 +117,20 @@ public class UILobbyList : UIBehaviour, IUILobbyList
 
 		ResizeLobbyList((uint)count + 10);
 
+		var ls = new LobbySettings()
+		{
+			Index = 0,
+			Name = "",
+			MaxPlayers = 0,
+			AvailableSlots = 0,
+			IsPlaying = false,
+		};
+
 		for (uint i = 0; i < 10; i++)
 		{
-			SetLobbyInfoIndex(
-				(uint)count + i,
-				$"temp {count + i}",
-				0,
-				0,
-				"");
+			ls.Index = (uint)count + i;
+			ls.Name = $"=Test Lobby {count + i}=";
+			SetLobby(ls);
 		}
 	}
 

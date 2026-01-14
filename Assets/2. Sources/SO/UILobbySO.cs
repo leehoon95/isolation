@@ -75,18 +75,7 @@ public class UILobbySO : ScriptableObject
 		=> _notification?.ShowNotification(content);
 
 	public void ResizeLobbyList(uint size = 0) => _lobbyList.ResizeLobbyList(size);
-	public void SetLobbyInfoByIndex(
-		uint index,
-		string name,
-		int maxPlayers,
-		int currentPlayer,
-		string lobbyId) 
-		=> _lobbyList.SetLobbyInfoIndex(
-			index, 
-			name,
-			maxPlayers,
-			currentPlayer, 
-			lobbyId);
+	public void SetLobbyInfoByIndex(LobbySettings settings) => _lobbyList.SetLobby(settings);
 
 	public void SetPlayerLabel(string nickname, Color personalColor)
 		=> _playerLabel.SetPlayerLabel(nickname, personalColor);

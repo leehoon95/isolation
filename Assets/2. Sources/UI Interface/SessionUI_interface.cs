@@ -1,12 +1,23 @@
 using UnityEngine;
 
-public interface IUIPlayerSlotManager
+public enum PlayerSlotStatus
 {
-	public void AddPlayer(ulong clieniId, string playerName, bool host = false);
-	public void RemovePlayer(ulong clientId);
+	Empty,
+	InUse,
+	Ready,
+	Host
 }
 
-public interface IUIMessageList
+public interface IUIPlayerSlotManager
 {
-	public void AddMessage(string message, Color color);
+	public void SetPlayer(uint slotIndex, string playerName, Color color, bool host = false);
+	public void ReadyPlayer(uint slotIndex, bool ready);
+	public void RemovePlayer(uint clientId);
+	public void SetInteractable(bool interactable);
+}
+
+public interface IUISessionCommunication
+{
+	public void AddMessage(string speaker, string message, Color personalColor);
+	public void SetInteractable(bool interactable);
 }

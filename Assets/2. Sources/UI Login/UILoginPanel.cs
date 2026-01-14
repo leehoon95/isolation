@@ -78,7 +78,6 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 
 	void OnClickLogin()
 	{
-		GLogger.Log("onclicklogin");
 		if (_id.text.Length < 2)
 		{
 			_tooltip.ShowTooltip(

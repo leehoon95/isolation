@@ -17,7 +17,7 @@ public class UGSRelayManager
 	 * 
 	 * return (result, joincode(or reason if failed))
 	 */
-	public static async Task<(bool, string)> StartHostWithRelayAndGetJoinCode(
+	public static async Task<(bool, string)> StartHostAndGetJoinCode(
 		int maxConnections,
 		string connectionType)
 	{
@@ -27,7 +27,7 @@ public class UGSRelayManager
 		 * Allocation 객체 안에는 host, join에 필요한 네트워크 정보, 토큰 등이 있음
 		 */
 		Allocation allocation = null;
-
+		
 		try
 		{
 			allocation = await RelayService.Instance.CreateAllocationAsync(
@@ -35,15 +35,14 @@ public class UGSRelayManager
 		}
 		catch (RelayServiceException rse)
 		{
-			//Debug.LogException(rse);
-			Debug.LogError("RealyManager.StartHostWithRelayAndGetJoinCode Exception(RelayServiceException)" +
+			GLogger.LogError("RealyManager.StartHostWithRelayAndGetJoinCode Exception(RelayServiceException)" +
 				$"reason: {rse.Reason.ToString()}");
 
 			return (false, null);
 		}
 		catch (Exception e)
 		{
-			Debug.LogError($"RealyManager.StartHostWithRelayAndGetJoinCode " +
+			GLogger.LogError($"RealyManager.StartHostWithRelayAndGetJoinCode " +
 				$"Exception: {e.Message}");
 
 			return (false, null);
@@ -64,7 +63,7 @@ public class UGSRelayManager
 	/*
 	 * return (result, reason)
 	 */
-	public static async Task<bool> StartClientWithRelay(string joinCode, string connectionType)
+	public static async Task<bool> StartClient(string joinCode, string connectionType)
 	{
 		if (joinCode.IsNullOrEmpty())
 		{

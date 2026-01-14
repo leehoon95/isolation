@@ -4,44 +4,37 @@ using UnityEngine;
 
 public class NetworkEventHandler : MonoBehaviour
 {
-	public event Action OnServerStarted;
-	public event Action<bool> OnServerStopped;
-	public event Action OnClientStarted;
-	public event Action<bool> OnClientStopped;
 	public event Action<ulong> OnClientConnected;
 	public event Action<ulong> OnClientDisconnected;
 	public event Action<ulong> OnPeerConnected;
 	public event Action<ulong> OnPeerDisconnected;
 
-	void OnEnable()
+	void Start()
 	{
-		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
-		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
-		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
-		NetworkManager.Singleton.OnServerStarted += OnServerStarted;
-		NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
+		NetworkManager.Singleton.OnClientStarted += SetListner;
 	}
 
-	void OnDisable()
+	void SetListner()
 	{
-		NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
-		NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
-		NetworkManager.Singleton.OnClientStarted -= OnClientStarted;
-		NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
-		NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
-		OnServerStarted = null;
-		OnServerStopped = null;
-		OnClientStarted = null;
-		OnClientStopped = null;
+		NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
+		NetworkManager.Singleton.OnPreShutdown += ClearAllEventListner;
+	}
+
+	void ClearAllEventListner()
+	{
 		OnClientConnected = null;
 		OnClientDisconnected = null;
 		OnPeerConnected = null;
 		OnPeerDisconnected = null;
+
+		NetworkManager.Singleton.OnClientStarted -= SetListner;
+		NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
+		NetworkManager.Singleton.OnPreShutdown -= ClearAllEventListner;
 	}
 
 	void OnConnectionEvent(NetworkManager nm, ConnectionEventData eventData)
 	{
-		switch(eventData.EventType)
+		switch (eventData.EventType)
 		{
 			case ConnectionEvent.ClientConnected: // This event is set on the client-side of the newly connected client and on the server-side.
 				OnClientConnected?.Invoke(eventData.ClientId);

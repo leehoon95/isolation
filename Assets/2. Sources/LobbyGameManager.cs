@@ -9,6 +9,9 @@ using WebSocketSharp;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Unity.VisualScripting;
 
+/*
+ * login scene에서 전달 받은 token으로 player data 요청
+ */
 public class LobbyGameManager : MonoBehaviour
 {
 	UILobbySO _uiso;
@@ -59,7 +62,6 @@ public class LobbyGameManager : MonoBehaviour
 		}
 
 		_uiso.OnClickCreateLobby += OnClickCreateLobby;
-		_uiso.OnClickSettings += OnClickSettings;
 		_uiso.OnClickRefresh += OnClickRefresh;
 		_uiso.OnClickLobby += OnClickLobby;
 
@@ -68,21 +70,16 @@ public class LobbyGameManager : MonoBehaviour
 		_taskCo = StartCoroutine(WaitForLobbyReady());
 	}
 
-	void OnDisable()
-	{
-		if (_taskCo != null)
-		{
-			StopCoroutine(_taskCo);
-		}
-	}
-
 	/*
-	 * player data를 수신할 때까지 UI잠그고 대기
-	 * 수신하면 lobby 리스트
+	 * 1. player data를 수신할 때까지 UI잠그고 대기
+	 * 2. 로비 리스트 갱신
 	 */
 	IEnumerator WaitForLobbyReady()
 	{
-		// Start에 호출되는 메서드이므로 다른 오브젝트 초기화를 위해 한 프레임 대기
+		/*
+		 * Start에 호출되는 메서드이므로 다른 오브젝트 초기화를 위해 한 프레임 대기
+		 * ui 초기화가 끝나지 않은 경우 있음
+		 */
 		yield return null;
 
 		_uiso.SetInteractable(false);
@@ -153,15 +150,19 @@ public class LobbyGameManager : MonoBehaviour
 
 			_uiso.ResizeLobbyList((uint)list.Count);
 
+			var ls = new LobbySettings();
 			for (int i = 0; i < list.Count; ++i)
 			{
 				var lobby = list[i];
-				_uiso.SetLobbyInfoByIndex(
-					(uint)i,
-					lobby.Name,
-					lobby.MaxPlayers,
-					lobby.MaxPlayers - lobby.AvailableSlots,
-					lobby.Id);
+
+				ls.Index = (uint)i;
+				ls.Name = lobby.Name;
+				ls.MaxPlayers = lobby.MaxPlayers;
+				ls.AvailableSlots = lobby.AvailableSlots;
+				ls.Id = lobby.Id;
+				ls.IsPlaying = lobby.Data["Playing"].Value == "true" ? true : false;
+
+				_uiso.SetLobbyInfoByIndex(ls);
 			}
 
 #if UNITY_EDITOR
@@ -190,18 +191,17 @@ public class LobbyGameManager : MonoBehaviour
 	{
 		_uiso.SetInteractable(false);
 
-		while (!task.IsCompleted)
-		{
-			yield return new WaitForSeconds(0.02f);
-		}
+		yield return new WaitUntil(() => task.IsCompleted);
 
 		_uiso.SetInteractable(true);
 		_taskCo = null;
 	}
 
-	void OnClickSettings()
+	IEnumerator LockInteractabilityUntilTaskComplete(IEnumerator co)
 	{
-
+		_uiso.SetInteractable(false);
+		yield return co;
+		_uiso.SetInteractable(true);
 	}
 
 	void OnClickRefresh()
@@ -254,22 +254,11 @@ public class LobbyGameManager : MonoBehaviour
 				return;
 			}
 
-
-
 			_taskCo = StartCoroutine(CreateLobbyAsHostAndEnter(lobbyName, lobbyPassword));
-
-
-
-			return;
-			_playerInfo.Host = true;
-			_playerInfo.LobbyName = lobbyName;
-			_playerInfo.LobbyPassword = lobbyPassword.IsNullOrEmpty() ? null : lobbyPassword;
-
-			LoadScene("NGOTestScene");
 		});
 	}
 
-	// client가 로비 진입 시도
+	// client 자격으로 session 진입
 	IEnumerator AttemptToEnterLobby(string lobbyId)
 	{
 		var taskJoinLobby = UGSLobbyManager.JoinLobbyById(lobbyId, null);
@@ -280,11 +269,11 @@ public class LobbyGameManager : MonoBehaviour
 		{
 			if (reason == "lobbyFull")
 			{
-				ShowNotification("account-creation-successful");
+				ShowNotification("lobby-entry-error-full");
 			}
 			else
 			{
-				ShowNotification("account-creation-successful");
+				ShowNotification("lobby-entry-error-unknown");
 			}
 
 			yield break;
@@ -293,20 +282,20 @@ public class LobbyGameManager : MonoBehaviour
 		{
 			GLogger.Log("Successful Lobby Entry");
 
-			var obj = new GameObject("[Game Parameter]");
+			var obj = new GameObject("[Session Parameter]");
 			var gp = obj.AddComponent<SessionParameterSOHolder>().Data;
 			DontDestroyOnLoad(obj);
 
 			gp.LobbyId = lobbyId;
-			gp.LobbyName = lobby.Name;
+			gp.LobbyName = null;
 			gp.LobbyPassword = null;
 			gp.MaxPlayers = 4;
 
-			LoadScene("GameReadyScene");
+			LoadScene("SessionReadyScene");
 		}
 	}
 
-	// host가 game 생성시
+	// host 자격으로 session 진입
 	IEnumerator CreateLobbyAsHostAndEnter(string lobbyName, string lobbyPassword)
 	{
 		if (lobbyName == null)
@@ -322,15 +311,17 @@ public class LobbyGameManager : MonoBehaviour
 			yield break;
 		}
 
-		var obj = new GameObject("[Game Parameter]");
+		var obj = new GameObject("[Session Parameter]");
 		var gp = obj.AddComponent<SessionParameterSOHolder>().Data;
 		DontDestroyOnLoad(obj);
 
+		gp.LobbyId = null; 
 		gp.LobbyName = lobbyName;
-		gp.LobbyPassword = lobbyPassword;
+		gp.LobbyPassword = null;
 		gp.MaxPlayers = 4;
 
-		LoadScene("GameReadyScene");
+		LoadScene("SessionReadyScene");
+		_taskCo = null;
 	}
 
 	async Task OnTCPDataReceived(byte[] buffer, int length)
@@ -382,11 +373,10 @@ public class LobbyGameManager : MonoBehaviour
 	{
 		_uiso.ClearEvent();
 		_tcpClient.OnReceived -= OnTCPDataReceived;
+		StopAllCoroutines();
 		SceneManager.LoadScene(sceneName);
 	}
 
-
-	// 메인 스레드에서 호출할 것
 	void ShowNotification(string localizationKey)
 	{
 		if (_notifyCo != null)

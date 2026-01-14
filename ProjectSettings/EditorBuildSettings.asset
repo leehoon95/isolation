@@ -14,15 +14,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1. Scenes/NGOTestScene.unity
     guid: 357692c9a527eb841928f29c1c278203
+  - enabled: 1
+    path: Assets/1. Scenes/SessionReadyScene.unity
+    guid: d51c511d838cb384ebb47f14d01467d5
   - enabled: 0
     path: Assets/1. Scenes/Test/TestScene.unity
     guid: 86f97b9c2f4441c4494df4a19531c1ca
   - enabled: 0
     path: Assets/1. Scenes/Test/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
-    path: Assets/1. Scenes/GameReadyScene.unity
-    guid: d51c511d838cb384ebb47f14d01467d5
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 3d2cb5027ae5d544f9f8bd3da87b2ebb, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 8a3e530e8df790140942f5d7a64179b4, type: 2}

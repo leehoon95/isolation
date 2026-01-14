@@ -1,15 +1,20 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+public class LobbySettings
+{
+	public uint Index;
+	public string Name;
+	public int MaxPlayers;
+	public int AvailableSlots;
+	public string Id;
+	public bool IsPlaying;
+}
+
 public interface IUILobbyList
 {
 	public void ResizeLobbyList(uint size, bool detroy = false);
-	public void SetLobbyInfoIndex(
-		uint index,
-		string name,
-		int maxPlayers,
-		int currentPlayer,
-		string lobbyId); 
+	public void SetLobby(LobbySettings settings); 
 	public void SetInteractable(bool interactable);
 }
 

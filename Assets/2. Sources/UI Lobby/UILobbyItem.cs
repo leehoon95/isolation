@@ -16,40 +16,14 @@ public class UISessionItem : UIBehaviour
 	[SerializeField]
 	TMP_Text _slotText;
 
-	int _maxPlayer;
-	int _playerCount;
-	string _lobbyCode;
-	bool _interactable = false;
+	string _lobbyId;
+	bool _isPlaying;
 
-	Action<string> _onClick;
-	public event Action<string> OnClick
-	{
-		add
-		{
-			_onClick -= value;
-			_onClick += value;
-		}
-		remove
-		{
-			_onClick -= value;
-		}
-	}
+	public event Action<string> OnClick;
 
-	public bool State
+	protected override void Start()
 	{
-		get
-		{
-			return _interactable;
-		}
-		set
-		{
-			_interactable = value;
-		}
-	}
-
-	protected override void Awake()
-	{
-		_button.onClick.AddListener(() => _onClick?.Invoke(_lobbyCode));
+		_button.onClick.AddListener(() => OnClick?.Invoke(_lobbyId));
 		_slotText.text = "0 / 4";
 	}
 
@@ -64,22 +38,17 @@ public class UISessionItem : UIBehaviour
 	//		40f);
 	//}
 
-	public void SetLobbyInfo(
-		string name,
-		int maxPlayerCount,
-		int playerCount,
-		string lobbyCode)
+	public void SetLobbyInfo(LobbySettings settings)
 	{
-		_buttonText.text = name;
-		_slotText.text = $"{playerCount} / {maxPlayerCount}";
-		_lobbyCode = lobbyCode;
+		_buttonText.text = settings.Name;
+		_slotText.text = $"{settings.MaxPlayers - settings.AvailableSlots} / {settings.MaxPlayers}";
+		_lobbyId = settings.Id;
+		_isPlaying = settings.IsPlaying;
 	}
 
 	public void ClearButtonEvent()
 	{
-		_onClick = null;
-		_button.onClick.RemoveAllListeners();
-
+		OnClick = null;
 	}
 
 	protected override void OnDestroy()

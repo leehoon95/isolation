@@ -11,6 +11,9 @@ using UnityEngine.Rendering.LookDev;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
 
+/*
+ * 특수한 예외를 제외하코 중요한 목적 코루틴의 동시 실행코드는 작성하지 말 것
+ */
 public class LoginGameManager : MonoBehaviour
 {
 	[SerializeField] 
@@ -102,6 +105,9 @@ public class LoginGameManager : MonoBehaviour
 		_taskCo = StartCoroutine(ReadyForLoginScene());
 	}
 
+	/*
+	 * 이벤트 메서드에서 실행하는 비동기 작업은 
+	 */
 	IEnumerator ReadyForLoginScene()
 	{
 		yield return LocalizationSettings.InitializationOperation;
@@ -289,11 +295,16 @@ public class LoginGameManager : MonoBehaviour
 	 */
 	IEnumerator LockInteractabilityUntilTaskComplete(Task task)
 	{
-		_uiso.DialogManager.HideAccountCreationDialog();
 		_uiso.SetInteractable(false);
 		yield return new WaitUntil(() => task.IsCompleted);
 		_uiso.SetInteractable(true);
-		_taskCo = null;
+	}
+
+	IEnumerator LockInteractabilityUntilTaskComplete(IEnumerator co)
+	{
+		_uiso.SetInteractable(false);
+		yield return co;
+		_uiso.SetInteractable(true);
 	}
 
 	// test button
@@ -404,6 +415,8 @@ public class LoginGameManager : MonoBehaviour
 		string notify;
 		string reason = "";
 
+		_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(false);
+
 		if (msg.Result)
 		{
 			/*
@@ -450,8 +463,7 @@ public class LoginGameManager : MonoBehaviour
 			yield return op;
 			reason = op.Result;
 		}
-
-		_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(false);
+		
 		_uiso.Notification.ShowNotification($"{notify}{(reason.Length > 0 ? '\n' : "")}{reason}");
 	}
 
@@ -459,19 +471,13 @@ public class LoginGameManager : MonoBehaviour
 	{
 		_uiso.ClearEvent();
 		_tcpClient.OnReceived -= OnTCPDataReceived;
+		StopAllCoroutines();
 		SceneManager.LoadScene(sceneName);
 	}
 
-	// 메인 스레드에서 호출할 것
 	void ShowNotification(string localizationKey)
 	{
-		//if (_notifyCo != null)
-		//{
-		//	StopCoroutine(_notifyCo);
-		//}
-
-		//_notifyCo =
-			StartCoroutine(ShowNotificationCo(localizationKey));
+		StartCoroutine(ShowNotificationCo(localizationKey));
 	}
 
 	IEnumerator ShowNotificationCo(string localizationKey)

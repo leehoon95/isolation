@@ -6,7 +6,7 @@ public class UISessionSO : ScriptableObject
 {
 	INotificationUI _notification;
 	IUIPlayerSlotManager _playerSlotManager;
-	IUIMessageList _messageList;
+	IUISessionCommunication _sessionCommunication;
 
 	public INotificationUI Notification 
 	{ 
@@ -20,10 +20,10 @@ public class UISessionSO : ScriptableObject
 		set => _playerSlotManager = value;
 	}
 
-	public IUIMessageList MessageList
+	public IUISessionCommunication SessionCommunication
 	{
-		get => _messageList;
-		set => _messageList = value;
+		get => _sessionCommunication;
+		set => _sessionCommunication = value;
 	}
 
 	public void ShowNotification(string text)
@@ -39,7 +39,19 @@ public class UISessionSO : ScriptableObject
 	public void RaiseOnClickReady() => OnClickReady?.Invoke();
 	public void RaiseOnClickLeave() => OnClickLeave?.Invoke();
 	public void RaiseOnSubmitMessage(string text) => OnSubmitMessage?.Invoke(text);
-	public void AddMessage(string text, Color color) => _messageList.AddMessage(text, color);
+	public void AddMessage(string speaker, string text, Color personalColor) => _sessionCommunication.AddMessage(speaker, text, personalColor);
+	public void ClearEvent()
+	{
+		OnClickReady = null;
+		OnClickLeave = null;
+		OnSubmitMessage = null;
+	}
+
+	public void SetInteractable(bool interactable)
+	{
+		_playerSlotManager.SetInteractable(interactable);
+		_sessionCommunication.SetInteractable(interactable);
+	}
 }
 
 public class UISessionSOHolder : SOHolderSinglton<UISessionSO, UISessionSOHolder>
