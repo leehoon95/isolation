@@ -12,6 +12,8 @@ public class UIPlayerSlot : UIBehaviour
 	[SerializeField] 
 	TMP_Text _hostSign;
 	[SerializeField]
+	TMP_Text _youSign;
+	[SerializeField]
 	UIPlayerSlotBackground _background;
 	[SerializeField]
 	Image _borderImage;
@@ -35,6 +37,11 @@ public class UIPlayerSlot : UIBehaviour
 	public Color SlotTextColor
 	{
 		set => _slotText.color = value;
+	}
+
+	public bool You
+	{
+		set => _youSign.gameObject.SetActive(value);
 	}
 
 #if UNITY_EDITOR

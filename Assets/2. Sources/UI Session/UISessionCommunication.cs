@@ -68,4 +68,9 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 	{
 		_chatGroup.interactable = interactable;
 	}
+
+	public void HideReadyButton()
+	{
+		_readyButton.gameObject.SetActive(false);
+	}
 }

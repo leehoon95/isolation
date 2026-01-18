@@ -64,6 +64,7 @@ public class LobbyGameManager : MonoBehaviour
 		_uiso.OnClickCreateLobby += OnClickCreateLobby;
 		_uiso.OnClickRefresh += OnClickRefresh;
 		_uiso.OnClickLobby += OnClickLobby;
+		_uiso.OnClickExit += OnClickExit;
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
@@ -90,7 +91,7 @@ public class LobbyGameManager : MonoBehaviour
 
 		GLogger.Log("Received player data");
 
-		_uiso.SetPlayerLabel(_playerInfo.Nickname, PlayerInfoSO.DeserializePersonalColor(_playerInfo.PersonalColor));
+		_uiso.SetPlayerLabel(_playerInfo.Nickname, _playerInfo.PersonalColor);
 
 		var t2 = UpdateLobbyList();
 		yield return new WaitUntil(() => t2.IsCompleted);
@@ -108,7 +109,7 @@ public class LobbyGameManager : MonoBehaviour
 
 		PMRequestPlayerData request = new()
 		{
-			Token = _playerInfo.Token
+			Message = "hello"
 		};
 
 		var data = request.ToByteArray();
@@ -324,6 +325,26 @@ public class LobbyGameManager : MonoBehaviour
 		_taskCo = null;
 	}
 
+	void OnClickExit()
+	{
+		if (_taskCo != null)
+		{
+			StopCoroutine(_taskCo);
+		}
+
+		StartCoroutine(LockInteractabilityUntilTaskComplete(ExitFromLobby()));
+	}
+
+	IEnumerator ExitFromLobby()
+	{
+		PMRequestLogout message = new();
+		var data = message.ToByteArray();
+		var task = _tcpClient.SendDataAsync((int)ProtoAuthenticationMessage.RequestLogout, data);
+		yield return new WaitUntil(() => task.IsCompleted);
+
+		LoadScene("LoginScene");
+	}
+
 	async Task OnTCPDataReceived(byte[] buffer, int length)
 	{
 		if (length == 0)
@@ -354,7 +375,7 @@ public class LobbyGameManager : MonoBehaviour
 			if (response.Result)
 			{
 				_playerInfo.Nickname = response.Nickname;
-				_playerInfo.PersonalColor = response.PersonalColor;
+				_playerInfo.PersonalColor = PlayerInfoSO.DeserializePersonalColor(response.PersonalColor);
 
 				UGSLobbyManager.nickname = response.Nickname;
 				UGSLobbyManager.PersonalColor = response.PersonalColor;
@@ -371,9 +392,13 @@ public class LobbyGameManager : MonoBehaviour
 
 	void LoadScene(string sceneName)
 	{
+		if (_taskCo != null)
+		{
+			StopCoroutine(_taskCo);	
+		}
+
 		_uiso.ClearEvent();
 		_tcpClient.OnReceived -= OnTCPDataReceived;
-		StopAllCoroutines();
 		SceneManager.LoadScene(sceneName);
 	}
 

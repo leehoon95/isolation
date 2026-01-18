@@ -19,10 +19,6 @@ MonoBehaviour:
     m_Items:
     - rid: 5193247791777841247
   m_TableData:
-  - m_Id: 4931590172672
-    m_Localized: "Account Creation\t"
-    m_Metadata:
-      m_Items: []
   - m_Id: 60572031660032
     m_Localized: Set yout personal color
     m_Metadata:
@@ -65,7 +61,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1577471362084864
-    m_Localized: Register
+    m_Localized: Register Account
     m_Metadata:
       m_Items: []
   - m_Id: 1580616565796864
@@ -158,6 +154,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7896385796845568
     m_Localized: Retry server connection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11841949566361600
+    m_Localized: ID does not exist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11842184850038784
+    m_Localized: Password does not match
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11842408213504000
+    m_Localized: The account is already logged in
     m_Metadata:
       m_Items: []
   references:

@@ -23,7 +23,6 @@ public class UILobbyButtons : UIBehaviour, IUILobbyButtons
 		_uiso.Buttons = this;
 
 		_createSessionButton.onClick.AddListener(() => _uiso.RaiseOnClickCreateLobby());
-		//_settingButton.onClick.AddListener(() => _uiso.RaiseOnClickSettings());
 		_refreshButton.onClick.AddListener(() => _uiso.RaiseOnClickRefresh());
 		_exitButton.onClick.AddListener(() => _uiso.RaiseOnClickExit());
 	}
@@ -31,9 +30,5 @@ public class UILobbyButtons : UIBehaviour, IUILobbyButtons
 	public void SetInteractable(bool interactable)
 	{
 		_canvasGroup.interactable = interactable;
-		//_createSessionButton.interactable = interactable;
-		////_settingButton.interactable = interactable;
-		//_refreshButton.interactable = interactable;
-		//_exitButton.interactable = interactable;
 	}
 }

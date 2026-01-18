@@ -1,5 +1,7 @@
+using Codice.CM.Common.Update.Partial;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
@@ -12,6 +14,7 @@ public class UGSLobbyManager : MonoBehaviour
 	static Lobby _cacheLobby;
 	static string _nickname;
 	static string _personalColor;
+	static DateTime _lastRequestTime = DateTime.MinValue;
 
 	public static string nickname
 	{
@@ -56,6 +59,16 @@ public class UGSLobbyManager : MonoBehaviour
 		return _player;
 	}
 
+	static async Task WaitForRequestRateLimit()
+	{
+		var duration = DateTime.Now - _lastRequestTime;
+		if (duration.TotalMilliseconds <= 1000)
+		{
+			await Task.Delay(1000 - (int)duration.TotalMilliseconds);
+		}
+		_lastRequestTime = DateTime.Now;
+	}
+
 	public static async Task<(bool, Lobby, ILobbyEvents)> CreateLobby(
 		string lobbyName,
 		int maxPlayers,
@@ -81,6 +94,7 @@ public class UGSLobbyManager : MonoBehaviour
 
 		try
 		{
+			await WaitForRequestRateLimit();
 			var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions);
 
 			ILobbyEvents cb = null;
@@ -179,6 +193,7 @@ public class UGSLobbyManager : MonoBehaviour
 				},
 			};
 
+			await WaitForRequestRateLimit();
 			var lobbyListQueryResponse = await LobbyService.Instance.QueryLobbiesAsync(options);
 			var result = lobbyListQueryResponse.Results;
 
@@ -209,6 +224,7 @@ public class UGSLobbyManager : MonoBehaviour
 
 		try
 		{
+			await WaitForRequestRateLimit();
 			return (await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId, options), "ok");
 		}
 		catch (LobbyServiceException e)
@@ -233,6 +249,7 @@ public class UGSLobbyManager : MonoBehaviour
 	{
 		try
 		{
+			await WaitForRequestRateLimit();
 			var lobby = await LobbyService.Instance.GetLobbyAsync(id, version);
 
 			return lobby;
@@ -247,21 +264,17 @@ public class UGSLobbyManager : MonoBehaviour
 	/*
 	 * host에게 로비를 삭제할 권한이 줄 것인지
 	 */
-	public static async void DeleteLobby(Lobby lobby)
+	public static async void DeleteLobby(string lobbyId)
 	{
-		if (lobby == null)
-		{
-			return;
-		}
-
-		if (lobby.HostId != AuthenticationService.Instance.PlayerId)
+		if (lobbyId.IsNullOrEmpty())
 		{
 			return;
 		}
 
 		try
 		{
-			await LobbyService.Instance.DeleteLobbyAsync(lobby.Id);
+			await WaitForRequestRateLimit();
+			await LobbyService.Instance.DeleteLobbyAsync(lobbyId);
 		}
 		catch (LobbyServiceException e)
 		{
@@ -278,6 +291,7 @@ public class UGSLobbyManager : MonoBehaviour
 	{
 		try
 		{
+			await WaitForRequestRateLimit();
 			await LobbyService.Instance.RemovePlayerAsync(
 				lobbyId,
 				playerId == "" ? AuthenticationService.Instance.PlayerId : playerId);
@@ -317,6 +331,7 @@ public class UGSLobbyManager : MonoBehaviour
 	{
 		try
 		{
+			await WaitForRequestRateLimit();
 			var lobbyList = await LobbyService.Instance.GetJoinedLobbiesAsync();
 			if (lobbyList == null || lobbyList.Count == 0)
 			{

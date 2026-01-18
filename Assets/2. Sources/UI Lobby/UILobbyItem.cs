@@ -24,19 +24,12 @@ public class UISessionItem : UIBehaviour
 	protected override void Start()
 	{
 		_button.onClick.AddListener(() => OnClick?.Invoke(_lobbyId));
-		_slotText.text = "0 / 4";
 	}
 
-	//public void FitSize(RectTransform parentRectTransform)
-	//{
-	//	RectTransform rectTransform = GetComponent<RectTransform>();
-
-	//	rectTransform.SetSizeWithCurrentAnchors(
-	//		RectTransform.Axis.Horizontal,
-	//		parentRectTransform.rect.width - _padding * 2);
-	//	rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-	//		40f);
-	//}
+	protected override void OnDisable()
+	{
+		OnClick = null;
+	}
 
 	public void SetLobbyInfo(LobbySettings settings)
 	{
@@ -44,15 +37,5 @@ public class UISessionItem : UIBehaviour
 		_slotText.text = $"{settings.MaxPlayers - settings.AvailableSlots} / {settings.MaxPlayers}";
 		_lobbyId = settings.Id;
 		_isPlaying = settings.IsPlaying;
-	}
-
-	public void ClearButtonEvent()
-	{
-		OnClick = null;
-	}
-
-	protected override void OnDestroy()
-	{
-		ClearButtonEvent();
 	}
 }

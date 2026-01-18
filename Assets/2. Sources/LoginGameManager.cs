@@ -217,7 +217,7 @@ public class LoginGameManager : MonoBehaviour
 
 		var data = msg.ToByteArray();
 
-		_taskCo = StartCoroutine(
+		StartCoroutine(
 			LockInteractabilityUntilTaskComplete(
 				_tcpClient.SendDataAsync(
 					(int)ProtoAuthenticationMessage.RequestLogin, data)));
@@ -375,11 +375,21 @@ public class LoginGameManager : MonoBehaviour
 
 				await Awaitable.MainThreadAsync();
 
-				_playerInfo.Token = msg.Token;
 				LoadScene("LobbyScene");
 			}
 			else
 			{
+				await Awaitable.MainThreadAsync();
+				switch (msg.Message)
+				{
+					case "idDoesNotExsist":
+						ShowNotification("id-not-exist"); break;
+					case "passwordMismatch":
+						ShowNotification("password-missmatch"); break;
+					case "loginedAlready":
+						ShowNotification("logined-already"); break;
+				}
+
 				GLogger.LogError($"Login request is Denied. (reason: {msg.Message})");
 			}
 		}
@@ -487,7 +497,5 @@ public class LoginGameManager : MonoBehaviour
 		yield return task;
 
 		_uiso.Notification.ShowNotification(task.Result);
-
-		_notifyCo = null;
 	}
 }

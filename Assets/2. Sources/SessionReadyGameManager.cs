@@ -1,8 +1,11 @@
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
@@ -14,6 +17,7 @@ public class SessionGameReadyManager : MonoBehaviour
 	TCPClientSO _tcpClient;
 	PlayerInfoSO _playerInfo;
 	SessionParameterSO _sessionParameter;
+	PlayerSlotSynchronizer _playerSlotSync;
 
 	[SerializeField]
 	NetworkEventHandler _networkEventHandler;
@@ -22,6 +26,8 @@ public class SessionGameReadyManager : MonoBehaviour
 	Coroutine _notifyCo;
 	Lobby _lobby;
 	ILobbyEvents _lobbyEvents;
+	uint _slotIndex;
+	bool _ready;
 
 	void Awake()
 	{
@@ -31,29 +37,24 @@ public class SessionGameReadyManager : MonoBehaviour
 			obj.AddComponent<UISessionSOHolder>();
 		}
 
-		if (FindAnyObjectByType<TCPClientSOHolder>() == null)
-		{
-			var obj = new GameObject("[TCP Client Holder]");
-			obj.AddComponent<TCPClientSOHolder>();
-			DontDestroyOnLoad(obj);
-		}
-
 		if (FindAnyObjectByType<SessionParameterSOHolder>() == null)
 		{
 			GLogger.LogError("SessionGameManger.Awake This session is invalid");
 			SceneManager.sceneLoaded += SceneLoadedOnInvalidSession;
 		}
 	}
-
 	void Start()
 	{
-		//_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
+		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UISessionSOHolder>().Data;
 		_sessionParameter = FindAnyObjectByType<SessionParameterSOHolder>().Data;
+		_playerSlotSync = FindAnyObjectByType<PlayerSlotSynchronizer>();
+		_playerSlotSync.OnSlotDataChanged += OnSlotDataChanged;
 
+		_uiso.OnClickReady += OnReady;
+		_uiso.OnClickLeave += OnLeave;
 		_uiso.OnSubmitMessage += OnSubmitMessage;
-		_uiso.OnClickLeave += LeaveFromSession;
 		_networkEventHandler.OnClientConnected += OnClientConnected;
 		_networkEventHandler.OnClientDisconnected += OnClientDisconnected;
 		_networkEventHandler.OnPeerConnected += OnPeerConnected;
@@ -63,7 +64,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		{
 			// start as host
 			_taskCo = StartCoroutine(StartHostCo());
-			
+			_uiso.HideReadyButton();
 		}
 		else
 		{
@@ -96,7 +97,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (!resultRelay)
 		{
 			GLogger.LogError("Failed to start Host");
-			LeaveFromSession();
+			OnLeave();
 			yield break;
 		}
 
@@ -117,18 +118,12 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (resultLobby == false)
 		{
 			GLogger.LogError("StartHost Failed to create lobby");
-			LeaveFromSession();
+			OnLeave();
 			yield break;
 		}
 		
 		_lobby = lobby;
 		_lobbyEvents = lobbyEvent;
-
-		_uiso.PlayerSlotManager.SetPlayer(
-			0,
-			_lobby.Players[0].Data["Nickname"].Value,
-			PlayerInfoSO.DeserializePersonalColor(_lobby.Players[0].Data["PersonalColor"].Value),
-			true);
 
 		StartCoroutine(HeartbeatLobby(lobby.Id));
 
@@ -165,7 +160,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (!task2.Result)
 		{
 			GLogger.LogError("StartClientCo Failed to start client");
-			LeaveFromSession();
+			OnLeave();
 			yield break;
 		}
 
@@ -176,31 +171,60 @@ public class SessionGameReadyManager : MonoBehaviour
 	void OnClientConnected(ulong clientId)
 	{
 		GLogger.Log($"OnClientConnected {clientId}");
-		if (NetworkManager.Singleton.LocalClientId != 0)
+
+		// host에게 player data를 전달
+		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
-			StartCoroutine(UpdatePlayerSlot(_lobby.Id));
+			_playerSlotSync.AddClientRpc(clientId, _playerInfo.Nickname, _playerInfo.PersonalColor);
 		}
 	}
 
 	void OnClientDisconnected(ulong clientId)
 	{
 		GLogger.Log($"OnClientDisconnected {clientId}");
+		// 접속한 client만 호출한다
+		if (NetworkManager.Singleton.IsHost)
+		{
+			_playerSlotSync.RemoveClientRpc(clientId);
+		}
 
-		LeaveFromSession();
+		// client가 나가기를 눌렀거나 host와 연결이 끊어짐
+		if (clientId == NetworkManager.Singleton.LocalClientId)
+		{
+			OnLeave();
+		}
 	}
 
 	void OnPeerConnected(ulong clientid)
-	{
-		GLogger.Log($"OnPeerConnected {clientid}");
-
-		StartCoroutine(UpdatePlayerSlot(_lobby.Id));
-	}
+	{}
 
 	void OnPeerDisconnected(ulong clientid)
-	{
-		GLogger.Log($"OnPeerDisconnected {clientid}");
+	{}
 
-		StartCoroutine(UpdatePlayerSlot(_lobby.Id));
+	void OnSlotDataChanged(int count)
+	{
+		//GLogger.Log($"OnSlotChanged count: {count}");
+
+		for (int i = 0; i < count; i++)
+		{
+			
+			var data = _playerSlotSync.GetSlotData(i);
+			_uiso.PlayerSlotManager.SetSlotData(
+				i,
+				data.Nickname.ToString(),
+				data.PersonalColor);
+			_uiso.PlayerSlotManager.SetReadyState(i, data.Ready);
+			if (data.Nickname == _playerInfo.Nickname)
+			{
+				_uiso.PlayerSlotManager.SetIsYou(i);
+			}
+		}
+
+		while (count < 3)
+		{
+			_uiso.PlayerSlotManager.EmptySlot(count);
+			count++;
+		}
 	}
 
 	IEnumerator LockInteractabilityUntilTaskComplete(Task task)
@@ -250,37 +274,28 @@ public class SessionGameReadyManager : MonoBehaviour
 #endif
 	}
 
-	IEnumerator UpdatePlayerSlot(string lobbyId)
-	{
-		var task = UGSLobbyManager.GetLobbyById(lobbyId);
-		yield return new WaitUntil(() => task.IsCompleted);
+	//IEnumerator AddPlayerSlot(string lobbyId)
+	//{
+	//	//var task = UGSLobbyManager.GetLobbyById(lobbyId);
+	//	//yield return new WaitUntil(() => task.IsCompleted);
 		
-		Lobby lobby = task.Result;
-		if (lobby == null)
-		{
-			GLogger.LogError($"UpdateLobby failed to get lobby. lobby id: {lobby}");
-			yield break;
-		}
+	//	//var lobby = task.Result;
+	//	//if (lobby == null)
+	//	//{
+	//	//	GLogger.LogError($"UpdateLobby failed to get lobby. lobby id: {lobby.Id}");
+	//	//	yield break;
+	//	//}
 
-		uint index = 0;
-		foreach (var p in lobby.Players)
-		{
-			_uiso.PlayerSlotManager.SetPlayer(
-				index, 
-				p.Data["Nickname"].Value, 
-				PlayerInfoSO.DeserializePersonalColor(p.Data["PersonalColor"].Value), 
-				index == 0);
-			index++;
-		}
+	//	var count = _playerSlotSync.GetSlotDataCount();
+	//	for (int i = 0; i < count; i++)
+	//	{
+	//		_playerSlotSync.AddSlotDataRpc(
+	//			p.Data["Nickname"].Value, 
+	//			PlayerInfoSO.DeserializePersonalColor(p.Data["PersonalColor"].Value));
+	//	}
 
-		while (index < 4)
-		{
-			_uiso.PlayerSlotManager.RemovePlayer(index);
-			index++;
-		}
-
-		_lobby = lobby;
-	}
+	//	_lobby = lobby;
+	//}
 
 	void OnKickedFromLobby()
 	{
@@ -324,8 +339,16 @@ public class SessionGameReadyManager : MonoBehaviour
 			new Color((int)Random.Range(128, 255), (int)Random.Range(128, 255), (int)Random.Range(128, 255)));
 	}
 
-	void LeaveFromSession()
+	void OnReady()
 	{
+		GLogger.Log("Ready");
+		_ready = !_ready;
+		_playerSlotSync.ReadyClientRpc(NetworkManager.Singleton.LocalClientId, _ready);
+	}
+
+	void OnLeave()
+	{
+		GLogger.Log("OnLeave");
 		StartCoroutine(LockInteractabilityUntilTaskComplete(LeaveFromThisSessionCo()));
 	}
 
@@ -342,7 +365,13 @@ public class SessionGameReadyManager : MonoBehaviour
 			var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
 			yield return new WaitUntil(() => task.IsCompleted);
 		}
-	
+
+		if (NetworkManager.Singleton.IsHost)
+		{
+			GLogger.LogWarning($"Delete Lobby {_lobby.Id}");
+			UGSLobbyManager.DeleteLobby(_lobby.Id);
+		}
+
 		NetworkManager.Singleton.Shutdown();
 		LoadScene("LobbyScene");
 	}

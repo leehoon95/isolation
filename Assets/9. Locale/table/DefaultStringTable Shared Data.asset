@@ -15,10 +15,6 @@ MonoBehaviour:
   m_TableCollectionName: DefaultStringTable
   m_TableCollectionNameGuidString: 91918a507bae7dc47b3d39959a4cb643
   m_Entries:
-  - m_Id: 4931590172672
-    m_Key: account-creation
-    m_Metadata:
-      m_Items: []
   - m_Id: 60572031660032
     m_Key: guide-setting-personal-color
     m_Metadata:
@@ -153,6 +149,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7896385796845568
     m_Key: retry-connect-server
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11841949566361600
+    m_Key: id-not-exist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11842184850038784
+    m_Key: password-missmatch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11842408213504000
+    m_Key: logined-already
     m_Metadata:
       m_Items: []
   m_Metadata:

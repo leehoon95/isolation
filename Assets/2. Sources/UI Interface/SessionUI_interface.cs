@@ -10,14 +10,16 @@ public enum PlayerSlotStatus
 
 public interface IUIPlayerSlotManager
 {
-	public void SetPlayer(uint slotIndex, string playerName, Color color, bool host = false);
-	public void ReadyPlayer(uint slotIndex, bool ready);
-	public void RemovePlayer(uint clientId);
+	public void SetSlotData(int slotIndex, string playerName, Color color);
+	public void SetReadyState(int slotIndex, bool ready);
+	public void EmptySlot(int slotIndex);
+	public void SetIsYou(int index);
 	public void SetInteractable(bool interactable);
 }
 
 public interface IUISessionCommunication
 {
+	public void HideReadyButton();
 	public void AddMessage(string speaker, string message, Color personalColor);
 	public void SetInteractable(bool interactable);
 }

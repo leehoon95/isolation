@@ -370,7 +370,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.05
+  m_fontSize: 45.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1086,7 +1086,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.05
+  m_fontSize: 45.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2063,7 +2063,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.05
+  m_fontSize: 45.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3616,10 +3616,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
-  m_fontSizeBase: 36
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -7667,7 +7667,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 804454778423457929}
   m_HandleRect: {fileID: 5649893862285616335}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8378,97 +8378,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2746618812513798873, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_GlobalFontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 4603081732669012067, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_GlobalFontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 4780294354249035588, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4294506744
-      objectReference: {fileID: 0}
-    - target: {fileID: 6182014894711345647, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_hasFontAssetChanged
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 4780294354249035588, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4292467161
-      objectReference: {fileID: 0}
-    - target: {fileID: 6289656273128953845, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_hasFontAssetChanged
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6683470899679951326, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6683470899679951326, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 4780294354249035588, guid: 9b8d0c2c3e558ed4a9e994b6b7ddc140, type: 2}
-    - target: {fileID: 6683470899679951326, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_hasFontAssetChanged
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8181869698045185277, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 68.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 8181869698045185277, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 44.01
-      objectReference: {fileID: 0}
     - target: {fileID: 9161239370889475663, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_Name
       value: Dialog Crent Room
-      objectReference: {fileID: 0}
-    - target: {fileID: 9161239370889475663, guid: 76f109b871674094795347a812470369, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8988,7 +8900,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6244376593600628318}
   m_HandleRect: {fileID: 1434942658629753368}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:

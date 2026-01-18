@@ -27,25 +27,27 @@ public static partial class AuthenticationMessageReflection {
           "CghuaWNrbmFtZRgDIAEoCRIVCg1wZXJzb25hbENvbG9yGAQgASgJIjwKGVBN",
           "UmVzcG9uc2VSZWdpc3RlckFjY291bnQSDgoGcmVzdWx0GAEgASgIEg8KB21l",
           "c3NhZ2UYAiABKAkiLgoOUE1SZXF1ZXN0TG9naW4SCgoCaWQYASABKAkSEAoI",
-          "cGFzc3dvcmQYAiABKAkiQQoPUE1SZXNwb25zZUxvZ2luEg4KBnJlc3VsdBgB",
-          "IAEoCBIPCgdtZXNzYWdlGAIgASgJEg0KBXRva2VuGAMgASgEIiQKE1BNUmVx",
-          "dWVzdFBsYXllckRhdGESDQoFdG9rZW4YASABKAQiYAoUUE1SZXNwb25zZVBs",
-          "YXllckRhdGESDgoGcmVzdWx0GAEgASgIEg8KB21lc3NhZ2UYAiABKAkSEAoI",
-          "bmlja25hbWUYAyABKAkSFQoNcGVyc29uYWxDb2xvchgEIAEoCSrIAQoaUHJv",
-          "dG9BdXRoZW50aWNhdGlvbk1lc3NhZ2USEwoPUEFNX1VOU1BFQ0lGSUVEEAAS",
-          "HAoYUkVRVUVTVF9SRUdJU1RFUl9BQ0NPVU5UEGQSHQoZUkVTUE9OU0VfUkVH",
-          "SVNURVJfQUNDT1VOVBBlEhEKDVJFUVVFU1RfTE9HSU4QZhISCg5SRVNQT05T",
-          "RV9MT0dJThBnEhcKE1JFUVVFU1RfUExBWUVSX0RBVEEQaBIYChRSRVNQT05T",
-          "RV9QTEFZRVJfREFUQRBpYghlZGl0aW9uc3DoBw=="));
+          "cGFzc3dvcmQYAiABKAkiMgoPUE1SZXNwb25zZUxvZ2luEg4KBnJlc3VsdBgB",
+          "IAEoCBIPCgdtZXNzYWdlGAIgASgJIiYKE1BNUmVxdWVzdFBsYXllckRhdGES",
+          "DwoHbWVzc2FnZRgBIAEoCSJgChRQTVJlc3BvbnNlUGxheWVyRGF0YRIOCgZy",
+          "ZXN1bHQYASABKAgSDwoHbWVzc2FnZRgCIAEoCRIQCghuaWNrbmFtZRgDIAEo",
+          "CRIVCg1wZXJzb25hbENvbG9yGAQgASgJIiIKD1BNUmVxdWVzdExvZ291dBIP",
+          "CgdtZXNzYWdlGAEgASgJKtwBChpQcm90b0F1dGhlbnRpY2F0aW9uTWVzc2Fn",
+          "ZRITCg9QQU1fVU5TUEVDSUZJRUQQABIcChhSRVFVRVNUX1JFR0lTVEVSX0FD",
+          "Q09VTlQQZBIdChlSRVNQT05TRV9SRUdJU1RFUl9BQ0NPVU5UEGUSEQoNUkVR",
+          "VUVTVF9MT0dJThBmEhIKDlJFU1BPTlNFX0xPR0lOEGcSFwoTUkVRVUVTVF9Q",
+          "TEFZRVJfREFUQRBoEhgKFFJFU1BPTlNFX1BMQVlFUl9EQVRBEGkSEgoOUkVR",
+          "VUVTVF9MT0dPVVQQamIIZWRpdGlvbnNw6Ac="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ProtoAuthenticationMessage), }, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::PMRequestRegisterAccount), global::PMRequestRegisterAccount.Parser, new[]{ "Id", "Password", "Nickname", "PersonalColor" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PMResponseRegisterAccount), global::PMResponseRegisterAccount.Parser, new[]{ "Result", "Message" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PMRequestLogin), global::PMRequestLogin.Parser, new[]{ "Id", "Password" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PMResponseLogin), global::PMResponseLogin.Parser, new[]{ "Result", "Message", "Token" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PMRequestPlayerData), global::PMRequestPlayerData.Parser, new[]{ "Token" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::PMResponsePlayerData), global::PMResponsePlayerData.Parser, new[]{ "Result", "Message", "Nickname", "PersonalColor" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::PMResponseLogin), global::PMResponseLogin.Parser, new[]{ "Result", "Message" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PMRequestPlayerData), global::PMRequestPlayerData.Parser, new[]{ "Message" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PMResponsePlayerData), global::PMResponsePlayerData.Parser, new[]{ "Result", "Message", "Nickname", "PersonalColor" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::PMRequestLogout), global::PMRequestLogout.Parser, new[]{ "Message" }, null, null, null, null)
         }));
   }
   #endregion
@@ -60,6 +62,15 @@ public enum ProtoAuthenticationMessage {
   [pbr::OriginalName("RESPONSE_LOGIN")] ResponseLogin = 103,
   [pbr::OriginalName("REQUEST_PLAYER_DATA")] RequestPlayerData = 104,
   [pbr::OriginalName("RESPONSE_PLAYER_DATA")] ResponsePlayerData = 105,
+  /// <summary>
+  ///REQUEST_CREATE_LOBBY = 106;
+  ///RESPONSE_CREATE_LOBBY = 107;
+  ///NOTIFY_DELETE_LOBBY = 108;
+  ///REQUEST_LOBBY_ENTRY = 109;
+  ///REPONSE_LOBBY_ENTRY = 110;
+  ///NOTIFY_LOBBY_OUT = 111;
+  /// </summary>
+  [pbr::OriginalName("REQUEST_LOGOUT")] RequestLogout = 106,
 }
 
 #endregion
@@ -196,11 +207,6 @@ public sealed partial class PMRequestRegisterAccount : pb::IMessage<PMRequestReg
   private readonly static string PersonalColorDefaultValue = "";
 
   private string personalColor_;
-  /// <summary>
-  ///uint32 pch = 4;
-  ///uint32 pcs = 5;
-  ///uint32 pcv = 6;
-  /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public string PersonalColor {
@@ -1003,7 +1009,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
     _hasBits0 = other._hasBits0;
     result_ = other.result_;
     message_ = other.message_;
-    token_ = other.token_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1066,33 +1071,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
     message_ = null;
   }
 
-  /// <summary>Field number for the "token" field.</summary>
-  public const int TokenFieldNumber = 3;
-  private readonly static ulong TokenDefaultValue = 0UL;
-
-  private ulong token_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public ulong Token {
-    get { if ((_hasBits0 & 2) != 0) { return token_; } else { return TokenDefaultValue; } }
-    set {
-      _hasBits0 |= 2;
-      token_ = value;
-    }
-  }
-  /// <summary>Gets whether the "token" field is set</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasToken {
-    get { return (_hasBits0 & 2) != 0; }
-  }
-  /// <summary>Clears the value of the "token" field</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearToken() {
-    _hasBits0 &= ~2;
-  }
-
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -1110,7 +1088,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
     }
     if (Result != other.Result) return false;
     if (Message != other.Message) return false;
-    if (Token != other.Token) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1120,7 +1097,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
     int hash = 1;
     if (HasResult) hash ^= Result.GetHashCode();
     if (HasMessage) hash ^= Message.GetHashCode();
-    if (HasToken) hash ^= Token.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1147,10 +1123,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
       output.WriteRawTag(18);
       output.WriteString(Message);
     }
-    if (HasToken) {
-      output.WriteRawTag(24);
-      output.WriteUInt64(Token);
-    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1169,10 +1141,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
       output.WriteRawTag(18);
       output.WriteString(Message);
     }
-    if (HasToken) {
-      output.WriteRawTag(24);
-      output.WriteUInt64(Token);
-    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1188,9 +1156,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
     }
     if (HasMessage) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(Message);
-    }
-    if (HasToken) {
-      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Token);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -1209,9 +1174,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
     }
     if (other.HasMessage) {
       Message = other.Message;
-    }
-    if (other.HasToken) {
-      Token = other.Token;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -1238,10 +1200,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
         }
         case 18: {
           Message = input.ReadString();
-          break;
-        }
-        case 24: {
-          Token = input.ReadUInt64();
           break;
         }
       }
@@ -1271,10 +1229,6 @@ public sealed partial class PMResponseLogin : pb::IMessage<PMResponseLogin>
           Message = input.ReadString();
           break;
         }
-        case 24: {
-          Token = input.ReadUInt64();
-          break;
-        }
       }
     }
   }
@@ -1290,7 +1244,6 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
 {
   private static readonly pb::MessageParser<PMRequestPlayerData> _parser = new pb::MessageParser<PMRequestPlayerData>(() => new PMRequestPlayerData());
   private pb::UnknownFieldSet _unknownFields;
-  private int _hasBits0;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public static pb::MessageParser<PMRequestPlayerData> Parser { get { return _parser; } }
@@ -1318,8 +1271,7 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public PMRequestPlayerData(PMRequestPlayerData other) : this() {
-    _hasBits0 = other._hasBits0;
-    token_ = other.token_;
+    message_ = other.message_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1329,31 +1281,30 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
     return new PMRequestPlayerData(this);
   }
 
-  /// <summary>Field number for the "token" field.</summary>
-  public const int TokenFieldNumber = 1;
-  private readonly static ulong TokenDefaultValue = 0UL;
+  /// <summary>Field number for the "message" field.</summary>
+  public const int MessageFieldNumber = 1;
+  private readonly static string MessageDefaultValue = "";
 
-  private ulong token_;
+  private string message_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public ulong Token {
-    get { if ((_hasBits0 & 1) != 0) { return token_; } else { return TokenDefaultValue; } }
+  public string Message {
+    get { return message_ ?? MessageDefaultValue; }
     set {
-      _hasBits0 |= 1;
-      token_ = value;
+      message_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
     }
   }
-  /// <summary>Gets whether the "token" field is set</summary>
+  /// <summary>Gets whether the "message" field is set</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public bool HasToken {
-    get { return (_hasBits0 & 1) != 0; }
+  public bool HasMessage {
+    get { return message_ != null; }
   }
-  /// <summary>Clears the value of the "token" field</summary>
+  /// <summary>Clears the value of the "message" field</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public void ClearToken() {
-    _hasBits0 &= ~1;
+  public void ClearMessage() {
+    message_ = null;
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1371,7 +1322,7 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Token != other.Token) return false;
+    if (Message != other.Message) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1379,7 +1330,7 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (HasToken) hash ^= Token.GetHashCode();
+    if (HasMessage) hash ^= Message.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1398,9 +1349,9 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (HasToken) {
-      output.WriteRawTag(8);
-      output.WriteUInt64(Token);
+    if (HasMessage) {
+      output.WriteRawTag(10);
+      output.WriteString(Message);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -1412,9 +1363,9 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (HasToken) {
-      output.WriteRawTag(8);
-      output.WriteUInt64(Token);
+    if (HasMessage) {
+      output.WriteRawTag(10);
+      output.WriteString(Message);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -1426,8 +1377,8 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (HasToken) {
-      size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Token);
+    if (HasMessage) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Message);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -1441,8 +1392,8 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
     if (other == null) {
       return;
     }
-    if (other.HasToken) {
-      Token = other.Token;
+    if (other.HasMessage) {
+      Message = other.Message;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -1463,8 +1414,8 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 8: {
-          Token = input.ReadUInt64();
+        case 10: {
+          Message = input.ReadString();
           break;
         }
       }
@@ -1486,8 +1437,8 @@ public sealed partial class PMRequestPlayerData : pb::IMessage<PMRequestPlayerDa
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 8: {
-          Token = input.ReadUInt64();
+        case 10: {
+          Message = input.ReadString();
           break;
         }
       }
@@ -1856,6 +1807,218 @@ public sealed partial class PMResponsePlayerData : pb::IMessage<PMResponsePlayer
         }
         case 34: {
           PersonalColor = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+[global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+public sealed partial class PMRequestLogout : pb::IMessage<PMRequestLogout>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<PMRequestLogout> _parser = new pb::MessageParser<PMRequestLogout>(() => new PMRequestLogout());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pb::MessageParser<PMRequestLogout> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::AuthenticationMessageReflection.Descriptor.MessageTypes[6]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public PMRequestLogout() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public PMRequestLogout(PMRequestLogout other) : this() {
+    message_ = other.message_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public PMRequestLogout Clone() {
+    return new PMRequestLogout(this);
+  }
+
+  /// <summary>Field number for the "message" field.</summary>
+  public const int MessageFieldNumber = 1;
+  private readonly static string MessageDefaultValue = "";
+
+  private string message_;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Message {
+    get { return message_ ?? MessageDefaultValue; }
+    set {
+      message_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+  /// <summary>Gets whether the "message" field is set</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool HasMessage {
+    get { return message_ != null; }
+  }
+  /// <summary>Clears the value of the "message" field</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void ClearMessage() {
+    message_ = null;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override bool Equals(object other) {
+    return Equals(other as PMRequestLogout);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public bool Equals(PMRequestLogout other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Message != other.Message) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (HasMessage) hash ^= Message.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (HasMessage) {
+      output.WriteRawTag(10);
+      output.WriteString(Message);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (HasMessage) {
+      output.WriteRawTag(10);
+      output.WriteString(Message);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public int CalculateSize() {
+    int size = 0;
+    if (HasMessage) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Message);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(PMRequestLogout other) {
+    if (other == null) {
+      return;
+    }
+    if (other.HasMessage) {
+      Message = other.Message;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 10: {
+          Message = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+    if ((tag & 7) == 4) {
+      // Abort on any end group tag.
+      return;
+    }
+    switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 10: {
+          Message = input.ReadString();
           break;
         }
       }

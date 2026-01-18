@@ -4,9 +4,8 @@ using WebSocketSharp;
 [CreateAssetMenu(fileName = "PlayerInfoSO", menuName = "Scriptable Objects/PlayerInfoSO")]
 public class PlayerInfoSO : ScriptableObject
 {
-    public ulong Token;
     public string Nickname;
-    public string PersonalColor;
+    public Color PersonalColor;
     public string LobbyName;
     public string LobbyIdForEntry;
     public string LobbyPassword;

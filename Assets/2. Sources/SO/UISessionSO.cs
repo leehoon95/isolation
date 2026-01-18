@@ -47,6 +47,8 @@ public class UISessionSO : ScriptableObject
 		OnSubmitMessage = null;
 	}
 
+	public void HideReadyButton() => SessionCommunication.HideReadyButton();
+
 	public void SetInteractable(bool interactable)
 	{
 		_playerSlotManager.SetInteractable(interactable);
