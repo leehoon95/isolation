@@ -168,6 +168,18 @@ MonoBehaviour:
     m_Localized: The account is already logged in
     m_Metadata:
       m_Items: []
+  - m_Id: 12817212500467712
+    m_Localized: No response from host
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12817835333640192
+    m_Localized: Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12818038321176576
+    m_Localized: Go out to the lobby and find another session
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

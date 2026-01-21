@@ -44,6 +44,10 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 		_tooltip = Instantiate(_tooltipPrefab, transform).GetComponent<UITooltip>();
 
 		_id.onValueChanged.AddListener(OnIdValueChanged);
+		//_id.onValidateInput += (text, index, addedText) => {
+		//	GLogger.Log($"{text} {index} {addedText}");
+		//	return addedText;
+		//};
 		_password.onValueChanged.AddListener(OnPasswordValueChanged);
 		
 		_loginButton.onClick.AddListener(OnClickLogin);

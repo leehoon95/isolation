@@ -163,6 +163,18 @@ MonoBehaviour:
     m_Key: logined-already
     m_Metadata:
       m_Items: []
+  - m_Id: 12817212500467712
+    m_Key: session-no-response-from-host
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12818038321176576
+    m_Key: session-no-response-from-host-guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12817835333640192
+    m_Key: exit-session
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

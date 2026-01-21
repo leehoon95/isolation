@@ -9,6 +9,15 @@ public class UIGradientUpMaterialController : UIMaterialControllerBase
 	[Range(0f, 1f)]
 	float _offset = 0.5f;
 
+	public Color Color
+	{
+		set 
+		{
+			_color = value;
+			SetMaterialDirty();
+		}
+	}
+
 	protected override void EditMaterialPropertiesValue()
 	{
 		material.SetColor("_Color", _color);

@@ -21,6 +21,8 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	[SerializeField]
 	NetworkEventHandler _networkEventHandler;
+	[SerializeField]
+	ChatBoxSynchronizer _chatBoxSync;
 
 	Coroutine _taskCo;
 	Coroutine _notifyCo;
@@ -28,6 +30,7 @@ public class SessionGameReadyManager : MonoBehaviour
 	ILobbyEvents _lobbyEvents;
 	uint _slotIndex;
 	bool _ready;
+	bool _connected;
 
 	void Awake()
 	{
@@ -48,10 +51,11 @@ public class SessionGameReadyManager : MonoBehaviour
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UISessionSOHolder>().Data;
+		_uiso.Notification = FindAnyObjectByType<UINotification>();
 		_sessionParameter = FindAnyObjectByType<SessionParameterSOHolder>().Data;
 		_playerSlotSync = FindAnyObjectByType<PlayerSlotSynchronizer>();
 		_playerSlotSync.OnSlotDataChanged += OnSlotDataChanged;
-
+		_chatBoxSync.OnReceivedChatMessage += OnReceivedChatMessage;
 		_uiso.OnClickReady += OnReady;
 		_uiso.OnClickLeave += OnLeave;
 		_uiso.OnSubmitMessage += OnSubmitMessage;
@@ -63,14 +67,19 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (_sessionParameter.LobbyName != null)
 		{
 			// start as host
-			_taskCo = StartCoroutine(StartHostCo());
-			_uiso.HideReadyButton();
+			StartCoroutine(StartHostCo());
+			_uiso.SessionCommunication.SetReadyButtonText("START GAME");
+			_uiso.SessionCommunication.SetReadyButtonHighlight(true);
 		}
 		else
 		{
 			// start as peer
-			_taskCo = StartCoroutine(StartClientCo());
+			StartCoroutine(StartClientCo());
+			_uiso.SessionCommunication.SetReadyButtonText("READY");
+			_uiso.SessionCommunication.SetReadyButtonHighlight(false);
 		}
+
+		StartCoroutine(ConnectionWatchDog());
 	}
 
 	void OnDisable()
@@ -81,6 +90,34 @@ public class SessionGameReadyManager : MonoBehaviour
 	void SceneLoadedOnInvalidSession(Scene scene, LoadSceneMode mode)
 	{
 		SceneManager.LoadScene("LobbyScene");
+	}
+
+	IEnumerator ConnectionWatchDog()
+	{
+		yield return null;
+		var delay = new WaitForSeconds(1f);
+		int count = 10;
+		while (count > 0)
+		{
+			yield return delay;
+
+			if (_connected)
+			{
+				yield break;
+			}
+
+			count--;
+		}
+
+		if (_lobby != null)
+		{
+			var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
+			yield return new WaitUntil(() => task.IsCompleted);
+		}
+
+		ShowNotification("session-no-response-from-host");
+		yield return new WaitForSeconds(3f);
+		ShowNotification("session-no-response-from-host-guide");
 	}
 
 	IEnumerator StartHostCo()
@@ -130,7 +167,6 @@ public class SessionGameReadyManager : MonoBehaviour
 		GLogger.Log($"StartHost Lobby creation is successful! host id:{lobby.HostId} lobby id: {lobby.Id}");
 
 		_uiso.SetInteractable(true);
-		_taskCo = null;
 	}
 
 	IEnumerator StartClientCo()
@@ -165,7 +201,6 @@ public class SessionGameReadyManager : MonoBehaviour
 		}
 
 		_uiso.SetInteractable(true);
-		_taskCo = null;
 	}
 
 	void OnClientConnected(ulong clientId)
@@ -175,6 +210,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		// host에게 player data를 전달
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
+			_connected = true;
 			_playerSlotSync.AddClientRpc(clientId, _playerInfo.Nickname, _playerInfo.PersonalColor);
 		}
 	}
@@ -213,10 +249,11 @@ public class SessionGameReadyManager : MonoBehaviour
 				i,
 				data.Nickname.ToString(),
 				data.PersonalColor);
-			_uiso.PlayerSlotManager.SetReadyState(i, data.Ready);
-			if (data.Nickname == _playerInfo.Nickname)
+			bool thisSlotIsMe = data.Nickname == _playerInfo.Nickname;
+			_uiso.PlayerSlotManager.SetReadyState(i, data.Ready, thisSlotIsMe);
+			if (thisSlotIsMe)
 			{
-				_uiso.PlayerSlotManager.SetIsYou(i);
+				_uiso.SessionCommunication.SetReadyButtonHighlight(data.Ready);
 			}
 		}
 
@@ -274,29 +311,6 @@ public class SessionGameReadyManager : MonoBehaviour
 #endif
 	}
 
-	//IEnumerator AddPlayerSlot(string lobbyId)
-	//{
-	//	//var task = UGSLobbyManager.GetLobbyById(lobbyId);
-	//	//yield return new WaitUntil(() => task.IsCompleted);
-		
-	//	//var lobby = task.Result;
-	//	//if (lobby == null)
-	//	//{
-	//	//	GLogger.LogError($"UpdateLobby failed to get lobby. lobby id: {lobby.Id}");
-	//	//	yield break;
-	//	//}
-
-	//	var count = _playerSlotSync.GetSlotDataCount();
-	//	for (int i = 0; i < count; i++)
-	//	{
-	//		_playerSlotSync.AddSlotDataRpc(
-	//			p.Data["Nickname"].Value, 
-	//			PlayerInfoSO.DeserializePersonalColor(p.Data["PersonalColor"].Value));
-	//	}
-
-	//	_lobby = lobby;
-	//}
-
 	void OnKickedFromLobby()
 	{
 		GLogger.LogWarning("OnKickedFromLobby");
@@ -334,16 +348,40 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	void OnSubmitMessage(string message)
 	{
-		GLogger.Log($"message: {message}");
-		_uiso.AddMessage("aabbcc", message, 
-			new Color((int)Random.Range(128, 255), (int)Random.Range(128, 255), (int)Random.Range(128, 255)));
+		//GLogger.Log($"message: {message}");
+		//_uiso.AddMessage("aabbcc", message, 
+		//	new Color((int)Random.Range(128, 255), 
+		//	(int)Random.Range(128, 255), 
+		//	(int)Random.Range(128, 255)));
+		_chatBoxSync.ChatMessageRpc(_playerInfo.Nickname, message, _playerInfo.PersonalColor);
 	}
 
 	void OnReady()
 	{
-		GLogger.Log("Ready");
-		_ready = !_ready;
-		_playerSlotSync.ReadyClientRpc(NetworkManager.Singleton.LocalClientId, _ready);
+		GLogger.Log("Ready Or GameStart");
+		if (NetworkManager.Singleton.IsHost)
+		{
+			var count = _playerSlotSync.GetSlotDataCount();
+			bool allReady = true;
+
+			for (int i = 0; i < count; i++)
+			{
+				allReady |= _playerSlotSync.GetSlotData(i).Ready;
+			}
+
+			if (allReady)
+			{
+				GLogger.LogWarning("ALL READY. START GAME");
+
+				NetworkManager.Singleton.SceneManager.LoadScene(
+					"TestGameScene", LoadSceneMode.Single);
+			}
+		}
+		else
+		{
+			_ready = !_ready;
+			_playerSlotSync.ReadyClientRpc(NetworkManager.Singleton.LocalClientId, _ready);
+		}
 	}
 
 	void OnLeave()
@@ -362,14 +400,17 @@ public class SessionGameReadyManager : MonoBehaviour
 
 		if (_lobby != null)
 		{
-			var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
-			yield return new WaitUntil(() => task.IsCompleted);
-		}
-
-		if (NetworkManager.Singleton.IsHost)
-		{
-			GLogger.LogWarning($"Delete Lobby {_lobby.Id}");
-			UGSLobbyManager.DeleteLobby(_lobby.Id);
+			if (NetworkManager.Singleton.IsHost)
+			{
+				GLogger.LogWarning($"Delete Lobby {_lobby.Id}");
+				var task = UGSLobbyManager.DeleteLobby(_lobby.Id);
+				yield return new WaitUntil(() => task.IsCompleted);
+			}
+			else
+			{
+				var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
+				yield return new WaitUntil(() => task.IsCompleted);
+			}
 		}
 
 		NetworkManager.Singleton.Shutdown();
@@ -382,6 +423,12 @@ public class SessionGameReadyManager : MonoBehaviour
 		_tcpClient.OnReceived -= OnTCPDataReceived;
 		StopAllCoroutines();
 		SceneManager.LoadScene(sceneName);
+	}
+
+	void OnReceivedChatMessage(string speaker,string message, Color color)
+	{
+		//GLogger.Log($"OnReceivedChatMessage {speaker} {message} {color}");
+		_uiso.AddMessage(speaker, message, color);
 	}
 
 	async Task OnTCPDataReceived(byte[] buffer, int length)
@@ -401,7 +448,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		{
 			StopCoroutine(_notifyCo);
 		}
-
+		
 		_notifyCo = StartCoroutine(ShowNotificationCo(localizationKey));
 	}
 
@@ -410,9 +457,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		var task = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(
 			"DefaultStringTable", localizationKey, LocalizationSettings.SelectedLocale);
 		yield return task;
-
 		_uiso.Notification.ShowNotification(task.Result);
-
 		_notifyCo = null;
 	}
 }

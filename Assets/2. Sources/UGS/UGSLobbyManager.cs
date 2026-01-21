@@ -264,7 +264,7 @@ public class UGSLobbyManager : MonoBehaviour
 	/*
 	 * host에게 로비를 삭제할 권한이 줄 것인지
 	 */
-	public static async void DeleteLobby(string lobbyId)
+	public static async Task DeleteLobby(string lobbyId)
 	{
 		if (lobbyId.IsNullOrEmpty())
 		{

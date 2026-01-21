@@ -12,7 +12,7 @@ public class UIChatMessage : MonoBehaviour
 	string _speakerColorHex = "<color=#FFFFFF>";
 
 	public Color SpeakerColor {
-		set => _speakerColorHex = $"<color=#{((int)(value.r)).ToString("X2")}{((int)(value.g )).ToString("X2")}{((int)(value.b )).ToString("X2")}>"; 
+		set => _speakerColorHex = $"<color=#{((int)(value.r * 255)).ToString("X2")}{((int)(value.g * 255)).ToString("X2")}{((int)(value.b * 255)).ToString("X2")}>"; 
 		//set => _speakerColorHex = $"<color=#{Convert.ToString(value.r, NumberStyles.HexNumber) }{value.r.ToString("x")}{value.r.ToString("x")}>"; 
 	}
 	public Color messageColor { set => _text.color = value; }

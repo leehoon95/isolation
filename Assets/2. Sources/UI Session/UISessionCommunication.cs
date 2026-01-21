@@ -11,6 +11,12 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 	[SerializeField]
 	Button _leaveButton;
 	[SerializeField]
+	TMP_Text _readyButtonText;
+	[SerializeField]
+	Image _readyBorderImage;
+	[SerializeField]
+	UIGradientUpMaterialController _readyButtonBackground;
+	[SerializeField]
 	ScrollRect _scrollRect;
 	[SerializeField]
 	GameObject _chatMessagePrefab;
@@ -20,6 +26,7 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 	CanvasGroup _chatGroup;
 
 	UISessionSO _uiso;
+	bool _isHost;
 
 	protected override void Start()
 	{
@@ -27,7 +34,6 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 		_uiso.SessionCommunication = this;
 
 		_inputField.onSubmit.AddListener(OnMessageSubmitted);
-		_inputField.characterLimit = 200;
 
 		_readyButton.onClick.AddListener(() => _uiso.RaiseOnClickReady());
 		_leaveButton.onClick.AddListener(() => _uiso.RaiseOnClickLeave());
@@ -69,8 +75,24 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 		_chatGroup.interactable = interactable;
 	}
 
-	public void HideReadyButton()
+	public void SetReadyButtonText(string text)
 	{
-		_readyButton.gameObject.SetActive(false);
+		_readyButtonText.text = text;
+	}
+
+	public void SetReadyButtonHighlight(bool bright)
+	{
+		if (bright)
+		{
+			var c = new Color(0f, 218f / 255f, 1f);
+			_readyBorderImage.color = c;
+			_readyButtonBackground.Color = c;
+		}
+		else
+		{
+			var c = new Color(1f, 127f / 255f, 0f);
+			_readyBorderImage.color = c;
+			_readyButtonBackground.Color = c;
+		}
 	}
 }

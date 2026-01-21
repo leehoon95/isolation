@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.LowLevel;
 using UnityEngine.UI;
 
 [ExecuteAlways]
@@ -39,7 +40,7 @@ public class UIPlayerSlot : UIBehaviour
 		set => _slotText.color = value;
 	}
 
-	public bool You
+	public bool ThisIsMe
 	{
 		set => _youSign.gameObject.SetActive(value);
 	}
@@ -75,10 +76,18 @@ public class UIPlayerSlot : UIBehaviour
 				_borderImage.color = new Color(1f, 127f / 255f, 0f);
 				_hostSign.gameObject.SetActive(false);
 				break;
+			case PlayerSlotStatus.InUseAndMe:
+				var inUseAndYouColor = new Color(32f / 255f, 178f / 255f, 170f / 255f);
+				_background.PatternColor = inUseAndYouColor;
+				_background.Offset = 0.5f;
+				_borderImage.color = inUseAndYouColor;
+				_hostSign.gameObject.SetActive(false);
+				break;
 			case PlayerSlotStatus.Ready:
-				_background.PatternColor = Color.green;
+				var readyColor = new Color(0f, 218f / 255f, 1f);
+				_background.PatternColor = readyColor;
 				_background.Offset = 0.3f;
-				_borderImage.color = new Color(0f, 218f / 255f, 255f);
+				_borderImage.color = readyColor;
 				_hostSign.gameObject.SetActive(false);
 				break;
 			case PlayerSlotStatus.Host:

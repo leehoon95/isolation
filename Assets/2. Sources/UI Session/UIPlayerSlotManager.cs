@@ -40,7 +40,7 @@ public class UIPlayerSlotManager : UIBehaviour, IUIPlayerSlotManager
 		slot.SlotTextColor = color;
 	}
 
-	public void SetReadyState(int slotIndex, bool ready)
+	public void SetReadyState(int slotIndex, bool ready, bool isMe)
 	{
 		if (slotIndex == 0)
 		{
@@ -54,7 +54,16 @@ public class UIPlayerSlotManager : UIBehaviour, IUIPlayerSlotManager
 		}
 		else
 		{
-			slot.SlotStatus = PlayerSlotStatus.InUse;
+			if (isMe)
+			{
+				slot.SlotStatus = PlayerSlotStatus.InUseAndMe;
+				slot.ThisIsMe = true;
+			}
+			else
+			{
+				slot.SlotStatus = PlayerSlotStatus.InUse;
+				slot.ThisIsMe = false;
+			}
 		}
 	}
 
@@ -71,45 +80,8 @@ public class UIPlayerSlotManager : UIBehaviour, IUIPlayerSlotManager
 		slot.SlotStatus = PlayerSlotStatus.Empty;
 	}
 
-	//UIPlayerSlot GetEmptySlot()
-	//{
-	//	if (_slot0.SlotStatus == PlayerSlotStatus.Empty)
-	//	{
-	//		return _slot0;
-	//	}
-	//	else if (_slot1.SlotStatus == PlayerSlotStatus.Empty)
-	//	{
-	//		return _slot1;
-	//	}
-	//	else if (_slot2.SlotStatus == PlayerSlotStatus.Empty)
-	//	{
-	//		return _slot2;
-	//	}
-	//	else if (_slot3.SlotStatus == PlayerSlotStatus.Empty)
-	//	{
-	//		return _slot3;
-	//	}
-
-	//	return null;
-	//}
-
 	public void SetInteractable(bool interactable)
 	{
 		_canvasGroup.interactable = interactable;
-	}
-
-	public void SetIsYou(int index)
-	{
-		for (int i = 1; i < _slots.Length; i++)
-		{
-			if (i == index)
-			{
-				_slots[i].You = true;
-			}
-			else
-			{
-				_slots[i].You = false;
-			}
-		}
 	}
 }
