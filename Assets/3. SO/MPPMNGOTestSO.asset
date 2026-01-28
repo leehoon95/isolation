@@ -9,6 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78ec5d0e02ce34942a972db904c2aecd, type: 3}
-  m_Name: UITestSO
+  m_Script: {fileID: 11500000, guid: c4c0052c5491cd341a50813ad3d5e2fb, type: 3}
+  m_Name: MPPMNGOTestSO
   m_EditorClassIdentifier: 
+  IsOn: 1
+  HostTarget: 0

@@ -36,6 +36,9 @@ public class LobbyGameManager : MonoBehaviour
 		var lobbyInfoSO = FindAnyObjectByType<SessionParameterSOHolder>();
 		Destroy(lobbyInfoSO);
 
+		var nho = FindAnyObjectByType<NetworkEventHandler>();
+		Destroy(nho);
+
 		//if (FindAnyObjectByType<PlayerInfoSOHolder>() == null)
 		//{
 		//	var obj = new GameObject("[Player Info Holder]");

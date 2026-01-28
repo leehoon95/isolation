@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,28 +9,26 @@ public class NetworkEventHandler : MonoBehaviour
 	public event Action<ulong> OnClientDisconnected;
 	public event Action<ulong> OnPeerConnected;
 	public event Action<ulong> OnPeerDisconnected;
+	public event Action<SceneEventType, ulong> OnSceneEvent;
 
 	void Start()
 	{
-		NetworkManager.Singleton.OnClientStarted += SetListner;
-	}
-
-	void SetListner()
-	{
+		DontDestroyOnLoad(gameObject);
 		NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
-		NetworkManager.Singleton.OnPreShutdown += ClearAllEventListner;
 	}
 
-	void ClearAllEventListner()
+	public void SetSceneEventListner()
+	{
+		NetworkManager.Singleton.SceneManager.OnSceneEvent += SceneEventListner;
+	}
+
+	public void ClearConnectionEventListner()
 	{
 		OnClientConnected = null;
 		OnClientDisconnected = null;
 		OnPeerConnected = null;
 		OnPeerDisconnected = null;
-
-		NetworkManager.Singleton.OnClientStarted -= SetListner;
-		NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
-		NetworkManager.Singleton.OnPreShutdown -= ClearAllEventListner;
+		OnSceneEvent = null;
 	}
 
 	void OnConnectionEvent(NetworkManager nm, ConnectionEventData eventData)
@@ -50,4 +49,7 @@ public class NetworkEventHandler : MonoBehaviour
 				break;
 		}
 	}
+
+	void SceneEventListner(SceneEvent sceneEvent) 
+		=> OnSceneEvent?.Invoke(sceneEvent.SceneEventType, sceneEvent.ClientId);
 }

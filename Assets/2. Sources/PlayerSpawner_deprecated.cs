@@ -30,7 +30,7 @@ using UnityEngine;
  * 
  * 
  */
-public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
+public class PlayerSpawner_Deprecated : NetworkBehaviour, INetworkPrefabInstanceHandler
 {
 	[SerializeField]
 	GameObject _playerPrefab;
@@ -66,10 +66,8 @@ public class PlayerSpawner : NetworkBehaviour, INetworkPrefabInstanceHandler
 	/*
 	 * INetworkprefabInstanceHandler.Instantiate 구현
 	 * Instantiate 메서드는 권한이 없는 client에서만 호출됨
-	 * 권한에 대한 네트워크 프리팹 동작을 지정하려면 prefab override를 사용
+	 * 권한(host)에 대한 네트워크 프리팹 동작을 지정하려면 prefab override를 사용
 	 * 
-	 * Authority(권한)에서 다른 클라이언트와 다른 prefab instance를 사용하려면
-	 * prefab override를 고려한다.
 	 * 
 	 */
 	public NetworkObject Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)

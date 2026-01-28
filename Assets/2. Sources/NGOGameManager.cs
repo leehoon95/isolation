@@ -17,7 +17,7 @@ public class NGOGameManager : MonoBehaviour
 	[SerializeField]
 	GameObject _targetPrefab;
 	[SerializeField]
-	PlayerSpawner _playerSpawner;
+	PlayerSpawner_Deprecated _playerSpawner;
 	[SerializeField]
 	PooledDynamicSpawner _pds;
 

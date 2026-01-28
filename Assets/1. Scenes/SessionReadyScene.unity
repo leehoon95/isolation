@@ -608,7 +608,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46
+  m_fontSize: 42.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1261,7 +1261,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46
+  m_fontSize: 36.5
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1769,7 +1769,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.2}
-  m_AnchoredPosition: {x: 0.0000038146973, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0.0000076293945, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &610733360
@@ -3757,6 +3757,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _networkEventHandler: {fileID: 967842752}
   _chatBoxSync: {fileID: 1862217028}
+  _nextSceneName: Level0_Scene
+  _ngoTestSO: {fileID: 11400000, guid: 0bfdbd37da44e274eb970f7efbf29fed, type: 2}
 --- !u!1 &1862217025
 GameObject:
   m_ObjectHideFlags: 0

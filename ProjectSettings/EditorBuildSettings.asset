@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/1. Scenes/SessionReadyScene.unity
     guid: d51c511d838cb384ebb47f14d01467d5
   - enabled: 1
-    path: Assets/1. Scenes/TestGameScene.unity
+    path: Assets/1. Scenes/Level0_Scene.unity
     guid: 97163bbef5129b642b8dd91a92770f0e
   - enabled: 0
     path: Assets/1. Scenes/Test/TestScene.unity

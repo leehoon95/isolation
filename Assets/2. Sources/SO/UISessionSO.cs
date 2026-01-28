@@ -55,9 +55,4 @@ public class UISessionSO : ScriptableObject
 }
 
 public class UISessionSOHolder : SOHolderSinglton<UISessionSO, UISessionSOHolder>
-{
-	protected override void Awake()
-	{
-		base.Awake();
-	}
-}
+{}

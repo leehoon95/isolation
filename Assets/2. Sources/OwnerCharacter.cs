@@ -38,11 +38,13 @@ public class OwnerCharacter : NetworkBehaviour
 		set => _text.text = value;
 	}
 
+	public Color BodyTextColor
+	{
+		set => _text.color = value;
+	}
+
 	public override void OnNetworkSpawn()
 	{
-		//Debug.Log($"OwnerCharacter.OnNetworkSpawn() IsHost: {IsHost}");
-		//Debug.Log($"OwnerCharacter.OnNetworkSpawn() IsClient: {IsClient}");
-		//Debug.Log($"OwnerCharacter.OnNetworkSpawn() IsOwner: {IsOwner}");
 		if (IsOwner)
 		{
 			_inputSystem = FindAnyObjectByType<InputSystem>();
@@ -53,7 +55,6 @@ public class OwnerCharacter : NetworkBehaviour
 			}
 			
 			_inputSystem.Move += OnMove;
-			//_inputSystem.Look += OnLook;
 			_inputSystem.Attack += OnAttack;
 			_inputSystem.Attack2 += OnAttack2;
 
@@ -70,12 +71,6 @@ public class OwnerCharacter : NetworkBehaviour
 	void OnMove(Vector2 dir)
 	{
 		_inputDirection = dir;
-	}
-
-	void OnLook(Vector2 pos)
-	{
-		Vector2 directionToMouse = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
-		_angle = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
 	}
 
 	void OnAttack(bool performed)
@@ -113,7 +108,9 @@ public class OwnerCharacter : NetworkBehaviour
 	{
 		if (IsOwner)
 		{
-			OnLook(Mouse.current.position.ReadValue());
+			// player->mouse direction
+			Vector2 directionToMouse = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
+			_angle = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
 
 			if (_inputDirection.magnitude > float.Epsilon)
 			{
@@ -134,7 +131,7 @@ public class OwnerCharacter : NetworkBehaviour
 				var dispersedUp = rq * worldUp;
 				//var dispersedUp = Quaternion.AngleAxis(RandomNormal(0f, 2f), Vector3.forward) * worldUp;
 				
-				_dynamicSpawner.CreateObject(
+				_dynamicSpawner?.CreateObject(
 					"bullet",
 					transform.position + dispersedUp.normalized,
 					transform.rotation * rq);

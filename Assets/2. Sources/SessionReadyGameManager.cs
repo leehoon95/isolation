@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Multiplayer.Playmode;
 using Unity.Netcode;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
@@ -23,6 +24,13 @@ public class SessionGameReadyManager : MonoBehaviour
 	NetworkEventHandler _networkEventHandler;
 	[SerializeField]
 	ChatBoxSynchronizer _chatBoxSync;
+	[SerializeField]
+	string _nextSceneName;
+
+#if UNITY_EDITOR
+	[SerializeField]
+	MPPMNGOTestSO _ngoTestSO;
+#endif
 
 	Coroutine _taskCo;
 	Coroutine _notifyCo;
@@ -40,29 +48,52 @@ public class SessionGameReadyManager : MonoBehaviour
 			obj.AddComponent<UISessionSOHolder>();
 		}
 
-		if (FindAnyObjectByType<SessionParameterSOHolder>() == null)
+#if UNITY_EDITOR
+		if (_ngoTestSO.IsOn)
 		{
-			GLogger.LogError("SessionGameManger.Awake This session is invalid");
-			SceneManager.sceneLoaded += SceneLoadedOnInvalidSession;
+			GLogger.LogWarning("=== START NGO TEST ===");
+
+			var obj = new GameObject("[Player Info Holder]");
+			var piHolder = obj.AddComponent<PlayerInfoSOHolder>();
+			DontDestroyOnLoad(obj);
+
+			return;
 		}
+#endif
 	}
+
 	void Start()
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
-		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UISessionSOHolder>().Data;
 		_uiso.Notification = FindAnyObjectByType<UINotification>();
-		_sessionParameter = FindAnyObjectByType<SessionParameterSOHolder>().Data;
 		_playerSlotSync = FindAnyObjectByType<PlayerSlotSynchronizer>();
 		_playerSlotSync.OnSlotDataChanged += OnSlotDataChanged;
 		_chatBoxSync.OnReceivedChatMessage += OnReceivedChatMessage;
 		_uiso.OnClickReady += OnReady;
 		_uiso.OnClickLeave += OnLeave;
 		_uiso.OnSubmitMessage += OnSubmitMessage;
+
 		_networkEventHandler.OnClientConnected += OnClientConnected;
 		_networkEventHandler.OnClientDisconnected += OnClientDisconnected;
 		_networkEventHandler.OnPeerConnected += OnPeerConnected;
 		_networkEventHandler.OnPeerDisconnected += OnPeerDisconnected;
+		_networkEventHandler.OnSceneEvent += OnSceneEvent;
+
+#if UNITY_EDITOR
+		if (_ngoTestSO.IsOn)
+		{
+			StartCoroutine(StartNGOTestClient());
+			return;
+		}
+#endif
+
+		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
+		_sessionParameter = FindAnyObjectByType<SessionParameterSOHolder>().Data;
+		if (_sessionParameter == null)
+		{
+			LoadScene("LobbyScene");
+		}
 
 		if (_sessionParameter.LobbyName != null)
 		{
@@ -82,15 +113,21 @@ public class SessionGameReadyManager : MonoBehaviour
 		StartCoroutine(ConnectionWatchDog());
 	}
 
-	void OnDisable()
+#if UNITY_EDITOR
+	IEnumerator StartNGOTestClient()
 	{
-		SceneManager.sceneLoaded -= SceneLoadedOnInvalidSession;
-	}
+		yield return null;
+		if (CurrentPlayer.IsMainEditor)
+		{
+			NetworkManager.Singleton.StartHost();
+		}
+		else
+		{
+			NetworkManager.Singleton.StartClient();
 
-	void SceneLoadedOnInvalidSession(Scene scene, LoadSceneMode mode)
-	{
-		SceneManager.LoadScene("LobbyScene");
+		}
 	}
+#endif
 
 	IEnumerator ConnectionWatchDog()
 	{
@@ -142,7 +179,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		//callbacks.LobbyChanged += OnLobbyChanged;
 		//callbacks.KickedFromLobby += OnKickedFromLobby;
 		//callbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
-		
+
 		var taskLobby = UGSLobbyManager.CreateLobby(
 			_sessionParameter.LobbyName,
 			_sessionParameter.MaxPlayers,
@@ -161,12 +198,11 @@ public class SessionGameReadyManager : MonoBehaviour
 		
 		_lobby = lobby;
 		_lobbyEvents = lobbyEvent;
-
+		
+		_uiso.SetInteractable(true);
 		StartCoroutine(HeartbeatLobby(lobby.Id));
 
 		GLogger.Log($"StartHost Lobby creation is successful! host id:{lobby.HostId} lobby id: {lobby.Id}");
-
-		_uiso.SetInteractable(true);
 	}
 
 	IEnumerator StartClientCo()
@@ -207,9 +243,20 @@ public class SessionGameReadyManager : MonoBehaviour
 	{
 		GLogger.Log($"OnClientConnected {clientId}");
 
-		// host에게 player data를 전달
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
+#if UNITY_EDITOR
+			_playerInfo.Nickname = $"{clientId}_client";
+
+			switch (clientId)
+			{
+				case 0: _playerInfo.PersonalColor = Color.red; break;
+				case 1: _playerInfo.PersonalColor = Color.yellow; break;
+				case 2: _playerInfo.PersonalColor = Color.green; break;
+				case 3: _playerInfo.PersonalColor = Color.cyan; break;
+			}
+#endif
+			_networkEventHandler.SetSceneEventListner();
 			_connected = true;
 			_playerSlotSync.AddClientRpc(clientId, _playerInfo.Nickname, _playerInfo.PersonalColor);
 		}
@@ -218,8 +265,14 @@ public class SessionGameReadyManager : MonoBehaviour
 	void OnClientDisconnected(ulong clientId)
 	{
 		GLogger.Log($"OnClientDisconnected {clientId}");
-		// 접속한 client만 호출한다
-		if (NetworkManager.Singleton.IsHost)
+#if UNITY_EDITOR
+		if (_ngoTestSO.IsOn)
+		{
+			return;
+		}
+#endif
+			// 접속한 client만 호출한다
+			if (NetworkManager.Singleton.IsHost)
 		{
 			_playerSlotSync.RemoveClientRpc(clientId);
 		}
@@ -237,6 +290,21 @@ public class SessionGameReadyManager : MonoBehaviour
 	void OnPeerDisconnected(ulong clientid)
 	{}
 
+	void OnSceneEvent(SceneEventType eventType, ulong clientId)
+	{
+		GLogger.Log($"SceneEvent {eventType} {clientId}");
+		switch (eventType)
+		{
+			case SceneEventType.Unload:
+				if (clientId == NetworkManager.Singleton.LocalClientId)
+				{
+					CleanEvent();
+				}
+
+				break;
+		}
+	}
+
 	void OnSlotDataChanged(int count)
 	{
 		//GLogger.Log($"OnSlotChanged count: {count}");
@@ -251,7 +319,7 @@ public class SessionGameReadyManager : MonoBehaviour
 				data.PersonalColor);
 			bool thisSlotIsMe = data.Nickname == _playerInfo.Nickname;
 			_uiso.PlayerSlotManager.SetReadyState(i, data.Ready, thisSlotIsMe);
-			if (thisSlotIsMe)
+			if (i > 0 && thisSlotIsMe)
 			{
 				_uiso.SessionCommunication.SetReadyButtonHighlight(data.Ready);
 			}
@@ -295,53 +363,24 @@ public class SessionGameReadyManager : MonoBehaviour
 		}
 	}
 
-	void OnLobbyChanged(ILobbyChanges changes)
-	{
-		return;
-		changes.ApplyToLobby(_lobby);
-
-#if UNITY_EDITOR
-		string log = "Players\n";
-		foreach (var p in _lobby.Players)
-		{
-			log += $"	{p.Data["Nickname"].Value} {p.Data["PersonalColor"].Value}\n";
-		}
-		log += "end...";
-		GLogger.Log(log);
-#endif
-	}
-
-	void OnKickedFromLobby()
-	{
-		GLogger.LogWarning("OnKickedFromLobby");
-		StopAllCoroutines();
-
-		StartCoroutine(LockInteractabilityUntilTaskComplete(LeaveFromThisSessionCo()));
-	}
-
 	void OnLobbyEventConnectionStateChanged(LobbyEventConnectionState state)
 	{
 		switch (state)
 		{
 			case LobbyEventConnectionState.Unsubscribed:
 				/* Update the UI if necessary, as the subscription has been stopped. */
-				//Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsubscribed");
 				break;
 			case LobbyEventConnectionState.Subscribing:
 				/* Update the UI if necessary, while waiting to be subscribed. */
-				//Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribing");
 				break;
 			case LobbyEventConnectionState.Subscribed:
 				/* Update the UI if necessary, to show subscription is working. */
-				//Debug.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Subscribed");
 				break;
 			case LobbyEventConnectionState.Unsynced:
 				/* Update the UI to show connection problems. Lobby will attempt to reconnect automatically. */
-				//GLogger.LogWarning("NGOGameManager.OnLobbyEventConnectionStateChanged Unsynced");
 				break;
 			case LobbyEventConnectionState.Error:
 				/* Update the UI to show the connection has errored. Lobby will not attempt to reconnect as something has gone wrong. */
-				//GLogger.LogError("NGOGameManager.OnLobbyEventConnectionStateChanged Error");
 				break;
 		}
 	}
@@ -358,23 +397,31 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	void OnReady()
 	{
-		GLogger.Log("Ready Or GameStart");
+		GLogger.Log("OnReady");
+		if (!_connected)
+		{
+			GLogger.LogWarning("OnReady Not connected");
+			return;
+		}
+
 		if (NetworkManager.Singleton.IsHost)
 		{
 			var count = _playerSlotSync.GetSlotDataCount();
-			bool allReady = true;
+			var ready = 0;
 
 			for (int i = 0; i < count; i++)
 			{
-				allReady |= _playerSlotSync.GetSlotData(i).Ready;
+				if (_playerSlotSync.GetSlotData(i).Ready)
+				{
+					ready++;
+				}
 			}
-
-			if (allReady)
+			GLogger.Log($"ready = {ready} / count = {count}");
+			if (count == ready + 1)
 			{
 				GLogger.LogWarning("ALL READY. START GAME");
 
-				NetworkManager.Singleton.SceneManager.LoadScene(
-					"TestGameScene", LoadSceneMode.Single);
+				LoadSceneNetwork(_nextSceneName);
 			}
 		}
 		else
@@ -419,10 +466,37 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	void LoadScene(string sceneName)
 	{
-		_uiso.ClearEvent();
-		_tcpClient.OnReceived -= OnTCPDataReceived;
+		CleanEvent();
 		StopAllCoroutines();
 		SceneManager.LoadScene(sceneName);
+	}
+
+	void LoadSceneNetwork(string sceneName)
+	{
+		CleanEvent();
+		StopAllCoroutines();
+		var status = NetworkManager.Singleton.SceneManager.LoadScene(
+					_nextSceneName, LoadSceneMode.Single);
+
+		if (status != SceneEventProgressStatus.Started)
+		{
+			GLogger.LogWarning($"Failed to load scene TestGameScene. {status}");
+		}
+	}
+
+	void CleanEvent()
+	{
+		_uiso.ClearEvent();
+		_networkEventHandler.ClearConnectionEventListner();
+
+#if UNITY_EDITOR
+		if (_ngoTestSO.IsOn)
+		{
+			return;
+		}
+#endif
+
+		_tcpClient.OnReceived -= OnTCPDataReceived;
 	}
 
 	void OnReceivedChatMessage(string speaker,string message, Color color)
