@@ -17,19 +17,6 @@ public class PlayerSpawner : NetworkBehaviour
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
 		_spawnHandler = new SpawnPlayerWithDataHandler(networkManager, _prefapToSpawn);
-
-		//if (!IsHost)
-		//{
-		//	GLogger.Log("IsClient !!");
-		//	_spawnHandler.OnSpawn += (clientId, no) =>
-		//	{
-		//		if (!_data.ContainsKey(clientId))
-		//		{
-		//			_data[clientId] = no;
-		//		}
-		//	};
-		//}
-
 	}
 
 	/*

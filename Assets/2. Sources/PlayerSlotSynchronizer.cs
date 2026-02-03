@@ -10,11 +10,11 @@ using UnityEngine;
 using UnityEngine.LightTransport.PostProcessing;
 
 /*
- * ÀÔÀåÇÑ client ¼øÀ¸·Î slotÀ» ¹èÁ¤ÇÑ´Ù
+ * ì…ì¥í•œ client ìˆœìœ¼ë¡œ slotì„ ë°°ì •í•œë‹¤
  */
 public struct SlotSyncData : IEquatable<SlotSyncData>, INetworkSerializable
 {
-	// string Å¸ÀÔÀº Çã¿ëÇÏÁö ¾Ê´Â´Ù. stringÀº C# immutable Å¸ÀÔ
+	// string íƒ€ì…ì€ í—ˆìš©í•˜ì§€ ì•ŠëŠ”ë‹¤. stringì€ C# immutable íƒ€ì…
 	public FixedString64Bytes Nickname;
 	public Color PersonalColor;
 	public bool Ready;
@@ -33,7 +33,7 @@ public struct SlotSyncData : IEquatable<SlotSyncData>, INetworkSerializable
 }
 
 /*
- * ¸ŞÀÎ½º·¹µå¿¡¼­¸¸ Á¢±ÙÇÏ°í Host¸¸ ³»ºÎ µ¥ÀÌÅÍ¸¦ º¯°æÇÒ °Í
+ * ë©”ì¸ìŠ¤ë ˆë“œì—ì„œë§Œ ì ‘ê·¼í•˜ê³  Hostë§Œ ë‚´ë¶€ ë°ì´í„°ë¥¼ ë³€ê²½í•  ê²ƒ
  */
 public class PlayerSlotSynchronizer : NetworkBehaviour
 {
@@ -45,11 +45,11 @@ public class PlayerSlotSynchronizer : NetworkBehaviour
 	public event Action<int> OnSlotDataChanged;
 
 	/*
-	 * clienId-sync data index Ä³½Ã
+	 * clienId-sync data index ìºì‹œ
 	 */
 	Dictionary<ulong, int> _index = new();
 
-	// NetworkVariable ÇÊµåÀÇ µ¿±âÈ­°¡ OnNetworkSpawn È£Ãâº¸´Ù ¸ÕÀú ½ÇÇàµÈ´Ù
+	// NetworkVariable í•„ë“œì˜ ë™ê¸°í™”ê°€ OnNetworkSpawn í˜¸ì¶œë³´ë‹¤ ë¨¼ì € ì‹¤í–‰ëœë‹¤
 	public override void OnNetworkSpawn()
 	{
 		_slotSyncDatas.OnListChanged += (e) =>

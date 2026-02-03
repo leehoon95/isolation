@@ -17,9 +17,6 @@ public struct PlayerInstantiateData : INetworkSerializable
 	}
 }
 
-/*
- * 
- */
 public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<PlayerInstantiateData>
 {
 	GameObject _prefabToSpawn;

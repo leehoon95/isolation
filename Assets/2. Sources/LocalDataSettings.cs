@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class IsolationLocalData
 {
-	// ¸¶Áö¸·À¸·Î
+	// ë§ˆì§€ë§‰ìœ¼ë¡œ
 	public string Id = "";
 	public string Password = "";
 }

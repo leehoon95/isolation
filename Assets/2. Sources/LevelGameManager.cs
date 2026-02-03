@@ -1,9 +1,12 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class StageGameManager : MonoBehaviour
 {
 	[SerializeField]
 	PlayerSpawner _playerSpawner;
+	[SerializeField]
+	PooledDynamicSpawner _pds;
 
 	PlayerInfoSO _playerInfo;
 	UIGameSO _uiso;
@@ -30,7 +33,6 @@ public class StageGameManager : MonoBehaviour
 	{
 		if (index == 0)
 		{
-			
 			_playerSpawner.SpawnPlayerRpc(
 				Vector2.zero,
 				Quaternion.identity,

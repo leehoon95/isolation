@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class TempBall : NetworkBehaviour, IColliderInteractable
+public class TempBall : NetworkBehaviour
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
@@ -70,5 +70,10 @@ public class TempBall : NetworkBehaviour, IColliderInteractable
 	void AddForceRpc(Vector2 force)
 	{
 		_rigidbody.AddForce(force, ForceMode2D.Impulse);
+	}
+
+	public void AddCollisionEvent(CollisionEvent ce)
+	{
+		throw new System.NotImplementedException();
 	}
 }

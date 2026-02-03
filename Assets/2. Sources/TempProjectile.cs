@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInteractable
+public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
@@ -13,9 +13,9 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 
 	string _prefabId;
 	string _objectId;
-	ulong _clientId;
+	ulong _ownerClientId;
 	IPooledDynamicSpawner _spawner;
-	ProjectileStatusSO _so;
+	//ProjectileProperty _pp;
 	Vector2 _direction;
 	float _velocity;
 	bool _onlyInteractInOwnerClient;
@@ -29,26 +29,33 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 		set { _layerMask = value; }
 	}
 
-	public ScriptableObject SO
-	{
-		get => _so;
-		set
-		{
-			var psso = value as ProjectileStatusSO;
-			if (psso == null)
-			{
-				throw new UnityException("Casting failed. ScriptableObject->ProjectileStatusSO");
-			}
+	//public ScriptableObject SO
+	//{
+	//	get => _so;
+	//	set
+	//	{
+	//		var psso = value as ProjectileStatusSO;
+	//		if (psso == null)
+	//		{
+	//			throw new UnityException("Casting failed. ScriptableObject->ProjectileStatusSO");
+	//		}
 
-			_so = psso;
-		}
-	}
+	//		_so = psso;
+	//	}
+	//}
+
+	/*
+	 * IDynamicPooledObject interface 구현
+	 */
+	public string PrefabId { get => _prefabId; set => _prefabId = value; }
+	public string ObjectId { get => _objectId; set => _objectId = value; }
+	public ulong OwnerClientId { get => _ownerClientId; set => _ownerClientId = value; }
+	public bool IsIllusion { get; set; }
+
 	public IPooledDynamicSpawner Spawner { set => _spawner = value; }
-	public IDynamicPooledObject DPO { get { return this; } }
+	public IDynamicPooledObject DPO { get => this; }
 
 	public GameObject GO => gameObject;
-
-	public NetworkObject NO => null;
 
 	public bool OnlyInteractInOwnerClient
 	{ 
@@ -68,16 +75,13 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 		}
 	}
 
-	public string PrefabId { get => _prefabId; set => _prefabId = value; }
-	public string ObjectId { get => _objectId; set => _objectId = value; }
-	public ulong ClientId { get => _clientId; set => _clientId = value; }
 	public Vector2 StartFrom { get => _startFrom; set => _startFrom = value; }
 
 	IEnumerator LifeTimer()
 	{
 		try
 		{
-			yield return new WaitForSeconds(2f);
+			yield return new WaitForSeconds(_lifeTime);
 		}
 		finally
 		{
@@ -88,7 +92,7 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 
 	void Release()
 	{
-		if (NetworkManager.Singleton.LocalClientId != ClientId)
+		if (NetworkManager.Singleton.LocalClientId != OwnerClientId)
 		{
 			return;
 		}
@@ -98,18 +102,18 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 			_spawner.ReleaseObject(this);
 		}
 	}
+
 	void OnTriggerEnter2D(Collider2D collision)
 	{
 		//Debug.Log($"TempProjectile.OnTriggerEnter2D {collision.gameObject.layer} {_collider.includeLayers.value}");
 		if (((1 << collision.gameObject.layer) & _layerMask.value) != 0)
 		{
-		
 			//Debug.Log($"TempProjectile.OnTriggerEnter2D addforce {collision.gameObject.name}");
 			var ci = collision.gameObject.GetComponentInParent<IColliderInteractable>();
 			if (ci != null)
 			{
 				//var force = collision.transform.position - transform.position;
-				ci.AddForce(_rigidbody.linearVelocity.normalized * 1f);
+				//ci.AddForce(_rigidbody.linearVelocity.normalized * 1f);
 
 				SetLifeTime(false);
 				Release();
@@ -119,21 +123,21 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 
 	void FixedUpdate()
 	{
-		switch (_so.FlyingType)
-		{
-			case ProjectileFlyingType.Direct:
-				_rigidbody.linearVelocity = transform.up * _so.Velocity;
-				break;
-			case ProjectileFlyingType.Homing:
-				break;
-			case ProjectileFlyingType.Registed:
-				break;
-		}
+		//switch (_pp.FlyingType)
+		//{
+		//	case ProjectileFlyingType.Direct:
+		//		_rigidbody.linearVelocity = transform.up * 5f;
+		//		break;
+		//	case ProjectileFlyingType.Homing:
+		//		break;
+		//	case ProjectileFlyingType.Registed:
+		//		break;
+		//}
 	}
 
 	public void SetLifeTime(bool active, float time = 0f)
 	{
-		if (NetworkManager.Singleton.LocalClientId != ClientId)
+		if (NetworkManager.Singleton.LocalClientId != OwnerClientId)
 		{
 			return;
 		}
@@ -161,12 +165,13 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject, IColliderInte
 		gameObject.transform.SetPositionAndRotation(position, rotation);
 	}
 
-	public void Clean()
-	{
-	}
-
 	public void AddForce(Vector2 force)
 	{
 		// nothing
+	}
+
+	public void AddCollisionEvent(CollisionEvent ce)
+	{
+		throw new System.NotImplementedException();
 	}
 }
