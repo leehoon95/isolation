@@ -79,7 +79,6 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 				},
 				actionOnGet: (instance) =>
 				{
-
 				},
 				actionOnRelease: (instance) =>
 				{
@@ -87,7 +86,10 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 				},
 				actionOnDestroy: (instance) =>
 				{
-					GameObject.Destroy(instance.GO);
+					if (instance != null)
+					{
+						Destroy(instance.GO);
+					}
 				},
 				collectionCheck: true,
 				defaultCapacity: config.Capacity);
@@ -160,15 +162,15 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 
 		dpo.GO.SetActive(true);
+		dpo.IsIllusion = rpcParams.Receive.SenderClientId != NetworkManager.LocalClientId;
 		dpo.PrefabId = pi;
 		dpo.ObjectId = oi;
 		dpo.OwnerClientId = rpcParams.Receive.SenderClientId;
-		dpo.IsIllusion = rpcParams.Receive.SenderClientId != NetworkManager.LocalClientId;
 		dpo.Spawner = this;
 		dpo.SetTransform(position, rotation);
 
-		var ci = dpo.GO.GetComponent<IColliderInteractable>();
-		ci.SetProjectileParameter(prp);
+		var ps = dpo.GO.GetComponent<IProjectileSetting>();
+		ps.SetProjectileParameter(prp);
 
 		lock (_activatedObjects)
 		{
@@ -254,9 +256,11 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		dpo.PrefabId = pi;
 		dpo.ObjectId = "none";
 		dpo.OwnerClientId = rpcParams.Receive.SenderClientId;
-		dpo.IsIllusion = true;
 		dpo.Spawner = this;
 		dpo.SetTransform(position, rotation);
+
+		var es = dpo.GO.GetComponent<IEffectSetting>();
+		es.SetEffectParameter(erp);
 	}
 
 	public void ReleaseObject(IDynamicPooledObject dpo)

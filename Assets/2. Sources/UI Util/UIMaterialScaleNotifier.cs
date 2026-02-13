@@ -2,7 +2,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 /*
- * ui object Àü¿ë shader graph property(aspect ratio) ¼¼ÆÃ¿ë ½ºÅ©¸³Æ®
+ * ui object ì „ìš© shader graph property(aspect ratio) ì„¸íŒ…ìš© ìŠ¤í¬ë¦½íŠ¸
+ * ui image, textëŠ” MaterialPropertyBlockì„ ì§€ì›í•˜ì§€ ì•ŠëŠ”ë‹¤
+ * ë”°ë¼ì„œ, IMaterialModifier ì¸í„°í˜ì´ìŠ¤ë¥¼ ì‚¬ìš©í•œë‹¤
  */
 [ExecuteAlways]
 [RequireComponent(typeof(Image))]
@@ -59,7 +61,7 @@ public class UIMaterialScaleNotifier : UIBehaviour, IMaterialModifier
 	{
 		if (_material == null)
 		{
-			_material = new Material(baseMaterial); // ÀÌ ¿ÀºêÁ§Æ®¸¸ÀÇ material instance¸¦ »ı¼ºÇÑ´Ù.
+			_material = new Material(baseMaterial); // ì´ ì˜¤ë¸Œì íŠ¸ë§Œì˜ material instanceë¥¼ ìƒì„±í•œë‹¤.
 			_material.hideFlags = HideFlags.HideAndDontSave;
 		}
 

@@ -13,8 +13,8 @@ public class IsolationLocalData
 
 public class LocalDataSettings
 {
-	static LocalDataSettings _instance = new();
-	static string _dataPath = Path.Combine(Application.persistentDataPath, "SaveData.json");
+	static LocalDataSettings _instance;
+	static string _dataPath;
 
 	IsolationLocalData _data = new();
 
@@ -27,6 +27,13 @@ public class LocalDataSettings
 	public static LocalDataSettings Instance
 	{
 		get { return _instance; }
+	}
+
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+	static void Init()
+	{
+		_instance = new();
+		_dataPath = Path.Combine(Application.persistentDataPath, "SaveData.json");
 	}
 
 	public async Task LoadAsync()

@@ -10,6 +10,8 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 	IPooledDynamicSpawner _spawner;
 	Coroutine _timerCoroutine;
 
+	public bool IsIllusion { get; set; }
+
 	protected virtual void OnDisable()
 	{
 		if (_timerCoroutine != null)
@@ -29,7 +31,7 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 	 * projectile을 owner client에서만 object 간 상호작용을 해야 한다
 	 * 다른 client에는 illusion만 보이는 것이다
 	 */
-	public bool IsIllusion { get; set; }
+	//public bool IsIllusion { get; set; }
 
 	public GameObject GO => gameObject;
 
@@ -67,7 +69,6 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 			StopCoroutine(_timerCoroutine);
 			_timerCoroutine = null;
 		}
-
 		Spawner.ReleaseObject(this);
 	}	
 }

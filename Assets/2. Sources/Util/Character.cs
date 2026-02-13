@@ -14,14 +14,14 @@ public class Character : MonoBehaviour
 	void EnableWithInputListner()
     {
         _is.Move += OnMove;
-        _is.Attack += OnAttack;
+        //_is.Attack += OnAttack;
 		_is.SwitchCamera1 += SwitchCamera1;
 	}
 
 	void DisableWithInputListner()
 	{
 		_is.Move -= OnMove;
-		_is.Attack -= OnAttack;
+		//_is.Attack -= OnAttack;
 	}
 
 	void OnMove(Vector2 velocity)
@@ -71,11 +71,11 @@ public class Character : MonoBehaviour
 
 	void Update()
     {
-		Vector2 dir = Camera.main.ScreenToWorldPoint(_is.MousePos) - transform.position;
+		//Vector2 dir = Camera.main.ScreenToWorldPoint(_is.MousePos) - transform.position;
 		
-		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+		//float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 		   
-		transform.rotation = Quaternion.Euler(0f, 0f, angle);
+		//transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
 }

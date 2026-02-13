@@ -1,7 +1,9 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class TempBall : NetworkBehaviour
+public class TempBall : NetworkBehaviour, ICollisionInteractable
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
@@ -19,6 +21,7 @@ public class TempBall : NetworkBehaviour
 	float _damping = 2f;
 
 	Vector2 _startFrom;
+	List<CollisionEvent> _collisionEventList = new();
 
 	public Vector2 StartFrom { get => Vector2.zero; set => _startFrom = value; }
 
@@ -73,6 +76,16 @@ public class TempBall : NetworkBehaviour
 	}
 
 	public void AddCollisionEvent(CollisionEvent ce)
+	{
+		_collisionEventList.Add(ce);
+	}
+
+	public CollisionEffect GetEffect()
+	{
+		return CollisionEffect.None;
+	}
+
+	public void SetProjectileParameter(in ProjectileRpcParameter param)
 	{
 		throw new System.NotImplementedException();
 	}

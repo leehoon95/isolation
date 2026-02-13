@@ -58,8 +58,8 @@ public class OwnerCharacter : NetworkBehaviour
 			}
 			
 			_inputSystem.Move += OnMove;
-			_inputSystem.Attack += OnAttack;
-			_inputSystem.Attack2 += OnAttack2;
+			//_inputSystem.Attack += OnAttack;
+			//_inputSystem.Attack2 += OnAttack2;
 
 			_dynamicSpawner = FindAnyObjectByType<PooledDynamicSpawner>();
 			if (_dynamicSpawner == null)
@@ -161,10 +161,10 @@ public class OwnerCharacter : NetworkBehaviour
 					new ProjectileRpcParameter()
 					{
 						Speed = 10f,
-						CollisionMask = LayerMask.GetMask("Enemy", "StaticObject"),
+						//CollisionMask = LayerMask.GetMask("Enemy", "StaticObject"),
 						CollisionEffect = (int)CollisionEffect.Damage,
 						CollisionEffectDetail = "",
-						ProjectileColor = _text.color,
+						EffectColor = _text.color,
 						LifeTime = 1f
 					});
 				_dynamicSpawner?.CreateEffect(
@@ -201,8 +201,8 @@ public class OwnerCharacter : NetworkBehaviour
 		{
 			_inputSystem.Move -= OnMove;
 			//_inputSystem.Look += OnLook;
-			_inputSystem.Attack -= OnAttack;
-			_inputSystem.Attack2 -= OnAttack2;
+			//_inputSystem.Attack -= OnAttack;
+			//_inputSystem.Attack2 -= OnAttack2;
 		}
 	}
 }

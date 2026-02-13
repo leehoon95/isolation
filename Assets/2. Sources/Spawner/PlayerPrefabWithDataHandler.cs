@@ -8,7 +8,7 @@ public struct PlayerInstantiateData : INetworkSerializable
 {
 	public FixedString64Bytes Nickname;
 	public Color PersonalColor;
-	// ÇÊ¿ä½Ã Ãß°¡ÇÏ°í, NetworkSerialize¿¡µµ Ãß°¡ÇÒ °Í
+	// í•„ìš”ì‹œ ì¶”ê°€í•˜ê³ , NetworkSerializeì—ë„ ì¶”ê°€í•  ê²ƒ
 
 	public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 	{
@@ -71,7 +71,6 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		Vector3 position, Quaternion rotation,
 		PlayerInstantiateData instantiationData)
 	{
-		
 		NetworkObject instance = null;
 		if (_instances.ContainsKey(ownerClientId))
 		{
@@ -85,23 +84,13 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		}
 
 		instance.transform.SetPositionAndRotation(position, rotation);
-		var oc = instance.GetComponent<OwnerCharacter>();
-		oc.BodyText = instantiationData.Nickname.ToString();
-		oc.BodyTextColor = instantiationData.PersonalColor;
-
-		if (ownerClientId == _networkManager.LocalClientId)
-		{
-			oc.BodyColor = Color.white;
-		}
-		else
-		{
-			oc.BodyColor = Color.gray;
-		}
+		var ps = instance.GetComponent<IPlayerSetting>();
+		ps.PersonalColor = instantiationData.PersonalColor;
 
 		return instance;
 	}
 
-	// client¿¡¼­¸¸ È£ÃâµÈ´Ù.
+	// clientì—ì„œë§Œ í˜¸ì¶œëœë‹¤.
 	public override NetworkObject Instantiate(
 		ulong ownerClientId,
 		Vector3 position, Quaternion rotation,
@@ -113,7 +102,7 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		return instance;
 	}
 
-	// host, client ¸ğµÎ È£ÃâµÈ´Ù
+	// host, client ëª¨ë‘ í˜¸ì¶œëœë‹¤
 	public override void Destroy(NetworkObject networkObject)
 	{
 		networkObject.gameObject.SetActive(false);

@@ -2,6 +2,7 @@ using Codice.CM.Common.Update.Partial;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
@@ -11,7 +12,6 @@ using WebSocketSharp;
 
 public class UGSLobbyManager : MonoBehaviour
 {
-	static Lobby _cacheLobby;
 	static string _nickname;
 	static string _personalColor;
 	static DateTime _lastRequestTime = DateTime.MinValue;
@@ -59,6 +59,14 @@ public class UGSLobbyManager : MonoBehaviour
 		return _player;
 	}
 
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+	static void Init()
+	{
+		_nickname = null;
+		_personalColor = null;
+		_player = null;
+	}
+
 	static async Task WaitForRequestRateLimit()
 	{
 		var duration = DateTime.Now - _lastRequestTime;
@@ -77,9 +85,9 @@ public class UGSLobbyManager : MonoBehaviour
 		string password = null)
 	{
 		/*
-		 * Player: ·Îºñ ¸¸µå´Â player Á¤º¸
-		 * IsPrivate: ·Îºñ¸¦ °ø°³ÇÑ °ÍÀÎ°¡. ºñ°ø°³¸é LobbyCode¸¦ ÀÌ¿ëÇØ¼­ ´Ù¸¥ »ç¿ëÀÚ°¡ ·Îºñ¿¡ join °¡´É.
-		 * Data: ·Îºñ¿¡ Àû¿ëÇÏ´Â Ä¿½ºÅÒ °ÔÀÓ ¼Ó¼º(map name, game type etc.)
+		 * Player: ë¡œë¹„ ë§Œë“œëŠ” player ì •ë³´
+		 * IsPrivate: ë¡œë¹„ë¥¼ ê³µê°œí•œ ê²ƒì¸ê°€. ë¹„ê³µê°œë©´ LobbyCodeë¥¼ ì´ìš©í•´ì„œ ë‹¤ë¥¸ ì‚¬ìš©ìê°€ ë¡œë¹„ì— join ê°€ëŠ¥.
+		 * Data: ë¡œë¹„ì— ì ìš©í•˜ëŠ” ì»¤ìŠ¤í…€ ê²Œì„ ì†ì„±(map name, game type etc.)
 		 */
 		var createOptions = new CreateLobbyOptions
 		{
@@ -156,9 +164,9 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 
 		/* 
-		 * ±âº» lobby È°¼º ÁÖ±â 30ÃÊ
-		 * ÁÖ±âÀû ÇÏÆ®ºñÆ® ÇÊ¿ä
-		 * »ç¿ëÇÏÁö ¾Ê´Â lobby´Â »èÁ¦ÇØ¾ß ÇÔ
+		 * ê¸°ë³¸ lobby í™œì„± ì£¼ê¸° 30ì´ˆ
+		 * ì£¼ê¸°ì  í•˜íŠ¸ë¹„íŠ¸ í•„ìš”
+		 * ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” lobbyëŠ” ì‚­ì œí•´ì•¼ í•¨
 		 */
 		await LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
 	}
@@ -171,7 +179,7 @@ public class UGSLobbyManager : MonoBehaviour
 		try
 		{
 			/*
-			 * Count: °á°ú °³¼ö(1-100, default: 10)
+			 * Count: ê²°ê³¼ ê°œìˆ˜(1-100, default: 10)
 			 * 
 			 */
 			var options = new QueryLobbiesOptions
@@ -262,7 +270,7 @@ public class UGSLobbyManager : MonoBehaviour
 	}
 
 	/*
-	 * host¿¡°Ô ·Îºñ¸¦ »èÁ¦ÇÒ ±ÇÇÑÀÌ ÁÙ °ÍÀÎÁö
+	 * hostì—ê²Œ ë¡œë¹„ë¥¼ ì‚­ì œí•  ê¶Œí•œì´ ì¤„ ê²ƒì¸ì§€
 	 */
 	public static async Task DeleteLobby(string lobbyId)
 	{
@@ -283,9 +291,9 @@ public class UGSLobbyManager : MonoBehaviour
 	}
 
 	/*
-	 * host°¡ ´Ù¸¥ player¸¦ kickÇÒ ¶§, ¶Ç´Â player ½º½º·Î ³ª°¥ ¶§
-	 * host°¡ ³ª°¡¸é ³²¾ÆÀÖ´Â player Áß¿¡¼­ host·Î ¹«ÀÛÀ§ ÁöÁ¤
-	 * ¸¶Áö¸· player°¡ ³ª°¡¸é lobby ÀÚµ¿À¸·Î »èÁ¦µÊ
+	 * hostê°€ ë‹¤ë¥¸ playerë¥¼ kickí•  ë•Œ, ë˜ëŠ” player ìŠ¤ìŠ¤ë¡œ ë‚˜ê°ˆ ë•Œ
+	 * hostê°€ ë‚˜ê°€ë©´ ë‚¨ì•„ìˆëŠ” player ì¤‘ì—ì„œ hostë¡œ ë¬´ì‘ìœ„ ì§€ì •
+	 * ë§ˆì§€ë§‰ playerê°€ ë‚˜ê°€ë©´ lobby ìë™ìœ¼ë¡œ ì‚­ì œë¨
 	 */
 	public static async Task<(bool result, string reason)> RemovePlayer(string lobbyId, string playerId = "")
 	{
@@ -335,7 +343,7 @@ public class UGSLobbyManager : MonoBehaviour
 			var lobbyList = await LobbyService.Instance.GetJoinedLobbiesAsync();
 			if (lobbyList == null || lobbyList.Count == 0)
 			{
-				GLogger.LogWarning("GetJoinedLobby Âü°¡ÇÑ ·Îºñ´Â ¾ø´Ù");
+				GLogger.LogWarning("GetJoinedLobby ì°¸ê°€í•œ ë¡œë¹„ëŠ” ì—†ë‹¤");
 				return (false, null);
 			}
 

@@ -14,10 +14,10 @@ TagManager:
   - Player
   - Projectile
   - Enemy
-  - StaticObject
-  - 
-  - 
-  - 
+  - Enemy Projectile
+  - Static Object
+  - Item
+  - LoginArea
   - 
   - 
   - 

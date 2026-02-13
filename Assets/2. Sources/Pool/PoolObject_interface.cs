@@ -6,10 +6,10 @@ using UnityEngine;
  */
 public interface IDynamicPooledObject
 {
+	bool IsIllusion { get; set; }
 	string PrefabId { get; set; }
 	string ObjectId { get; set; }
 	ulong OwnerClientId { get; set; }
-	bool IsIllusion { get; set; }
 	GameObject GO { get; }
 	IPooledDynamicSpawner Spawner { set; }
 	IDynamicPooledObject DPO { get; }

@@ -109,7 +109,7 @@ public class TempProjectile : MonoBehaviour, IDynamicPooledObject
 		if (((1 << collision.gameObject.layer) & _layerMask.value) != 0)
 		{
 			//Debug.Log($"TempProjectile.OnTriggerEnter2D addforce {collision.gameObject.name}");
-			var ci = collision.gameObject.GetComponentInParent<IColliderInteractable>();
+			var ci = collision.gameObject.GetComponentInParent<ICollisionInteractable>();
 			if (ci != null)
 			{
 				//var force = collision.transform.position - transform.position;

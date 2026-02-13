@@ -1,10 +1,11 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 /*
- * scene¿¡ scriptable object¸¦ ½Ì±ÛÅÏ ¿ÀºêÁ§Æ®·Î Á¸Àç
- * Multiplayer Play ModeÀÇ °¡»ó player ¸¶´Ù ·±Å¸ÀÓ ÀÎ½ºÅÏ½º¸¦ »ı¼ºÇÏ±â À§ÇÑ base class
- * DontDestroyOnLoad´Â ÇØ´ç object¸¦ ÂüÁ¶ÇÏ´Â GameManager°¡ °áÁ¤ÇÒ °Í
+ * sceneì— scriptable objectë¥¼ ì‹±ê¸€í„´ ì˜¤ë¸Œì íŠ¸ë¡œ ì¡´ì¬
+ * Multiplayer Play Modeì˜ ê°€ìƒ player ë§ˆë‹¤ ëŸ°íƒ€ì„ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ìƒì„±í•˜ê¸° ìœ„í•œ base class
+ * DontDestroyOnLoadëŠ” í•´ë‹¹ objectë¥¼ ì°¸ì¡°í•˜ëŠ” GameManagerê°€ ê²°ì •í•  ê²ƒ
  */
 public abstract class SOHolderSinglton<T, TS> : MonoBehaviour 
 	where T : ScriptableObject
@@ -14,9 +15,15 @@ public abstract class SOHolderSinglton<T, TS> : MonoBehaviour
 	protected T RuntimeInstance;
 	public T Data => RuntimeInstance;
 
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+	static void Init()
+	{
+		Instance = null;
+	}
+
 	protected virtual void Awake()
 	{
-		if (Instance != null && Instance != null)
+		if (Instance != null && Instance != this)
 		{
 			DestroyImmediate(gameObject);
 			return;
@@ -31,19 +38,21 @@ public abstract class SOHolderSinglton<T, TS> : MonoBehaviour
 		RuntimeInstance = ScriptableObject.CreateInstance<T>();
 	}
 
-	/*
-	 * ÇÊµå ¸ğµÎ GC´ë»óÀ¸·Î ¿¡µğÅÍ, ºôµå¿¡¼­ ¾ÈÀüÇÏ³ª ¸í½ÃÀû ÆÄ±« ÇÊ¿ä½Ã Âü°íÇÒ °Í
-	 */
-	//protected virtual void OnDestroy()
-	//{
-	//	if (RuntimeInstance != null)
-	//	{
-	//		Destroy(RuntimeInstance);
-	//	}
 
-	//	if (Instance == this)
-	//	{
-	//		Instance = null;
-	//	}
-	//}
+
+	/*
+	 * í•„ë“œ ëª¨ë‘ GCëŒ€ìƒìœ¼ë¡œ ì—ë””í„°, ë¹Œë“œì—ì„œ ì•ˆì „í•˜ë‚˜ ëª…ì‹œì  íŒŒê´´ í•„ìš”ì‹œ ì°¸ê³ í•  ê²ƒ
+	 */
+	protected virtual void OnDestroy()
+	{
+		if (RuntimeInstance != null)
+		{
+			Destroy(RuntimeInstance);
+		}
+
+		if (Instance == this)
+		{
+			Instance = null;
+		}
+	}
 }

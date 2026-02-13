@@ -40,6 +40,15 @@ public class SessionGameReadyManager : MonoBehaviour
 	bool _ready;
 	bool _connected;
 
+	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+	static void Init()
+	{
+		if (NetworkManager.Singleton != null)
+		{
+			GLogger.LogWarning("NetworkManager is not null");
+		}
+	}
+
 	void Awake()
 	{
 		if (FindAnyObjectByType<UISessionSOHolder>() == null)
@@ -246,14 +255,17 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
 #if UNITY_EDITOR
-			_playerInfo.Nickname = $"{clientId}_client";
-
-			switch (clientId)
+			if (_ngoTestSO.IsOn)
 			{
-				case 0: _playerInfo.PersonalColor = Color.red; break;
-				case 1: _playerInfo.PersonalColor = Color.yellow; break;
-				case 2: _playerInfo.PersonalColor = Color.green; break;
-				case 3: _playerInfo.PersonalColor = Color.cyan; break;
+				_playerInfo.Nickname = $"{clientId}_client";
+
+				switch (clientId)
+				{
+					case 0: _playerInfo.PersonalColor = new Color(1.0f, 0.5f, 0f); break;
+					case 1: _playerInfo.PersonalColor = Color.yellow; break;
+					case 2: _playerInfo.PersonalColor = new Color(0f, 0.5f, 1f); break;
+					case 3: _playerInfo.PersonalColor = Color.magenta; break;
+				}
 			}
 #endif
 			_networkEventHandler.SetSceneEventListner();
@@ -271,13 +283,13 @@ public class SessionGameReadyManager : MonoBehaviour
 			return;
 		}
 #endif
-			// Á¢¼ÓÇÑ client¸¸ È£ÃâÇÑ´Ù
+			// ì ‘ì†í•œ clientë§Œ í˜¸ì¶œí•œë‹¤
 			if (NetworkManager.Singleton.IsHost)
 		{
 			_playerSlotSync.RemoveClientRpc(clientId);
 		}
 
-		// client°¡ ³ª°¡±â¸¦ ´­·¶°Å³ª host¿Í ¿¬°áÀÌ ²÷¾îÁü
+		// clientê°€ ë‚˜ê°€ê¸°ë¥¼ ëˆŒë €ê±°ë‚˜ hostì™€ ì—°ê²°ì´ ëŠì–´ì§
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
 			OnLeave();

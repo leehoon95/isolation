@@ -16,13 +16,22 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Attack",
+                    "name": "LeftTrigger",
                     "type": "Button",
                     "id": "6c2ab1b8-8984-453a-af3d-a3c78ae1679a",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "RightTrigger",
+                    "type": "Button",
+                    "id": "17cbb214-bc26-4a38-b6ad-474e5b2e0093",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "SwitchCamera1",
@@ -37,15 +46,6 @@
                     "name": "SwitchCamera2",
                     "type": "Button",
                     "id": "42a81f42-fba2-42cd-8f4e-efa7473e4ea2",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Attack2",
-                    "type": "Button",
-                    "id": "baacf161-4a07-4f56-b511-f0884dffa96b",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -159,7 +159,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Attack",
+                    "action": "LeftTrigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -187,12 +187,12 @@
                 },
                 {
                     "name": "",
-                    "id": "ad2eea2f-a1cf-4d01-8328-2567d8da5b45",
+                    "id": "4278c66e-83ca-450c-b6b7-8072a49710ed",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Attack2",
+                    "action": "RightTrigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

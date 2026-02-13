@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class EffectHitNotmal : PooledEffectBase
+public class EffectHitNotmal : PooledEffectBase, IEffectSetting
 {
     [SerializeField]
 	Animator _animator;
@@ -36,5 +36,10 @@ public class EffectHitNotmal : PooledEffectBase
 	{
 		yield return new WaitForSeconds(length);
 		ReleaseObject();
+	}
+
+	public void SetEffectParameter(in EffectRpcParameter param)
+	{
+		//throw new System.NotImplementedException();
 	}
 }
