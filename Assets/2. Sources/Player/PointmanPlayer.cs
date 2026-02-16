@@ -3,11 +3,6 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum WeaponGripMode
-{
-	Left, Right, Both
-}
-
 public interface IPlayerSetting
 {
 	public string Nickname { set; }
@@ -29,8 +24,10 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 	SpriteRenderer _bodySprite;
 	[SerializeField]
 	PlayerBodyIndicator _bodyIndicator;
+	[SerializeField]
+	PlayerHand _hand;
 	
-
+	
 	NetworkVariable<int> _health = new(
 		100, 
 		NetworkVariableReadPermission.Everyone, 
@@ -38,10 +35,13 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 
 	IWeaponInterface _leftWeapon;
 	IWeaponInterface _rightWeapon;
-
-	WeaponGripMode _weaponGripMode = WeaponGripMode.Right;
+	UILevelSO _uiso;
+	PlayerSpawner _spawner;
+	IItemHandler _grabbedItem;
 	List<CollisionEvent> _collisionEvents = new();
-	List<string> _fieldEvent = new();
+	Vector2 _inputMovement;
+	bool _inputLeftTrigger;
+	bool _inputRightTrigger;
 
 	string _nickname;
 	Color _personalColor;
@@ -65,11 +65,6 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 		}
 	}
 
-	void Start()
-	{
-		
-	}
-
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
@@ -79,13 +74,33 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 			return;
 		}
 
-		_health.OnValueChanged += HeathChanged;
-		_health.Value = 100;
-		//_fieldEvent.Add("Pistol");
+		_health.OnValueChanged += HealthChanged;
+		_health.Value = 50;
+		_hand.OnGrabbedItem += OnGrabbedItem;
+		_spawner = FindAnyObjectByType<PlayerSpawner>();
+		_spawner.NotifyPlayerSpawned(this);
+		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+
+		PlayerInput.Move += OnMove;
+		PlayerInput.LeftTrigger += OnLeftTrigger;
+		PlayerInput.RightTrigger += OnRightTrigger;
+		PlayerInput.UseItem += OnUseItem;
+	}
+
+	public override void OnNetworkDespawn()
+	{
+		if (!IsOwner)
+		{
+			return;
+		}
+
+		base.OnNetworkDespawn();
+		_spawner.NotifyPlayerDespawned(this);
 	}
 
 	//void OnTriggerEnter2D(Collider2D collision)
 	//{
+	//	collision.layer
 	//	var ci = collision.gameObject.GetComponentInParent<ICollisionInteractable>();
 	//	if (ci != null)
 	//	{
@@ -95,10 +110,12 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 
 	void Update()
 	{
-		if (IsOwner)
+		if (!IsOwner)
 		{
-			transform.rotation = Quaternion.Euler(0f, 0f, _angle);
+			return;
 		}
+
+		transform.rotation = Quaternion.Euler(0f, 0f, _angle);
 	}
 
 	void FixedUpdate()
@@ -138,17 +155,17 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 
 		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg + gunCorrectionAngle;
 
-		if (MovementValue.magnitude > float.Epsilon)
+		if (_inputMovement.magnitude > float.Epsilon)
 		{
 			
-			var newPosition = _rigidbody.position + MovementValue.normalized * 5f * Time.fixedDeltaTime;
+			var newPosition = _rigidbody.position + _inputMovement.normalized * 5f * Time.fixedDeltaTime;
 			_rigidbody.MovePosition(newPosition);
 		}
 
 		//if (_leftWeapon != null)
 		{
 			long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
-			if (LeftTrigger && ((now - _lastFiredTime) >= 50))
+			if (_inputLeftTrigger && ((now - _lastFiredTime) >= 50))
 			{
 				var muzzle = mousePosition.normalized;
 				PDS.CreateProjectile(
@@ -172,24 +189,6 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 				_lastFiredTime = now;
 			}
 		}
-
-		if (_fieldEvent.Count > 0)
-		{
-			foreach (var fieldEvent in _fieldEvent)
-			{
-				if (fieldEvent == "Pistol")
-				{
-					var instance = Instantiate(_weaponList.Pistol, _rightWeaponPosition.transform);
-					instance.transform.localPosition = Vector2.zero;
-					_rightWeapon = instance;
-					_rightWeapon.PDS = PDS;
-					_rightWeapon.PersonalColor = _personalColor;
-				}
-
-			}
-
-			_fieldEvent.Clear();
-		}
 	}
 
 	[Rpc(SendTo.Everyone)]
@@ -203,9 +202,42 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 
 	}
 
-	void HeathChanged(int previousValue, int newValue)
+	void HealthChanged(int previousValue, int newValue)
 	{
 		_bodyIndicator.Health = newValue;
+	}
+
+	void OnGrabbedItem(IItemHandler itemHandler)
+	{
+		if (itemHandler != null)
+		{
+			//GLogger.Log($"item grabbed {itemHandler.GO.transform.position}");
+			_uiso.ShowItemPicker(itemHandler.GO.transform.position);
+		}
+		else
+		{
+			_uiso.HideItemPicker();
+		}
+	}
+
+	void OnMove(Vector2 direction)
+	{
+		_inputMovement = direction;
+	}
+
+	void OnLeftTrigger(bool trigger)
+	{
+		_inputLeftTrigger = trigger;
+	}
+
+	void OnRightTrigger(bool trigger)
+	{
+		_inputRightTrigger = trigger;
+	}
+
+	void OnUseItem()
+	{
+
 	}
 
 	public void AddCollisionEvent(CollisionEvent ce)

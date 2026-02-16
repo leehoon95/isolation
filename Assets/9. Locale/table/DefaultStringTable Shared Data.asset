@@ -175,6 +175,10 @@ MonoBehaviour:
     m_Key: exit-session
     m_Metadata:
       m_Items: []
+  - m_Id: 21293257412456448
+    m_Key: item-mount
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

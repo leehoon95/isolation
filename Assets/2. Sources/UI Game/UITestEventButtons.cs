@@ -4,11 +4,11 @@ using UnityEngine.UI;
 
 public class UITestEventButtons : UIBehaviour
 {
-    UIGameSO _uiso;
+    UILevelSO _uiso;
 
 	protected override void Start()
 	{
-		_uiso = FindAnyObjectByType<UIGameSOHolder>().Data;
+		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 
 		var buttons = GetComponentsInChildren<Button>();
 

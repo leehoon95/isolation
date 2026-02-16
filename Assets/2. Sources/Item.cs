@@ -6,17 +6,18 @@ using UnityEngine;
 public enum ItemType
 {
 	Weapon,
-	AutomaticWeapon,
 	Buff,
 
 }
 
-public class Item : NetworkBehaviour, ICollisionInteractable
+public class Item : NetworkBehaviour, IItemHandler
 {
 	[SerializeField]
 	SpriteRenderer _itemSprite;
 	[SerializeField]
 	SpriteRenderer _backgroundSprite;
+	[SerializeField]
+	SpriteRenderer _selectedBackgroundSprite;
 	[SerializeField]
 	ItemType _type;
 	[SerializeField]
@@ -24,30 +25,68 @@ public class Item : NetworkBehaviour, ICollisionInteractable
 	[SerializeField]
 	List<Sprite> _weaponIconSprites = new();
 	[SerializeField]
-	List<Sprite> _automaticWeaponIconSprites = new();
-	[SerializeField]
 	List<Sprite> _buffSprites = new();
 
-#if UNITY_EDITOR
-	void OnValidate()
+	NetworkObject _no;
+	bool _isSelected;
+//#if UNITY_EDITOR
+//	void OnValidate()
+//	{
+//		EditorApplication.delayCall += () =>
+//		{
+//			SetItemShapeForType(_type);
+//		};
+//	}
+//#endif
+
+	public NetworkObject NO
 	{
-		EditorApplication.delayCall += () =>
+		get => GetComponent<NetworkObject>();
+	}
+	public GameObject GO
+	{
+		get => gameObject;
+	}
+	public ItemType ItemType
+	{
+		get => _type;
+		set => _type = value;
+	}
+	public string ItemEffect 
+	{
+		get => _effect;
+		set => _effect = value;
+	}
+	public bool IsSelected 
+	{
+		get => _isSelected;
+		set
 		{
-			SetItemShapeForType(_type);
-		};
+			_isSelected = value;
+			if (_isSelected)
+			{
+				_selectedBackgroundSprite.gameObject.SetActive(true);
+			}
+			else
+			{
+				_selectedBackgroundSprite.gameObject.SetActive(false);
+			}
+		}
 	}
-#endif
 
-	public ItemType ItemType { get; set; }
-	public string ItemEffect { get; set; }
-	public string GetEffect()
+	public string ItemDescription 
 	{
-		return _effect;
+		get; set;
 	}
 
-	void OnTriggerEnter2D(Collider2D collision)
+	void Start()
 	{
 		
+	}
+
+	public void Despawn()
+	{
+
 	}
 
 	void SetItemShapeForType(ItemType type)
@@ -58,24 +97,13 @@ public class Item : NetworkBehaviour, ICollisionInteractable
 			Sprite s = null;
 			switch (_effect)
 			{
-				case "homing": s = _weaponIconSprites[0]; break;
-				case "cluster": s = _weaponIconSprites[1]; break;
-				case "laser": s = _weaponIconSprites[2]; break;
-				case "bolt": s = _weaponIconSprites[3]; break;
-				default: s = null; break;
-			}
-
-			_itemSprite.sprite = s;
-		}
-		else if (type == ItemType.AutomaticWeapon)
-		{
-			_backgroundSprite.color = new Color(1f, 64f / 255f, 146f / 255f);
-			Sprite s = null;
-			switch (_effect)
-			{
-				case "shield": s = _automaticWeaponIconSprites[0]; break;
-				case "shock": s = _automaticWeaponIconSprites[1]; break;
-				case "wave": s = _automaticWeaponIconSprites[2]; break;
+				case "shield": s = _weaponIconSprites[0]; break;
+				case "shock": s = _weaponIconSprites[1]; break;
+				case "homing": s = _weaponIconSprites[2]; break;
+				case "cluster": s = _weaponIconSprites[3]; break;
+				case "wave": s = _weaponIconSprites[4]; break;
+				case "laser": s = _weaponIconSprites[5]; break;
+				case "bolt": s = _weaponIconSprites[6]; break;
 				default: s = null; break;
 			}
 
@@ -101,8 +129,8 @@ public class Item : NetworkBehaviour, ICollisionInteractable
 		throw new System.NotImplementedException();
 	}
 
-	CollisionEffect ICollisionInteractable.GetEffect()
+	public CollisionEffect GetEffect()
 	{
-		return CollisionEffect.Item;
+		throw new System.NotImplementedException();
 	}
 }

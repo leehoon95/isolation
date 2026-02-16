@@ -1,32 +1,40 @@
+using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
 
-public class StageGameManager : MonoBehaviour
+public class LevelGameManager : MonoBehaviour
 {
 	[SerializeField]
-	PlayerSpawner _playerSpawner;
-	[SerializeField]
 	PooledDynamicSpawner _pds;
+	[SerializeField]
+	CinemachineCamera _cineCamera;
 
+	PlayerSpawner _playerSpawner;
 	PlayerInfoSO _playerInfo;
-	UIGameSO _uiso;
+	UILevelSO _uiso;
 	NetworkEventHandler _networkEventHandler;
 
 	void Awake()
 	{
-		if (FindAnyObjectByType<UIGameSOHolder>() == null)
+		if (FindAnyObjectByType<UILevelSOHolder>() == null)
 		{
 			var obj = new GameObject("[UI Game Holder]");
-			obj.AddComponent<UIGameSOHolder>();
+			obj.AddComponent<UILevelSOHolder>();
 		}
+		
 	}
 
 	void Start()
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
-		_uiso = FindAnyObjectByType<UIGameSOHolder>().Data;
+		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 
 		_uiso.OnTestEvent += TestEventListner;
+	}
+
+	public void NotifyPlayerSpawnerSpawned(PlayerSpawner playerSpawner)
+	{
+		_playerSpawner = playerSpawner;
 	}
 
 	void TestEventListner(int index)

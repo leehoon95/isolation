@@ -20,7 +20,7 @@ public class PlayerBodyIndicator : MonoBehaviour
 		set 
 		{ 
 			_personalColor = value;
-			_fatalSignColor = Color.white - value;
+			_fatalSignColor = Color.black;
 			UpdateColorMaterialProperty();
 		}
 	}
@@ -38,6 +38,7 @@ public class PlayerBodyIndicator : MonoBehaviour
 #if UNITY_EDITOR
 	void OnValidate()
 	{
+		PersonalColor = _personalColor;
 		UpdateColorMaterialProperty();
 	}
 #endif

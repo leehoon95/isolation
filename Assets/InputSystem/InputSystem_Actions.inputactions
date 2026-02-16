@@ -34,6 +34,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "UseItem",
+                    "type": "Button",
+                    "id": "5a56ff93-026b-429e-bd71-99a47d82ada2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SwitchCamera1",
                     "type": "Button",
                     "id": "6f97ed93-bc7b-47c0-9b2b-a3364d06204e",
@@ -193,6 +202,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "RightTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1869b14-4b59-470c-8dbf-1d87455218ea",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseItem",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

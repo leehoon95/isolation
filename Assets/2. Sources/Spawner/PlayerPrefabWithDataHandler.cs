@@ -23,8 +23,6 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 	NetworkManager _networkManager;
 	Dictionary<ulong, NetworkObject> _instances = new();
 
-	public event UnityAction<ulong, NetworkObject> OnSpawn;
-
 	public SpawnPlayerWithDataHandler(NetworkManager networkManager, GameObject perfab)
 	{
 		_prefabToSpawn = perfab;
@@ -97,7 +95,6 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		PlayerInstantiateData instantiationData)
 	{
 		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
-		OnSpawn?.Invoke(ownerClientId, instance);
 
 		return instance;
 	}

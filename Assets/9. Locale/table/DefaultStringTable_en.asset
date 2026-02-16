@@ -180,6 +180,10 @@ MonoBehaviour:
     m_Localized: Go out to the lobby and find another session
     m_Metadata:
       m_Items: []
+  - m_Id: 21293257412456448
+    m_Localized: Mount
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

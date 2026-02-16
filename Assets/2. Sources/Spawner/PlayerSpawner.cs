@@ -3,8 +3,8 @@ using Unity.Netcode;
 using UnityEngine;
 
 /*
- * in-scene placed °´Ã¼·Î ÀÖ¾î¾ß ÇÔ
- * player prefabÀ» spawn
+ * in-scene placed ê°ì²´ë¡œ ìˆì–´ì•¼ í•¨
+ * player prefabì„ spawn
  */
 public class PlayerSpawner : NetworkBehaviour
 {
@@ -12,16 +12,22 @@ public class PlayerSpawner : NetworkBehaviour
 	GameObject _prefapToSpawn;
 	SpawnPlayerWithDataHandler _spawnHandler;
 
-	Dictionary<ulong, NetworkObject> _data = new();
+	Dictionary<ulong, PointmanPlayer> _data = new();
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
 		_spawnHandler = new SpawnPlayerWithDataHandler(networkManager, _prefapToSpawn);
 	}
 
+	public override void OnNetworkSpawn()
+	{
+		var gm = FindAnyObjectByType<LevelGameManager>();
+		gm.NotifyPlayerSpawnerSpawned(this);
+	}
+
 	/*
-	 * host´Â handler ¸Ş¼­µå¸¦ »ç¿ëÇØ¼­ ¹Ù·Î ½ºÆùÇÑ´Ù.
-	 * client side¿¡¼­´Â handler¸¦ ÅëÇØ prefab override¸¦ ÁøÇàÇÑ´Ù
+	 * hostëŠ” handler ë©”ì„œë“œë¥¼ ì‚¬ìš©í•´ì„œ ë°”ë¡œ ìŠ¤í°í•œë‹¤.
+	 * client sideì—ì„œëŠ” handlerë¥¼ í†µí•´ prefab overrideë¥¼ ì§„í–‰í•œë‹¤
 	 */
 	[Rpc(SendTo.Server)]
 	public void SpawnPlayerRpc(
@@ -30,7 +36,7 @@ public class PlayerSpawner : NetworkBehaviour
 		PlayerInstantiateData data,
 		RpcParams rpcParam = default)
 	{
-		_spawnHandler.InstantiateWithDataAndSpawn(
+		var no = _spawnHandler.InstantiateWithDataAndSpawn(
 			rpcParam.Receive.SenderClientId,
 			spawnPosition, rotation, data);
 	}
@@ -39,5 +45,15 @@ public class PlayerSpawner : NetworkBehaviour
 	public void DespawnPlayerRpc(RpcParams rpcParam = default)
 	{
 		_spawnHandler.InactiveAndDespawn(rpcParam.Receive.SenderClientId);
+	}
+
+	public void NotifyPlayerSpawned(PointmanPlayer player)
+	{
+		_data[player.OwnerClientId] = player;
+	}
+
+	public void NotifyPlayerDespawned(PointmanPlayer player)
+	{
+		_data.Remove(player.OwnerClientId);
 	}
 }

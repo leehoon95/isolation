@@ -23,7 +23,7 @@ public enum CollisionEffect : int
 	Damage = 1,
 	DamageAndDebuff,
 	Debuff,
-	Item
+	Item // 
 }
 
 /*

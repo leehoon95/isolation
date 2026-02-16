@@ -1,0 +1,19 @@
+{
+    "name": "ui_level",
+    "rootNamespace": "",
+    "references": [
+        "GUID:14dd90aae613ce0488e315c7c921ba24",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:3d13a5aac7e10dc4baa8d622b52c2977",
+        "GUID:8add87b30d9750a458f291061c348f24"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

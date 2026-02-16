@@ -184,6 +184,10 @@ MonoBehaviour:
       \uCC3E\uC73C\uC138\uC694"
     m_Metadata:
       m_Items: []
+  - m_Id: 21293257412456448
+    m_Localized: "\uC7A5\uCC29"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
