@@ -5,11 +5,8 @@ using UnityEngine;
 public class LevelGameManager : MonoBehaviour
 {
 	[SerializeField]
-	PooledDynamicSpawner _pds;
-	[SerializeField]
-	CinemachineCamera _cineCamera;
+	GameProcessor _gameProcessor;
 
-	PlayerSpawner _playerSpawner;
 	PlayerInfoSO _playerInfo;
 	UILevelSO _uiso;
 	NetworkEventHandler _networkEventHandler;
@@ -18,41 +15,22 @@ public class LevelGameManager : MonoBehaviour
 	{
 		if (FindAnyObjectByType<UILevelSOHolder>() == null)
 		{
-			var obj = new GameObject("[UI Game Holder]");
+			var obj = new GameObject("[UI Level Holder]");
 			obj.AddComponent<UILevelSOHolder>();
 		}
-		
 	}
 
 	void Start()
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+		_gameProcessor.OnSceneLoadRequested += SceneLoadRequested;
 
-		_uiso.OnTestEvent += TestEventListner;
+		//_networkEventHandler.
 	}
 
-	public void NotifyPlayerSpawnerSpawned(PlayerSpawner playerSpawner)
+	void SceneLoadRequested()
 	{
-		_playerSpawner = playerSpawner;
-	}
-
-	void TestEventListner(int index)
-	{
-		if (index == 0)
-		{
-			_playerSpawner.SpawnPlayerRpc(
-				Vector2.zero,
-				Quaternion.identity,
-				new PlayerInstantiateData()
-				{
-					Nickname = _playerInfo.Nickname,
-					PersonalColor = _playerInfo.PersonalColor,
-				});
-		}
-		else if (index == 1)
-		{
-			_playerSpawner.DespawnPlayerRpc();
-		}
+		//NetworkManager.Singleton.SceneManager.LoadScene
 	}
 }

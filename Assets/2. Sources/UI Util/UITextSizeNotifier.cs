@@ -12,14 +12,19 @@ public class UITextPreferredSizeNotifier : UIBehaviour
 	TMP_Text _targetText;
 	public event Action<float, float> OnTextPreferredSizeChanged;
 
-	protected override void OnEnable()
+	protected override void Start()
 	{
 		_targetText = GetComponent<TMP_Text>();
+	}
+
+	protected override void OnEnable()
+	{
 		OnTextPreferredSizeChanged?.Invoke(_targetText.preferredWidth, _targetText.preferredHeight);
 	}
 
 	protected override void OnRectTransformDimensionsChange()
 	{
+		print($"OnRectTransformDimensionsChange {_targetText.preferredWidth}");
 		OnTextPreferredSizeChanged?.Invoke(_targetText.preferredWidth, _targetText.preferredHeight); 
 	}
 }

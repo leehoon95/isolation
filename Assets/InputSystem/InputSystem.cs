@@ -1,6 +1,8 @@
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 {
@@ -12,7 +14,7 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 	public event UnityAction<Vector2> Look;
 	public event UnityAction<bool> LeftTrigger;
 	public event UnityAction<bool> RightTrigger;
-	public event UnityAction UseItem;
+	public event UnityAction<bool> UseItem;
 	public event UnityAction<bool> SwitchCamera1;
 	public event UnityAction<bool> SwitchCamera2;
 
@@ -52,11 +54,12 @@ public class InputSystem : MonoBehaviour, InputSystem_Actions.IPlayerActions
 		SwitchCamera2?.Invoke(context.performed);
 	}
 
-	public void OnUseItem(InputAction.CallbackContext context)
+	void InputSystem_Actions.IPlayerActions.OnUseItem(InputAction.CallbackContext context)
 	{
-		if (context.canceled)
+		if (context.started)
 		{
-			UseItem?.Invoke();
+			return;
 		}
+		UseItem?.Invoke(context.performed);
 	}
 }

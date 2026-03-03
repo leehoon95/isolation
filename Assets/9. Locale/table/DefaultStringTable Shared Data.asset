@@ -179,6 +179,34 @@ MonoBehaviour:
     m_Key: item-mount
     m_Metadata:
       m_Items: []
+  - m_Id: 22395753090396160
+    m_Key: weapon-shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22401797719994368
+    m_Key: weapon-shock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22401958537998336
+    m_Key: weapon-homing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22402103778357248
+    m_Key: weapon-wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22402315041255424
+    m_Key: weapon-cluster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22403321242202112
+    m_Key: weapon-laser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22403691360169984
+    m_Key: Weapon-bolt
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

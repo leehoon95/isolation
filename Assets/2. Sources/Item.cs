@@ -1,11 +1,13 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public enum ItemType
+public enum ItemType : int
 {
-	Weapon,
+	Weapon = 0,
 	Buff,
 
 }
@@ -23,21 +25,17 @@ public class Item : NetworkBehaviour, IItemHandler
 	[SerializeField]
 	string _effect;
 	[SerializeField]
+	SortingGroup _sortingGroup;
+	[SerializeField]
 	List<Sprite> _weaponIconSprites = new();
 	[SerializeField]
 	List<Sprite> _buffSprites = new();
 
 	NetworkObject _no;
 	bool _isSelected;
-//#if UNITY_EDITOR
-//	void OnValidate()
-//	{
-//		EditorApplication.delayCall += () =>
-//		{
-//			SetItemShapeForType(_type);
-//		};
-//	}
-//#endif
+	DateTime _spawnedTime;
+	Coroutine _timeoutCo;
+	WaitForSeconds _wait = new WaitForSeconds(10f);
 
 	public NetworkObject NO
 	{
@@ -52,12 +50,12 @@ public class Item : NetworkBehaviour, IItemHandler
 		get => _type;
 		set => _type = value;
 	}
-	public string ItemEffect 
+	public string ItemEffect
 	{
 		get => _effect;
 		set => _effect = value;
 	}
-	public bool IsSelected 
+	public bool IsSelected
 	{
 		get => _isSelected;
 		set
@@ -65,33 +63,70 @@ public class Item : NetworkBehaviour, IItemHandler
 			_isSelected = value;
 			if (_isSelected)
 			{
+				_sortingGroup.sortingOrder = 1;
 				_selectedBackgroundSprite.gameObject.SetActive(true);
 			}
 			else
 			{
+				_sortingGroup.sortingOrder = 0;
 				_selectedBackgroundSprite.gameObject.SetActive(false);
 			}
 		}
 	}
 
-	public string ItemDescription 
+	public bool IsOnlyFront
 	{
-		get; set;
+		get
+		{
+			if (_effect == "shield"
+				|| _effect == "shock"
+				|| _effect == "wave")
+			{
+				return true;
+			}
+
+			return false;
+		}
 	}
 
-	void Start()
+	public DateTime SpawnedTime => _spawnedTime;
+
+	void OnEnable()
 	{
-		
+		_sortingGroup.sortingOrder = 0;
+		IsSelected = false;
+		if (IsHost)
+		{
+			_spawnedTime = DateTime.Now;
+			_timeoutCo = StartCoroutine(ReleaseTimeout());
+		}
 	}
 
-	public void Despawn()
+	void OnDisable()
 	{
-
+		if (IsHost && _timeoutCo != null)
+		{
+			StopCoroutine(_timeoutCo);
+		}
 	}
 
-	void SetItemShapeForType(ItemType type)
+	IEnumerator ReleaseTimeout()
 	{
-		if (type == ItemType.Weapon)
+		yield return _wait;
+
+		_timeoutCo = null;
+		DespawnItemRpc();
+	}
+
+	[Rpc(SendTo.Server)]
+	public void DespawnItemRpc()
+	{
+		NetworkObject.Despawn();
+	}
+
+	public void RefreshItemShape()
+	{
+		if (_type == ItemType.Weapon)
 		{
 			_backgroundSprite.color = new Color(22f / 255f, 147f / 255f, 146f / 255f);
 			Sprite s = null;
@@ -109,7 +144,7 @@ public class Item : NetworkBehaviour, IItemHandler
 
 			_itemSprite.sprite = s;
 		}
-		else if (type == ItemType.Buff)
+		else if (_type == ItemType.Buff)
 		{
 			_backgroundSprite.color = new Color(60f / 255f, 179f / 255f, 161f / 255f);
 			Sprite s = null;
@@ -122,15 +157,5 @@ public class Item : NetworkBehaviour, IItemHandler
 			}
 			_itemSprite.sprite = s;
 		}
-	}
-
-	public void AddCollisionEvent(CollisionEvent ce)
-	{
-		throw new System.NotImplementedException();
-	}
-
-	public CollisionEffect GetEffect()
-	{
-		throw new System.NotImplementedException();
 	}
 }

@@ -11,8 +11,8 @@ enum TargetSizeAxis
 	Vertical = 2,
 }
 /*
- * ÀÚ½Ä ¿ÀºêÁ§Æ®(Text Mesh Pro)ÀÇ °¡º¯ Å©±â¿¡ µû¶ó ºÎ¸ğ ¿ÀºêÁ§Æ® Å©±â¸¦ ¸ÂÃß°í ½ÍÀ» ¶§ »ç¿ëÇÔ
- * ÇØ´ç ÀÚ½Ä ¿ÀºêÁ§Æ®´Â UITextSizeNotifier ÄÄÆ÷³ÍÆ®¸¦ Æ÷ÇÔÇØ¾ß ÇÔ
+ * ìì‹ ì˜¤ë¸Œì íŠ¸(Text Mesh Pro)ì˜ ê°€ë³€ í¬ê¸°ì— ë”°ë¼ ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ í¬ê¸°ë¥¼ ë§ì¶”ê³  ì‹¶ì„ ë•Œ ì‚¬ìš©í•¨
+ * í•´ë‹¹ ìì‹ ì˜¤ë¸Œì íŠ¸ëŠ” UITextSizeNotifier ì»´í¬ë„ŒíŠ¸ë¥¼ í¬í•¨í•´ì•¼ í•¨
  */
 
 [ExecuteAlways]
@@ -29,18 +29,29 @@ public class UITextContentSizeFitter : UIBehaviour
 
 	RectTransform _rt;
 
-	protected override void OnEnable()
+	protected override void Start()
 	{
-		base.OnEnable();
 		_rt = (RectTransform)transform;
 		_notifier.OnTextPreferredSizeChanged += OnTextPreferredSizeChanged;
 	}
 
-	protected override void OnDisable()
+	protected override void OnDestroy()
 	{
-		base.OnDisable();
 		_notifier.OnTextPreferredSizeChanged -= OnTextPreferredSizeChanged;
 	}
+
+	//protected override void OnEnable()
+	//{
+	//	base.OnEnable();
+	//	_rt = (RectTransform)transform;
+	//	_notifier.OnTextPreferredSizeChanged += OnTextPreferredSizeChanged;
+	//}
+
+	//protected override void OnDisable()
+	//{
+	//	base.OnDisable();
+	//	_notifier.OnTextPreferredSizeChanged -= OnTextPreferredSizeChanged;
+	//}
 
 #if UNITY_EDITOR
 	protected override void OnValidate()
@@ -51,6 +62,7 @@ public class UITextContentSizeFitter : UIBehaviour
 
 	void OnTextPreferredSizeChanged(float preferredWidth, float preferredHeight)
 	{
+		print($"{_textPreferredWidth} {_textPreferredHeight}");
 		_textPreferredWidth = preferredWidth;
 		_textPreferredHeight = preferredHeight;
 		FitSize();
@@ -62,7 +74,7 @@ public class UITextContentSizeFitter : UIBehaviour
 		{
 			return;
 		}
-
+		
 		if (_targetSizeAxis == TargetSizeAxis.None)
 		{
 			return;

@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/1. Scenes/Level0_Scene.unity
     guid: 97163bbef5129b642b8dd91a92770f0e
   - enabled: 0
+    path: Assets/1. Scenes/NetworkBootLoader.unity
+    guid: f41105f384bc78a408b4ffa447d16e9b
+  - enabled: 0
     path: Assets/1. Scenes/Test/TestScene.unity
     guid: 86f97b9c2f4441c4494df4a19531c1ca
   - enabled: 0

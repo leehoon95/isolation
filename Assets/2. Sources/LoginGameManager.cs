@@ -1,13 +1,10 @@
 using Google.Protobuf;
 using System;
 using System.Collections;
-using System.Threading;
 using System.Threading.Tasks;
-using Unity.Services.Authentication;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
-using UnityEngine.Rendering.LookDev;
+using UnityEngine.Localization.Tables;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
 
@@ -16,7 +13,7 @@ using WebSocketSharp;
  */
 public class LoginGameManager : MonoBehaviour
 {
-	[SerializeField] 
+	[SerializeField]
 	SaveDataLoader _sdl;
 	TCPClientSO _tcpClient;
 	UILoginSO _uiso;
@@ -24,11 +21,12 @@ public class LoginGameManager : MonoBehaviour
 
 	string _inputId;
 	string _inputPassword;
-
 	// 다수의 네트워크 작업을 동시에 진행하지 말 것
 	Coroutine _taskCo;
 	Coroutine _notifyCo;
 	PMResponseRegisterAccount _responseRegisterAccount;
+	LocalizationLoader _localizationLoader = new();
+	StringTable _localizedTable;
 
 	void Awake()
 	{
@@ -78,7 +76,8 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.OnLogin += OnLogin;
 		_uiso.OnRegister += OnRegister;
 		//_uiso.OnTest_1 += OnDisconnect;
-		_uiso.OnTest_2 += () => {
+		_uiso.OnTest_2 += () =>
+		{
 			if (_taskCo != null)
 			{
 				GLogger.LogWarning("OnRegister 다른 작업이 진행 중");
@@ -111,11 +110,15 @@ public class LoginGameManager : MonoBehaviour
 	IEnumerator ReadyForLoginScene()
 	{
 		yield return LocalizationSettings.InitializationOperation;
-		//var op = LocalizationSettings.StringDatabase.PreloadOperation;
-		//while (!op.IsDone)
-		//{
-		//	yield return new WaitForSeconds(0.02f);
-		//}
+
+		/*
+		 * locale이 변경될 경우 table을 다시 로드할 것
+		 */
+		var selectedLocale = LocalizationSettings.SelectedLocale;
+		var op = LocalizationSettings.StringDatabase.GetTableAsync("DefaultStringTable", selectedLocale);
+		yield return op;
+		_localizedTable = op.Result;
+
 		var t = LocalDataSettings.Instance.LoadAsync();
 		yield return new WaitUntil(() => t.IsCompleted);
 
@@ -165,12 +168,19 @@ public class LoginGameManager : MonoBehaviour
 	void OpenNetworkErrorDialog()
 	{
 		GLogger.Log("OpenNetworkErrorDialog");
-		var selectedLocale = LocalizationSettings.SelectedLocale;
-		var adb = LocalizationSettings.StringDatabase;
+		var title = _localizedTable.GetEntry("network-connection-error")?.LocalizedValue;
+		var content = _localizedTable.GetEntry("network-connection-error")?.LocalizedValue;
+		var okButton = _localizedTable.GetEntry("network-connection-error")?.LocalizedValue;
+
+		//var selectedLocale = LocalizationSettings.SelectedLocale;
+		// adb = LocalizationSettings.StringDatabase;
 		_uiso.DialogManager.ShowOkDialog(
-			adb.GetLocalizedString("DefaultStringTable", "network-connection-error", selectedLocale),
-			adb.GetLocalizedString("DefaultStringTable", "network-connection-error-massage", selectedLocale),
-			adb.GetLocalizedString("DefaultStringTable", "retry", selectedLocale),
+			//adb.GetLocalizedString("DefaultStringTable", "network-connection-error", selectedLocale),
+			//adb.GetLocalizedString("DefaultStringTable", "network-connection-error-massage", selectedLocale),
+			//adb.GetLocalizedString("DefaultStringTable", "retry", selectedLocale),
+			title,
+			content,
+			okButton,
 				() =>
 				{
 					if (_taskCo != null)
@@ -283,7 +293,7 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.SetInteractable(false);
 		yield return new WaitUntil(() => dataTransferTask.IsCompleted);
 		yield return new WaitUntil(() => _responseRegisterAccount != null);
-		yield return HandleAccountCreationResultCo(_responseRegisterAccount);
+		HandleAccountCreationResult(_responseRegisterAccount);
 		_uiso.SetInteractable(true);
 		_responseRegisterAccount = null;
 		_taskCo = null;
@@ -319,12 +329,13 @@ public class LoginGameManager : MonoBehaviour
 		if (length == 0)
 		{
 			await Awaitable.MainThreadAsync();
-
-			_uiso.ShowNotification(
-				LocalizationSettings.StringDatabase.GetLocalizedString(
-					"DefaultStringTable",
-					"network-disconnected-from-server",
-					LocalizationSettings.SelectedLocale));
+			var text = _localizedTable.GetEntry("network-disconnected-from-server")?.LocalizedValue;
+			//_uiso.ShowNotification(
+			//	LocalizationSettings.StringDatabase.GetLocalizedString(
+			//		"DefaultStringTable",
+			//		"network-disconnected-from-server",
+			//		LocalizationSettings.SelectedLocale));
+			_uiso.ShowNotification(text);
 
 			_uiso.DialogManager.HideAccountCreationDialog();
 			_uiso.DialogManager.HideYesNoDialog();
@@ -370,7 +381,7 @@ public class LoginGameManager : MonoBehaviour
 				var data = LocalDataSettings.Instance.Data;
 				data.Id = _inputId;
 				data.Password = _inputPassword;
-				
+
 				await LocalDataSettings.Instance.SaveAsync();
 
 				await Awaitable.MainThreadAsync();
@@ -418,7 +429,7 @@ public class LoginGameManager : MonoBehaviour
 		}
 	}
 
-	IEnumerator HandleAccountCreationResultCo(PMResponseRegisterAccount msg)
+	void HandleAccountCreationResult(PMResponseRegisterAccount msg)
 	{
 		var selectedLocale = LocalizationSettings.SelectedLocale;
 		var adb = LocalizationSettings.StringDatabase;
@@ -432,21 +443,24 @@ public class LoginGameManager : MonoBehaviour
 			/*
 			 * Async 함수임에도 내부에서 get_isPlaying 사용으로 인해 메인 스레드에서 호출되어야 한다
 			 */
-			var op = adb.GetLocalizedStringAsync(
-				"DefaultStringTable", "account-creation-successful", selectedLocale);
-			yield return op;
-			notify = op.Result;
+			//var op = adb.GetLocalizedStringAsync(
+			//	"DefaultStringTable", "account-creation-successful", selectedLocale);
+			//yield return op;
+			//notify = op.Result;
+
+			notify = _localizedTable.GetEntry("account-creation-successful").LocalizedValue;
 
 			_uiso.DialogManager.HideAccountCreationDialog();
 		}
 		else
 		{
-			GLogger.LogWarning($"Faield to create new account! {msg.Message}");
-			var op = adb.GetLocalizedStringAsync(
-				"DefaultStringTable", "account-creation-failed", selectedLocale);
-			yield return op;
+			//GLogger.LogWarning($"Faield to create new account! {msg.Message}");
+			//var op = adb.GetLocalizedStringAsync(
+			//	"DefaultStringTable", "account-creation-failed", selectedLocale);
+			//yield return op;
+			//notify = op.Result;
 
-			notify = op.Result;
+			notify = _localizedTable.GetEntry("account-creation-successful").LocalizedValue;
 			string key = "account-creation-failure-reason-unknown";
 
 			switch (msg.Message)
@@ -468,12 +482,14 @@ public class LoginGameManager : MonoBehaviour
 					break;
 			}
 
-			op = adb.GetLocalizedStringAsync(
-						"DefaultStringTable", key, selectedLocale);
-			yield return op;
-			reason = op.Result;
+			//op = adb.GetLocalizedStringAsync(
+			//			"DefaultStringTable", key, selectedLocale);
+			//yield return op;
+			//reason = op.Result;
+
+			reason = _localizedTable.GetEntry(key).LocalizedValue;
 		}
-		
+
 		_uiso.Notification.ShowNotification($"{notify}{(reason.Length > 0 ? '\n' : "")}{reason}");
 	}
 

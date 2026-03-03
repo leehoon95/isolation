@@ -15,14 +15,21 @@ public class UILevelSO : ScriptableObject
 	public event Action<int> OnTestEvent;
 
     public void RaiseTestEvent(int index) => OnTestEvent?.Invoke(index);
-	public void ShowItemPicker(Vector2 position)
+	public void ShowItemPicker(Vector2 position, string itemEffect, bool onlyFront)
 	{
-		_itemPickerPanel.ShowItemPicker(position);
+		_itemPickerPanel.ShowItemPicker(position, itemEffect, onlyFront);
 	}
 
 	public void HideItemPicker()
 	{
 		_itemPickerPanel.HideItemPicker();
+	}
+
+	public bool IsShowingItemPicker() => _itemPickerPanel.IsShowingItemPicker();
+
+	public int GetPickedItemsIndex()
+	{
+		return _itemPickerPanel.GetSelectedIndex();
 	}
 }
 

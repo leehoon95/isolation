@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -11,22 +12,22 @@ TagManager:
   - 
   - Water
   - UI
-  - Player
-  - Projectile
-  - Enemy
-  - Enemy Projectile
-  - Static Object
   - Item
+  - 
+  - Enemy Body
+  - Enemy Trigger
+  - Enemy Projectile
+  - Enemy Hand
+  - 
+  - 
+  - Player Body
+  - Player Trigger
+  - Player Projectile
   - Player Hand
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Static Object
+  - Floor
   - 
   - 
   - 
@@ -46,6 +47,27 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: StaticObejct
+    uniqueID: 2268750443
+    locked: 0
+  - name: Enemy
+    uniqueID: 704004111
+    locked: 0
+  - name: Item
+    uniqueID: 1534428849
+    locked: 0
+  - name: Player
+    uniqueID: 7222001
+    locked: 0
+  - name: Projectile
+    uniqueID: 1942144009
+    locked: 0
+  - name: Effect
+    uniqueID: 3843907439
+    locked: 0
+  - name: UI
+    uniqueID: 434005281
     locked: 0
   m_RenderingLayers:
   - Default

@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Events;
 
 public struct PlayerInstantiateData : INetworkSerializable
 {
@@ -21,7 +21,8 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 {
 	GameObject _prefabToSpawn;
 	NetworkManager _networkManager;
-	Dictionary<ulong, NetworkObject> _instances = new();
+	Dictionary<ulong, PointmanPlayer> _instances = new();
+	public event Action<NetworkObject> NetworkObjectDestroyed;
 
 	public SpawnPlayerWithDataHandler(NetworkManager networkManager, GameObject perfab)
 	{
@@ -31,7 +32,7 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		_networkManager.PrefabHandler.AddHandler(_prefabToSpawn, this);
 	}
 
-	public NetworkObject InstantiateWithDataAndSpawn(
+	public PointmanPlayer InstantiateWithDataAndSpawn(
 		ulong ownerClientId,
 		Vector3 position, Quaternion rotation,
 		PlayerInstantiateData instantiationData)
@@ -42,9 +43,9 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		}
 
 		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
-		_networkManager.PrefabHandler.SetInstantiationData(instance, instantiationData);
-		instance.SpawnWithOwnership(ownerClientId, true);
-
+		_networkManager.PrefabHandler.SetInstantiationData(instance.NetworkObject, instantiationData);
+		instance.NetworkObject.SpawnWithOwnership(ownerClientId, true);
+		
 		return instance;
 	}
 
@@ -60,16 +61,16 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 			var instance = _instances[ownerClientId];
 			if (instance.IsSpawned)
 			{
-				instance.Despawn();
+				instance.NetworkObject.Despawn();
 			}
 		}
 	}
 
-	NetworkObject GetPrefabInstance(ulong ownerClientId,
+	PointmanPlayer GetPrefabInstance(ulong ownerClientId,
 		Vector3 position, Quaternion rotation,
 		PlayerInstantiateData instantiationData)
 	{
-		NetworkObject instance = null;
+		PointmanPlayer instance = null;
 		if (_instances.ContainsKey(ownerClientId))
 		{
 			instance = _instances[ownerClientId];
@@ -77,12 +78,12 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		}
 		else
 		{
-			instance = Object.Instantiate(_prefabToSpawn).GetComponent<NetworkObject>();
+			instance = UnityEngine.Object.Instantiate(_prefabToSpawn).GetComponent<PointmanPlayer>();
 			_instances[ownerClientId] = instance;
 		}
 
 		instance.transform.SetPositionAndRotation(position, rotation);
-		var ps = instance.GetComponent<IPlayerSetting>();
+		var ps = instance.GetComponent<IPlayerHandler>();
 		ps.PersonalColor = instantiationData.PersonalColor;
 
 		return instance;
@@ -96,12 +97,13 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 	{
 		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
 
-		return instance;
+		return instance.NetworkObject;
 	}
 
 	// host, client 모두 호출된다
 	public override void Destroy(NetworkObject networkObject)
 	{
+		NetworkObjectDestroyed?.Invoke(networkObject);
 		networkObject.gameObject.SetActive(false);
 	}
 }

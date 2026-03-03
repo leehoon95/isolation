@@ -32,12 +32,4 @@ public class PlayerBase : NetworkBehaviour
 				+ $"pooled dynamic spawner is {_pds}");
 		}
 	}
-
-	public override void OnNetworkDespawn()
-	{
-		if (!IsOwner)
-		{
-			return;
-		}
-	}
 }

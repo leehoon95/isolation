@@ -19,8 +19,7 @@ public struct ProjectileRpcParameter : INetworkSerializable
 	 */
 	//public int CollisionIncludeLayers;
 	//public int CollisionExcludeLayers;
-	public int CollisionEffect;
-	public FixedString32Bytes CollisionEffectDetail;
+	public CollisionEventStruct CollisionEvent;
 	public Color EffectColor;
 	public float LifeTime;
 	
@@ -35,8 +34,7 @@ public struct ProjectileRpcParameter : INetworkSerializable
 		serializer.SerializeValue(ref MaxAngularVelocity);
 		//serializer.SerializeValue(ref CollisionIncludeLayers);
 		//serializer.SerializeValue(ref CollisionExcludeLayers);
-		serializer.SerializeValue(ref CollisionEffect);
-		serializer.SerializeValue(ref CollisionEffectDetail);
+		CollisionEvent.NetworkSerialize(serializer);
 		serializer.SerializeValue(ref EffectColor);
 		serializer.SerializeValue(ref LifeTime);
 	}

@@ -184,6 +184,34 @@ MonoBehaviour:
     m_Localized: Mount
     m_Metadata:
       m_Items: []
+  - m_Id: 22395753090396160
+    m_Localized: Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22401958537998336
+    m_Localized: Homing missile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22402315041255424
+    m_Localized: Cluster Bomb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22403321242202112
+    m_Localized: Laser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22402103778357248
+    m_Localized: Wave Generator
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22401797719994368
+    m_Localized: Electric Shock Device
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22403691360169984
+    m_Localized: Bolt
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

@@ -1,16 +1,16 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
-
-public interface IPlayerSetting
-{
-	public string Nickname { set; }
-	public Color PersonalColor { set; }
-}
+using UnityEngine.UIElements;
 
 
-public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
+[DisallowMultipleComponent]
+[RequireComponent(typeof(Rigidbody2D))]
+public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCollision
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
@@ -26,8 +26,9 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 	PlayerBodyIndicator _bodyIndicator;
 	[SerializeField]
 	PlayerHand _hand;
-	
-	
+
+	InputSystem _inputSystem;
+	PooledDynamicSpawner _pds;
 	NetworkVariable<int> _health = new(
 		100, 
 		NetworkVariableReadPermission.Everyone, 
@@ -38,7 +39,8 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 	UILevelSO _uiso;
 	PlayerSpawner _spawner;
 	IItemHandler _grabbedItem;
-	List<CollisionEvent> _collisionEvents = new();
+	bool _grabbed;
+
 	Vector2 _inputMovement;
 	bool _inputLeftTrigger;
 	bool _inputRightTrigger;
@@ -47,6 +49,16 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 	Color _personalColor;
 	float _angle;
 	long _lastFiredTime = 0;
+	List<CollisionEvent> _collisionEventList = new();
+	CollisionEvent _collisionEventCache = new()
+	{
+		Position = Vector2.zero,
+		Direction = Vector2.right,
+		Effect = CollisionEffect.Block,
+		EffectDuration = 0f,
+		Damage = 0,
+	};
+	long _lastHealthRecoveryTime;
 
 	public string Nickname
 	{
@@ -65,26 +77,52 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 		}
 	}
 
+	public InputSystem InputSystem
+	{
+		set => _inputSystem = value;
+	}
+
+	public NetworkObject NO => NetworkObject;
+
+	public GameObject GO => gameObject;
+
 	public override void OnNetworkSpawn()
 	{
-		base.OnNetworkSpawn();
-
 		if (!IsOwner)
 		{
+			_hand.gameObject.SetActive(false);
 			return;
 		}
 
-		_health.OnValueChanged += HealthChanged;
-		_health.Value = 50;
-		_hand.OnGrabbedItem += OnGrabbedItem;
-		_spawner = FindAnyObjectByType<PlayerSpawner>();
-		_spawner.NotifyPlayerSpawned(this);
-		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+		_inputSystem = FindAnyObjectByType<InputSystem>();
+		_pds = FindAnyObjectByType<PooledDynamicSpawner>();
 
-		PlayerInput.Move += OnMove;
-		PlayerInput.LeftTrigger += OnLeftTrigger;
-		PlayerInput.RightTrigger += OnRightTrigger;
-		PlayerInput.UseItem += OnUseItem;
+		if (_inputSystem == null
+			|| _pds == null)
+		{
+			throw new NullReferenceException($"Check null reference"
+				+ $"input system is {_inputSystem}\n"
+				+ $"pooled dynamic spawner is {_pds}");
+		}
+
+		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+		_health.OnValueChanged += HealthChanged;
+		_health.Value = 100;
+		_hand.OnGrabbedItem += OnGrabbedItem;
+		_hand.ActiveHand();
+		_spawner = FindAnyObjectByType<PlayerSpawner>();
+		
+		if (_uiso == null)
+		{
+			GLogger.LogError("uiso is null");
+		}
+
+		_inputSystem.Move += OnMove;
+		_inputSystem.LeftTrigger += OnLeftTrigger;
+		_inputSystem.RightTrigger += OnRightTrigger;
+		_inputSystem.UseItem += OnUseItem;
+
+		_collisionEventCache.SenderId = NetworkObjectId;
 	}
 
 	public override void OnNetworkDespawn()
@@ -93,20 +131,7 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 		{
 			return;
 		}
-
-		base.OnNetworkDespawn();
-		_spawner.NotifyPlayerDespawned(this);
 	}
-
-	//void OnTriggerEnter2D(Collider2D collision)
-	//{
-	//	collision.layer
-	//	var ci = collision.gameObject.GetComponentInParent<ICollisionInteractable>();
-	//	if (ci != null)
-	//	{
-
-	//	}
-	//}
 
 	void Update()
 	{
@@ -124,6 +149,27 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 		{
 			return;
 		}
+
+		while (_collisionEventList.Count > 0)
+		{
+			var ce = _collisionEventList[0];
+			_collisionEventList.RemoveAt(0);
+
+			if (ce.Effect == CollisionEffect.Suicide)
+			{
+				_health.Value -= ce.Damage;
+			}
+		}
+
+		long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
+		if (now - _lastHealthRecoveryTime > 3000)
+		{
+			_health.Value += 5;
+
+			_lastHealthRecoveryTime = now;
+		}
+
+		_health.Value = Mathf.Clamp(_health.Value, 0, 100);
 
 		var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 		var toMouseVector = mousePosition - (Vector2)transform.position;
@@ -164,11 +210,10 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 
 		//if (_leftWeapon != null)
 		{
-			long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
-			if (_inputLeftTrigger && ((now - _lastFiredTime) >= 50))
+			if (_inputLeftTrigger && ((now - _lastFiredTime) >= 100))
 			{
 				var muzzle = mousePosition.normalized;
-				PDS.CreateProjectile(
+				_pds.CreateProjectile(
 					"BulletNormal",
 					(Vector2)transform.position,
 					Quaternion.Euler(0f, 0f, _angle + 90),
@@ -176,12 +221,18 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 					{
 						FlyingType = ProjectileFlyingType.Homing,
 						StartPosition = transform.position,
-						TartgetPosition = mousePosition + new Vector2(Random.Range(-0.2f, 0.2f), Random.Range(-0.5f, 0.5f)),
+						TartgetPosition = mousePosition + new Vector2(
+							UnityEngine.Random.Range(-0.2f, 0.2f), 
+							UnityEngine.Random.Range(-0.5f, 0.5f)),
 						Speed = 12f,
 						SpeedDeltaPerSec = 0f,
 						MaxAngularVelocity = 720f,
-						CollisionEffect = (int)CollisionEffect.Damage,
-						CollisionEffectDetail = "5",
+						CollisionEvent = new CollisionEventStruct()
+						{
+							Effect = CollisionEffect.Knockback,
+							EffectDuration = 0.02f,
+							EffectIntensity = 5f
+						},
 						EffectColor = _personalColor,
 						LifeTime = 5f,
 					});
@@ -191,15 +242,13 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 		}
 	}
 
-	[Rpc(SendTo.Everyone)]
-	void ProcessEventRpc()
+	void OnTriggerEnter2D(Collider2D collision)
 	{
-
-	}
-
-	void ProcessEventImplementation()
-	{
-
+		var ci = collision.gameObject.GetComponentInParent<INetworkObjectCollision>();
+		if (ci != null)
+		{
+			ci.SendCollisionEvent(_collisionEventCache);
+		}
 	}
 
 	void HealthChanged(int previousValue, int newValue)
@@ -209,15 +258,17 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 
 	void OnGrabbedItem(IItemHandler itemHandler)
 	{
-		if (itemHandler != null)
-		{
-			//GLogger.Log($"item grabbed {itemHandler.GO.transform.position}");
-			_uiso.ShowItemPicker(itemHandler.GO.transform.position);
-		}
-		else
+		if (itemHandler == null)
 		{
 			_uiso.HideItemPicker();
+			_grabbed = false;
 		}
+		else if (_grabbedItem != itemHandler &&
+			_uiso.IsShowingItemPicker())
+		{
+			_uiso.ShowItemPicker(itemHandler.GO.transform.position, itemHandler.ItemEffect, itemHandler.IsOnlyFront);
+		}
+		_grabbedItem = itemHandler;
 	}
 
 	void OnMove(Vector2 direction)
@@ -235,23 +286,55 @@ public class PointmanPlayer : PlayerBase, ICollisionInteractable, IPlayerSetting
 		_inputRightTrigger = trigger;
 	}
 
-	void OnUseItem()
+	void OnUseItem(bool tryPickItem)
 	{
-
-	}
-
-	public void AddCollisionEvent(CollisionEvent ce)
-	{
-		if (!IsOwner)
+		if (tryPickItem && _grabbedItem != null)
 		{
+			_uiso.ShowItemPicker(_grabbedItem.GO.transform.position, _grabbedItem.ItemEffect, _grabbedItem.IsOnlyFront);
+			_grabbed = true;
 			return;
 		}
+		
+		if (_grabbed && !tryPickItem)
+		{
+			var index = _uiso.GetPickedItemsIndex();
+			if (index == 3) // cancel
+			{
+				_uiso.HideItemPicker();
+				return;
+			}
 
-		_collisionEvents.Add(ce);
+			var effect = _grabbedItem.ItemEffect;
+			var onlyFront = _grabbedItem.IsOnlyFront;
+
+			GLogger.Log($"Use item at {index} {_grabbedItem.ItemEffect} onlyFront: {_grabbedItem.IsOnlyFront}");
+			_grabbedItem.DespawnItemRpc();
+			_uiso.HideItemPicker();
+			_grabbed = false;
+		}
 	}
 
-	public CollisionEffect GetEffect()
+	[Rpc(SendTo.Owner)]
+	void SendCollisionEventRpc(CollisionEventStruct ces)
 	{
-		return CollisionEffect.None;
+		//GLogger.Log($"SendCollisionEventRpc sender {ces.SenderId}");
+		_collisionEventList.Add(new CollisionEvent().FromCollisionEventStruct(ces));
 	}
+
+	public void InvalidateUntilDespawn()
+	{
+	}
+
+	public void SendCollisionEvent(CollisionEvent ces)
+	{
+		SendCollisionEventRpc(ces);
+		//_collisionEventList.Add(ce);
+	}
+
+	public CollisionEvent GetCollisionEvent()
+	{
+		return _collisionEventCache;
+	}
+
+
 }

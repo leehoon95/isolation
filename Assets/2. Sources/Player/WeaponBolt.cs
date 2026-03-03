@@ -46,25 +46,30 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 	{
 		if (_triggerd)
 		{
-			long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			if ((now - _lastFiredTime) >= _firingInterval)
-			{
-				PDS.CreateProjectile(
-					"BulletNormal",
-					MuzzleTransform.position,
-					MuzzleTransform.rotation,
-					new ProjectileRpcParameter()
-					{
-						FlyingType = ProjectileFlyingType.Rectilinear,
-						Speed = _bulletSpeed,
-						CollisionEffect = (int)_collisionEffect,
-						CollisionEffectDetail = "",
-						EffectColor = PersonalColor,
-						LifeTime = _lifeTime,
-					});
+			//long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+			//if ((now - _lastFiredTime) >= _firingInterval)
+			//{
+			//	PDS.CreateProjectile(
+			//		"BulletNormal",
+			//		MuzzleTransform.position,
+			//		MuzzleTransform.rotation,
+			//		new ProjectileRpcParameter()
+			//		{
+			//			FlyingType = ProjectileFlyingType.Rectilinear,
+			//			Speed = _bulletSpeed,
+			//			CollisionEvent = new CollisionEventStruct()
+			//			{
+			//				Effect = CollisionEffect.Knockback,
+			//				EffectDuration = 0.02f,
+			//				EffectIntensity = 5f,
+			//				Damage = 10,
+			//			},
+			//			EffectColor = PersonalColor,
+			//			LifeTime = _lifeTime,
+			//		});
 
-				_lastFiredTime = now;
-			}
+			//	_lastFiredTime = now;
+			//}
 			_triggerd = false;
 		}
 	}

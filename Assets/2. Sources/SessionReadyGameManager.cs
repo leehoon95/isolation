@@ -43,6 +43,7 @@ public class SessionGameReadyManager : MonoBehaviour
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 	static void Init()
 	{
+		GLogger.LogWarning("Init");
 		if (NetworkManager.Singleton != null)
 		{
 			GLogger.LogWarning("NetworkManager is not null");

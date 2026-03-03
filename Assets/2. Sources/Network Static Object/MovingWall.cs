@@ -1,36 +1,47 @@
 using Mono.Cecil;
+using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class MovingWall : NetworkBehaviour, ICollisionInteractable
+public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
 	[SerializeField]
 	TMP_Text _text;
 
-	NetworkVariable<int> count = new(
+	NetworkVariable<int> _count = new(
 		0,
 		NetworkVariableReadPermission.Everyone,
 		NetworkVariableWritePermission.Server
 		);
+	List<CollisionEvent> _collisionEventList = new();
+	CollisionEvent _collisionEventCache = new()
+	{
+		Effect = CollisionEffect.None
+	};
 	float _time;
 
 	public override void OnNetworkSpawn()
 	{
-		count.OnValueChanged += (previoudValue, newValue) => { _text.text = $"{newValue}"; };
+		if (!IsHost)
+		{
+			return;
+		}
+
+		_collisionEventList = new();
+		_collisionEventCache = new()
+		{
+			Effect = CollisionEffect.None
+		};
+		_count.OnValueChanged += (previoudValue, newValue) => { _text.text = $"{newValue}"; };
 	}
 
-	public void AddCollisionEvent(CollisionEvent ce)
+	public CollisionEvent GetEffect()
 	{
-		ProcessCollisionEffectgRpc((int)ce.Effect, ce.EffectDetail);
-	}
-
-	public CollisionEffect GetEffect()
-	{
-		return CollisionEffect.None;
+		return new();
 	}
 
 	void FixedUpdate()
@@ -38,6 +49,14 @@ public class MovingWall : NetworkBehaviour, ICollisionInteractable
 		if (!IsServer)
 		{
 			return;
+		}
+
+		while (_collisionEventList.Count > 0)
+		{
+			var ce = _collisionEventList[0];
+			_collisionEventList.RemoveAt(0);
+
+			_count.Value += ce.Damage;
 		}
 
 		if (_time < 1f)
@@ -57,12 +76,22 @@ public class MovingWall : NetworkBehaviour, ICollisionInteractable
 	}
 
 	[Rpc(SendTo.Server)]
-	void ProcessCollisionEffectgRpc(int effect, FixedString32Bytes effectDetail, RpcParams rpcParams = default)
+	public void SendCollisionEventRpc(CollisionEventStruct ce)
 	{
-		//GLogger.Log($"{rpcParams.Receive.SenderClientId} hit wall");
-		if (effect == (int)CollisionEffect.Damage)
-		{
-			count.Value = count.Value + int.Parse(effectDetail.ToString());
-		}
+		_collisionEventList.Add(new CollisionEvent().FromCollisionEventStruct(ce));
 	}
+
+	public void InvalidateUntilDespawn()
+	{
+	}
+
+	public void SendCollisionEvent(CollisionEvent ce)
+	{
+		SendCollisionEventRpc(ce);
+	}
+	public CollisionEvent GetCollisionEvent()
+	{
+		return _collisionEventCache;
+	}
+
 }

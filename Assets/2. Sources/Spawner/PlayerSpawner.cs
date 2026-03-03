@@ -1,28 +1,34 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /*
  * in-scene placed 객체로 있어야 함
  * player prefab을 spawn
  */
-public class PlayerSpawner : NetworkBehaviour
+public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 {
 	[SerializeField]
 	GameObject _prefapToSpawn;
+	[SerializeField]
+	InputSystem _inputSystem;
+	[SerializeField]
+	PooledDynamicSpawner _pooledDynamicSpawner;
+
 	SpawnPlayerWithDataHandler _spawnHandler;
 
-	Dictionary<ulong, PointmanPlayer> _data = new();
+	Dictionary<ulong, IPlayerHandler> _activedPlayer;
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
 		_spawnHandler = new SpawnPlayerWithDataHandler(networkManager, _prefapToSpawn);
-	}
-
-	public override void OnNetworkSpawn()
-	{
-		var gm = FindAnyObjectByType<LevelGameManager>();
-		gm.NotifyPlayerSpawnerSpawned(this);
+		if (IsHost)
+		{
+			_activedPlayer = new();
+			_spawnHandler.NetworkObjectDestroyed += OnNetworkObjectDestroyed;
+		}
 	}
 
 	/*
@@ -36,9 +42,11 @@ public class PlayerSpawner : NetworkBehaviour
 		PlayerInstantiateData data,
 		RpcParams rpcParam = default)
 	{
-		var no = _spawnHandler.InstantiateWithDataAndSpawn(
+		var pp = _spawnHandler.InstantiateWithDataAndSpawn(
 			rpcParam.Receive.SenderClientId,
 			spawnPosition, rotation, data);
+
+		_activedPlayer[pp.NetworkObjectId] = pp;
 	}
 
 	[Rpc(SendTo.Server)]
@@ -47,13 +55,13 @@ public class PlayerSpawner : NetworkBehaviour
 		_spawnHandler.InactiveAndDespawn(rpcParam.Receive.SenderClientId);
 	}
 
-	public void NotifyPlayerSpawned(PointmanPlayer player)
+	void OnNetworkObjectDestroyed(NetworkObject networkObject)
 	{
-		_data[player.OwnerClientId] = player;
+		_activedPlayer.Remove(networkObject.NetworkObjectId);
 	}
 
-	public void NotifyPlayerDespawned(PointmanPlayer player)
+	public List<IPlayerHandler> GetPlayers()
 	{
-		_data.Remove(player.OwnerClientId);
+		return _activedPlayer.Values.ToList();
 	}
 }

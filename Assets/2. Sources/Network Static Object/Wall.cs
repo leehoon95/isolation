@@ -1,21 +1,30 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class Wall : NetworkBehaviour, ICollisionInteractable
+public class Wall : NetworkBehaviour, INetworkObjectCollision
 {
-	public void AddCollisionEvent(CollisionEvent ce)
+	CollisionEvent _collisionEventCache;
+
+	public override void OnNetworkSpawn()
 	{
-		
+		_collisionEventCache = new()
+		{ 
+			SenderId = NetworkObjectId,
+			Effect = CollisionEffect.Block,
+		};
+
 	}
 
-	[Rpc(SendTo.Server)]
-	void HitWallRpc(RpcParams rpcParams = default)
+	public void InvalidateUntilDespawn()
 	{
-		GLogger.Log($"{rpcParams.Receive.SenderClientId} hit wall");
 	}
 
-	public CollisionEffect GetEffect()
+	public void SendCollisionEvent(CollisionEvent ce)
 	{
-		return CollisionEffect.None;
+	}
+
+	public CollisionEvent GetCollisionEvent()
+	{
+		return _collisionEventCache;
 	}
 }
