@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -22,7 +23,10 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 	public int HealthPoint
 	{
 		get => _healthPoint.Value;
-		set => _healthPoint.Value = Mathf.Clamp(value, 0, 100);
+		set
+		{
+			_healthPoint.Value = Mathf.Max(0, value);
+		}
 	}
 
 	public bool IsEffectInProgress
@@ -36,7 +40,7 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 	public NetworkObject NO => NetworkObject;
 	public GameObject GO => gameObject;
 	public IEnemySpawner Spawner { get; set; }
-
+	public IPooledDynamicSpawner IPDS { get; set; }
 	public int MaxHealthPoint { get; set; }
 	public float Speed { get; set; }
 	public float KnockbackResistance { get; set; }
@@ -54,31 +58,26 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 		NetworkObject.Despawn();
 	}
 
-	public override void OnNetworkPreDespawn()
+	public override void OnNetworkSpawn()
 	{
 		if (!IsHost)
 		{
 			return;
 		}
-
-		HealthPoint = MaxHealthPoint;
-	}
-
-	public override void OnNetworkSpawn()
-	{
-		if (!IsServer)
+		if (_rigidbody == null)
 		{
-			return;
+			_rigidbody = GetComponent<Rigidbody2D>();
 		}
-		_rigidbody = GetComponent<Rigidbody2D>();
-		_healthPoint.Value = MaxHealthPoint;
 	}
 
-	//protected void MoveToTarget(Vector2 targetPosition)
-	//{
-	//	var direction = (targetPosition - (Vector2)transform.position).normalized;
-	//	_rigidbody.linearVelocity = direction * 2f;
-	//}
+	protected void MoveToTarget(Vector2 targetPosition)
+	{
+		var direction = (targetPosition - (Vector2)transform.position).normalized;
+		var desiredVelocity = direction * Speed;
+		var steer = desiredVelocity - _rigidbody.linearVelocity;
+		//GLogger.Log($"desiredVelocity: {Speed} steer: {steer}");
+		_rigidbody.AddForce(steer * 10f);
+	}
 
 	public void ApplyKnockback(Vector2 directionm, float knockbackForce, float knockbackTime)
 	{
@@ -93,7 +92,6 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 	IEnumerator Knockback(Vector2 direction, float knockbackForce, float knockbackTime)
 	{
 		IsEffectInProgress = true;
-
 		_rigidbody.AddForce(direction * knockbackForce, ForceMode2D.Impulse);
 		yield return new WaitForSeconds(knockbackTime);
 
@@ -123,22 +121,17 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 	}
 
 	/*
-	 * OnNetworkPreSpawn, OnNetworkSpawn 메서드가 호출되기 전에 먼저 호출된다.
+	 * Spawn되기 전에 호출된다.
+	 * Host만 호출한다(EnemyPrefabWithDataHandler 참고)
 	 */
 	public virtual void SetData(in EnemyInstantiateData data)
 	{
-		if (IsServer)
-		{
-
-			PrefabId = data.PrefabId;
-			Speed = data.Speed;
-			MaxHealthPoint = data.MaxHealthPoint;
-			KnockbackResistance = data.KnockbackResistance;
-			StoppingPowerResistance = data.StoppingPowerResistance;
-			Defense = data.Defense;
-
-
-		}
-
+		GLogger.Log("SetData Enemy");
+		PrefabId = data.PrefabId;
+		Speed = data.Speed;
+		MaxHealthPoint = data.MaxHealthPoint;
+		KnockbackResistance = data.KnockbackResistance;
+		StoppingPowerResistance = data.StoppingPowerResistance;
+		Defense = data.Defense;
 	}
 }

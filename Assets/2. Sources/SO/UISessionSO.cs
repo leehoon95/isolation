@@ -39,7 +39,8 @@ public class UISessionSO : ScriptableObject
 	public void RaiseOnClickReady() => OnClickReady?.Invoke();
 	public void RaiseOnClickLeave() => OnClickLeave?.Invoke();
 	public void RaiseOnSubmitMessage(string text) => OnSubmitMessage?.Invoke(text);
-	public void AddMessage(string speaker, string text, Color personalColor) => _sessionCommunication.AddMessage(speaker, text, personalColor);
+	public void AddMessage(string speaker, string text, Color personalColor)
+		=> _sessionCommunication.AddMessage(speaker, text, personalColor);
 	public void ClearEvent()
 	{
 		OnClickReady = null;

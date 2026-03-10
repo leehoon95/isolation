@@ -66,7 +66,7 @@ public class SessionGameReadyManager : MonoBehaviour
 			var obj = new GameObject("[Player Info Holder]");
 			var piHolder = obj.AddComponent<PlayerInfoSOHolder>();
 			DontDestroyOnLoad(obj);
-
+			
 			return;
 		}
 #endif
@@ -104,7 +104,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		{
 			LoadScene("LobbyScene");
 		}
-
+		
 		if (_sessionParameter.LobbyName != null)
 		{
 			// start as host
@@ -130,11 +130,14 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (CurrentPlayer.IsMainEditor)
 		{
 			NetworkManager.Singleton.StartHost();
+			_uiso.SessionCommunication.SetReadyButtonText("START GAME");
+			_uiso.SessionCommunication.SetReadyButtonHighlight(true);
 		}
 		else
 		{
 			NetworkManager.Singleton.StartClient();
-
+			_uiso.SessionCommunication.SetReadyButtonText("READY");
+			_uiso.SessionCommunication.SetReadyButtonHighlight(false);
 		}
 	}
 #endif

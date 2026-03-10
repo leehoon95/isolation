@@ -8,6 +8,7 @@ public interface IEnemyHandler
 	public NetworkObject NO { get; }
 	public GameObject GO { get; }
 	public IEnemySpawner Spawner { get; set; }
+	public IPooledDynamicSpawner IPDS { get; set; }
 	public Transform Target { get; set; }
 	public void DespawnEnemyRpc();
 	public void SetData(in EnemyInstantiateData data);

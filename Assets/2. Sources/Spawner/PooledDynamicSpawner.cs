@@ -204,7 +204,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	/*
 	 * 신뢰성 전송한다
 	 */
-	[Rpc(SendTo.Everyone, Delivery = RpcDelivery.Unreliable)]
+	[Rpc(SendTo.Everyone, Delivery = RpcDelivery.Reliable)]
 	void CreateEffectEveryoneReliableRpc(
 		FixedString32Bytes prefabId,
 		Vector2 position,

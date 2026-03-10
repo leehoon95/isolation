@@ -19,14 +19,13 @@ public enum ProjectileFlyingType : int
 
 /*
  * 충돌 후 반대편에게 줄 수 있는 물리 효과
- * 단발성 이벤트를 가지는 오브젝트는 Block 이벤트를 수신하면 Despawn 또는 Destroy 된다
  */
 public enum CollisionEffect : int
 {
 	None = 0,
 	Knockback,
 	Stopping,
-	Suicide,
+	Pop,
 	Block
 }
 
@@ -62,6 +61,7 @@ public struct CollisionEventStruct : INetworkSerializable
 			Position = ce.Position,
 			Direction = ce.Direction,
 			Effect = ce.Effect,
+			EffectIntensity = ce.EffectIntensity,
 			EffectDuration = ce.EffectDuration,
 			Damage = ce.Damage,
 		};

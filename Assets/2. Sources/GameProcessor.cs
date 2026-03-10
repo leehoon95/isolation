@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Cinemachine;
 using Unity.Collections;
@@ -35,6 +37,12 @@ public struct TargetSearchJob : IJobParallelFor
 	}
 }
 
+[Serializable]
+public struct CameraConfig
+{
+	public string CameraName;
+	public CinemachineCamera Camera;
+}
 
 /*
  * 게임 진행은 host가 전담한다
@@ -52,13 +60,13 @@ public class GameProcessor : NetworkBehaviour
 	[SerializeField]
 	PooledDynamicSpawner _pds;
 	[SerializeField]
-	CinemachineCamera _cineCamera;
-
+	List<CameraConfig> _cameraConfigs;
 
 	UILevelSO _uiso;
 	PlayerInfoSO _playerInfo;
 	Coroutine _updateCo;
 	Coroutine _enemyTargetSettingCo;
+	Dictionary<string, CinemachineCamera> _cameras = new();
 
 	string[] _weaponNames = new[] {
 		"shield",
@@ -70,8 +78,7 @@ public class GameProcessor : NetworkBehaviour
 		"bolt"
 	};
 
-	public event UnityAction OnSceneLoadRequested;
-
+	public event UnityAction<string> OnSceneLoadRequested;
 
 	void Awake()
 	{
@@ -80,20 +87,30 @@ public class GameProcessor : NetworkBehaviour
 			var obj = new GameObject("[UI Level Holder]");
 			obj.AddComponent<UILevelSOHolder>();
 		}
+
+		{
+			var obj = new GameObject("[Game Player]");
+			obj.AddComponent<GamePlayerSOHolder>();
+		}
 	}
 
-	void Start()
+	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 		_uiso.OnTestEvent += TestEventListner;
+		_playerSpawner.PlayerSpawned += OnPlayerSpawned;
 
-		if (IsHost)
+		foreach (var item in _cameraConfigs)
+		{
+			_cameras[item.CameraName] = item.Camera;
+		}
+
+		if (networkManager.IsHost)
 		{
 			_updateCo = StartCoroutine(GameUpdate());
 			_enemyTargetSettingCo = StartCoroutine(EnemyTargetSetting());
 		}
-	
 	}
 
 	IEnumerator EnemyTargetSetting()
@@ -103,6 +120,11 @@ public class GameProcessor : NetworkBehaviour
 		NativeArray<float3> playerPositions;
 		NativeArray<float3> enemyPositions;
 		NativeArray<int> nearestIndices; // enemy 가 target으로 지정하는
+
+		while (!_playerSpawner.IsSpawned || !_enemySpawner.IsSpawned)
+		{
+			yield return delay;
+		}
 
 		while (true)
 		{
@@ -182,8 +204,17 @@ public class GameProcessor : NetworkBehaviour
 		}
 	}
 
-	void TestEventListner(int index)
+	void OnPlayerSpawned(IPlayerHandler ph)
 	{
+		//GLogger.LogWarning($"Player {ph.NO.NetworkObjectId} Spawned");
+		if (ph.NO.IsOwner)
+		{
+			_cameras["PlayerCamera"].Follow = ph.CameraTarget;
+		}
+	}
+
+	void TestEventListner(int index)
+	{ 
 		if (index == 0)
 		{
 			_playerSpawner.SpawnPlayerRpc(
@@ -219,12 +250,41 @@ public class GameProcessor : NetworkBehaviour
 		else if (index == 4)
 		{
 			_enemySpawner.SpawnEnemyRpc(
-				new Vector2(4f, UnityEngine.Random.Range(-3f, 3f)),
+				new Vector2(3f, UnityEngine.Random.Range(-4f, 4f)),
 				Quaternion.identity,
 				new EnemyInstantiateData()
 				{
 					PrefabId = "SuicideBomber",
+					Speed = 2f,
+					MaxHealthPoint = 100
 				});
 		}
+		else if (index == 5)
+		{
+			_enemySpawner.SpawnEnemyRpc(
+				new Vector2(3f, UnityEngine.Random.Range(-4f, 4f)),
+				Quaternion.identity,
+				new EnemyInstantiateData()
+				{
+					PrefabId = "RangedAttacker",
+					Speed = 1.7f,
+					MaxHealthPoint = 60
+				});
+		}
+		else if (index >= 6 && index <= 8)
+		{
+			foreach (var item in _cameras)
+			{
+				item.Value.Priority = 0;
+			}
+
+			switch (index)
+			{
+				case 6: _cameras["PlayerCamera"].Priority = 1; break;
+				case 7: _cameras["EnemyCamera"].Priority = 1; break;
+				case 8: _cameras["TestCamera"].Priority = 1; break;
+			}
+		}
+
 	}
 }

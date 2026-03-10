@@ -7,12 +7,14 @@ using UnityEngine;
 using UnityEngine.Splines;
 
 
-public class NormalBullet : PooledProjectileBase, IProjectileSetting
+public class TrailBullet : PooledProjectileBase, IProjectileSetting
 {
 	[SerializeField]
 	Rigidbody2D _rigidbody;
 	[SerializeField]
 	Collider2D _collider;
+	[SerializeField]
+	SpriteRenderer _spriteRenderer;
 	[SerializeField]
 	TrailRenderer _trailRenderer;
 
@@ -46,8 +48,8 @@ public class NormalBullet : PooledProjectileBase, IProjectileSetting
 				mode = GradientMode.Blend,
 				colorKeys = new GradientColorKey[2]
 				{
-					new GradientColorKey(Color.white, 0f),
-					new GradientColorKey(Color.yellow, 1f)
+					new GradientColorKey(_effectColor, 0f),
+					new GradientColorKey(_effectColor, 1f)
 				}
 			};
 		}
@@ -134,9 +136,6 @@ public class NormalBullet : PooledProjectileBase, IProjectileSetting
 		_maxAngulaVelocity = param.MaxAngularVelocity;
 		EffectColor = param.EffectColor;
 
-		//var direction = _targetPosition - _startPosition;
-		//transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
-
 		if (IsIllusion)
 		{
 			_collider.enabled = false;
@@ -144,9 +143,12 @@ public class NormalBullet : PooledProjectileBase, IProjectileSetting
 		else
 		{
 			_collider.enabled = true;
+			_collisionEvent.Effect = param.CollisionEvent.Effect;
+			_collisionEvent.EffectIntensity = param.CollisionEvent.EffectIntensity;
+			_collisionEvent.EffectDuration = param.CollisionEvent.EffectDuration;
+			_collisionEvent.Damage = param.CollisionEvent.Damage;
 			//_collider.includeLayers = (LayerMask)param.CollisionIncludeLayers;
 			//_collider.excludeLayers = (LayerMask)param.CollisionExcludeLayers;
-			//_collisionEvent =  param.
 			SetLifeTime(param.LifeTime);
 		}
 	}

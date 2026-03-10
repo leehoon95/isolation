@@ -171,10 +171,6 @@ MonoBehaviour:
     m_Key: session-no-response-from-host-guide
     m_Metadata:
       m_Items: []
-  - m_Id: 12817835333640192
-    m_Key: exit-session
-    m_Metadata:
-      m_Items: []
   - m_Id: 21293257412456448
     m_Key: item-mount
     m_Metadata:
@@ -204,7 +200,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22403691360169984
-    m_Key: Weapon-bolt
+    m_Key: weapon-bolt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28903825174573056
+    m_Key: create-session
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28904316826693632
+    m_Key: New Entry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28904322778411008
+    m_Key: refresh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28904390436728832
+    m_Key: exit
     m_Metadata:
       m_Items: []
   m_Metadata:

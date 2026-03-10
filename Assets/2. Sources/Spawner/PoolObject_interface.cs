@@ -13,6 +13,7 @@ public interface IDynamicPooledObject
 	GameObject GO { get; }
 	IPooledDynamicSpawner Spawner { set; }
 	IDynamicPooledObject DPO { get; }
+	bool Play { get; set; }
 	void SetTransform(Vector2 position, Quaternion rotation);
 }
 

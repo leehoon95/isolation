@@ -10,8 +10,6 @@ public class EffectHitNotmal : PooledEffectBase, IEffectSetting
 	[SerializeField]
 	ParticleMaterialController _pmc;
 
-	Coroutine _coroutine;
-
 	void OnEnable()
 	{
 		//_animator.Rebind();
@@ -19,7 +17,7 @@ public class EffectHitNotmal : PooledEffectBase, IEffectSetting
 		//var info = _animator.GetCurrentAnimatorStateInfo(0);
 		//GLogger.Log($"len {info.length}");
 		var length = 0.333f;
-		_coroutine = StartCoroutine(PlayAnimation(length));
+		StartCoroutine(PlayAnimation(length));
 		_pmc.Stop();
 		_pmc.SetColor(Color.white);
 		var halfRange = length * 0.5f;

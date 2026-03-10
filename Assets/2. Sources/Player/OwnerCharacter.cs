@@ -25,8 +25,8 @@ public class OwnerCharacter : NetworkBehaviour
 	float _angle;
 	PooledDynamicSpawner _dynamicSpawner;
 	//float _fireInterval = (200f / 600f) * 1000f;
-	float _fireInterval = 50f;
-	bool _attack;
+	//float _fireInterval = 50f;
+	//bool _attack;
 	long _lastFiredTime;
 	//NetworkVariable<float> _angle = new NetworkVariable<float>(
 	//	0,
@@ -90,11 +90,11 @@ public class OwnerCharacter : NetworkBehaviour
 		if (performed)
 		{
 
-			_attack = true;
+			//_attack = true;
 		}
 		else
 		{
-			_attack = false;
+			//_attack = false;
 		}
 	}
 

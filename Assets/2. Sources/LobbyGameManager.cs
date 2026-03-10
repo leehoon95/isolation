@@ -10,7 +10,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using Unity.VisualScripting;
 
 /*
- * login scene¿¡¼­ Àü´Ş ¹ŞÀº tokenÀ¸·Î player data ¿äÃ»
+ * login sceneì—ì„œ ì „ë‹¬ ë°›ì€ tokenìœ¼ë¡œ player data ìš”ì²­
  */
 public class LobbyGameManager : MonoBehaviour
 {
@@ -32,7 +32,7 @@ public class LobbyGameManager : MonoBehaviour
 			obj.AddComponent<UILobbySOHolder>();
 		}
 
-		// lobby¸¦ ½ÃÀÛÇßÀ» ¶§ ·Îºñ»ı¼º¿¡ °ü¿©ÇÏ´Â SO´Â ÀÖÀ¸¸é ¾È µÊ
+		// lobbyë¥¼ ì‹œì‘í–ˆì„ ë•Œ ë¡œë¹„ìƒì„±ì— ê´€ì—¬í•˜ëŠ” SOëŠ” ìˆìœ¼ë©´ ì•ˆ ë¨
 		var lobbyInfoSO = FindAnyObjectByType<SessionParameterSOHolder>();
 		Destroy(lobbyInfoSO);
 
@@ -75,14 +75,14 @@ public class LobbyGameManager : MonoBehaviour
 	}
 
 	/*
-	 * 1. player data¸¦ ¼ö½ÅÇÒ ¶§±îÁö UIÀá±×°í ´ë±â
-	 * 2. ·Îºñ ¸®½ºÆ® °»½Å
+	 * 1. player dataë¥¼ ìˆ˜ì‹ í•  ë•Œê¹Œì§€ UIì ê·¸ê³  ëŒ€ê¸°
+	 * 2. ë¡œë¹„ ë¦¬ìŠ¤íŠ¸ ê°±ì‹ 
 	 */
 	IEnumerator WaitForLobbyReady()
 	{
 		/*
-		 * Start¿¡ È£ÃâµÇ´Â ¸Ş¼­µåÀÌ¹Ç·Î ´Ù¸¥ ¿ÀºêÁ§Æ® ÃÊ±âÈ­¸¦ À§ÇØ ÇÑ ÇÁ·¹ÀÓ ´ë±â
-		 * ui ÃÊ±âÈ­°¡ ³¡³ªÁö ¾ÊÀº °æ¿ì ÀÖÀ½
+		 * Startì— í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œì´ë¯€ë¡œ ë‹¤ë¥¸ ì˜¤ë¸Œì íŠ¸ ì´ˆê¸°í™”ë¥¼ ìœ„í•´ í•œ í”„ë ˆì„ ëŒ€ê¸°
+		 * ui ì´ˆê¸°í™”ê°€ ëë‚˜ì§€ ì•Šì€ ê²½ìš° ìˆìŒ
 		 */
 		yield return null;
 
@@ -122,13 +122,13 @@ public class LobbyGameManager : MonoBehaviour
 	}
 
 	/*
-	 * ¸ÕÀú ¼­¹ö¿¡¼­ ResponsePlayerData ÀÀ´äÀ» ¹Ş°í È£ÃâÇÒ °Í
+	 * ë¨¼ì € ì„œë²„ì—ì„œ ResponsePlayerData ì‘ë‹µì„ ë°›ê³  í˜¸ì¶œí•  ê²ƒ
 	 */
 	async Task UpdateLobbyList()
 	{
 		if (!_playerDataReceived)
 		{
-			GLogger.LogWarning("LobbyGameManager.GetLobbyList ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ ¼ö½Å Àü");
+			GLogger.LogWarning("LobbyGameManager.GetLobbyList í”Œë ˆì´ì–´ ë°ì´í„° ìˆ˜ì‹  ì „");
 			return;
 		}
 
@@ -188,8 +188,8 @@ public class LobbyGameManager : MonoBehaviour
 	}
 
 	/*
-	 * ³×Æ®¿öÅ© ÀÛ¾÷À» ´ë±â
-	 * ¿Ï·áÇÒ ¶§ ±îÁö ui¸¦ Àá±İ
+	 * ë„¤íŠ¸ì›Œí¬ ì‘ì—…ì„ ëŒ€ê¸°
+	 * ì™„ë£Œí•  ë•Œ ê¹Œì§€ uië¥¼ ì ê¸ˆ
 	 */
 	IEnumerator LockInteractabilityUntilTaskComplete(Task task)
 	{
@@ -222,7 +222,7 @@ public class LobbyGameManager : MonoBehaviour
 	{
 		if (_taskCo != null)
 		{
-			GLogger.LogWarning("LobbyGameManager.OnClickLobby ´Ù¸¥ ÀÛ¾÷ Ã³¸® Áß");
+			GLogger.LogWarning("LobbyGameManager.OnClickLobby ë‹¤ë¥¸ ì‘ì—… ì²˜ë¦¬ ì¤‘");
 			return;
 		}
 
@@ -230,16 +230,16 @@ public class LobbyGameManager : MonoBehaviour
 
 		return;
 		////
-		_playerInfo.LobbyIdForEntry = lobbyId;
+		//_playerInfo.LobbyIdForEntry = lobbyId;
 
-		LoadScene("NGOTestScene");
+		//LoadScene("NGOTestScene");
 	}
 
 	void OnClickCreateLobby()
 	{
 		if (_taskCo != null)
 		{
-			GLogger.LogWarning("LobbyGameManager.OnClickCreateLobby ´Ù¸¥ ÀÛ¾÷ÀÌ ÁøÇà Áß");
+			GLogger.LogWarning("LobbyGameManager.OnClickCreateLobby ë‹¤ë¥¸ ì‘ì—…ì´ ì§„í–‰ ì¤‘");
 			return;
 		}
 
@@ -262,7 +262,7 @@ public class LobbyGameManager : MonoBehaviour
 		});
 	}
 
-	// client ÀÚ°İÀ¸·Î session ÁøÀÔ
+	// client ìê²©ìœ¼ë¡œ session ì§„ì…
 	IEnumerator AttemptToEnterLobby(string lobbyId)
 	{
 		var taskJoinLobby = UGSLobbyManager.JoinLobbyById(lobbyId, null);
@@ -299,7 +299,7 @@ public class LobbyGameManager : MonoBehaviour
 		}
 	}
 
-	// host ÀÚ°İÀ¸·Î session ÁøÀÔ
+	// host ìê²©ìœ¼ë¡œ session ì§„ì…
 	IEnumerator CreateLobbyAsHostAndEnter(string lobbyName, string lobbyPassword)
 	{
 		if (lobbyName == null)

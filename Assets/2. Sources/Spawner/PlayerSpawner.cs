@@ -3,12 +3,13 @@ using System.Linq;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 /*
  * in-scene placed 객체로 있어야 함
  * player prefab을 spawn
  */
-public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
+public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner, IPlayerSpawnObserver
 {
 	[SerializeField]
 	GameObject _prefapToSpawn;
@@ -18,16 +19,22 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 	PooledDynamicSpawner _pooledDynamicSpawner;
 
 	SpawnPlayerWithDataHandler _spawnHandler;
-
 	Dictionary<ulong, IPlayerHandler> _activedPlayer;
+
+	public event UnityAction<IPlayerHandler> PlayerSpawned;
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
-		_spawnHandler = new SpawnPlayerWithDataHandler(networkManager, _prefapToSpawn);
-		if (IsHost)
+		_spawnHandler = new SpawnPlayerWithDataHandler(
+			networkManager, 
+			_prefapToSpawn,
+			this);
+
+		if (networkManager.IsHost)
 		{
 			_activedPlayer = new();
-			_spawnHandler.NetworkObjectDestroyed += OnNetworkObjectDestroyed;
+			//_spawnHandler.PlayerObjectInstantiated += OnPlayerObjectInstantiated;
+			_spawnHandler.PlayerObjectDestroyed += OnPlayerObjectDestroyed;
 		}
 	}
 
@@ -46,7 +53,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 			rpcParam.Receive.SenderClientId,
 			spawnPosition, rotation, data);
 
-		_activedPlayer[pp.NetworkObjectId] = pp;
+		_activedPlayer[pp.NO.NetworkObjectId] = pp;
 	}
 
 	[Rpc(SendTo.Server)]
@@ -55,7 +62,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 		_spawnHandler.InactiveAndDespawn(rpcParam.Receive.SenderClientId);
 	}
 
-	void OnNetworkObjectDestroyed(NetworkObject networkObject)
+	void OnPlayerObjectDestroyed(NetworkObject networkObject)
 	{
 		_activedPlayer.Remove(networkObject.NetworkObjectId);
 	}
@@ -63,5 +70,10 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 	public List<IPlayerHandler> GetPlayers()
 	{
 		return _activedPlayer.Values.ToList();
+	}
+
+	public void NotifyPlayerSpawned(IPlayerHandler ph)
+	{
+		PlayerSpawned?.Invoke(ph);
 	}
 }

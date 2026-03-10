@@ -15,6 +15,10 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	[SerializeField]
 	Rigidbody2D _rigidbody;
 	[SerializeField]
+	CircleCollider2D _collider;
+	[SerializeField]
+	CircleCollider2D _colliderTrigger;
+	[SerializeField]
 	GameObject _leftWeaponPosition;
 	[SerializeField]
 	GameObject _rightWeaponPosition;
@@ -26,6 +30,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	PlayerBodyIndicator _bodyIndicator;
 	[SerializeField]
 	PlayerHand _hand;
+	[SerializeField]
+	PlayerCameraTarget _cameraTarget;
 
 	InputSystem _inputSystem;
 	PooledDynamicSpawner _pds;
@@ -33,7 +39,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		100, 
 		NetworkVariableReadPermission.Everyone, 
 		NetworkVariableWritePermission.Owner);
-
+	IPlayerSpawnObserver _spawnObserver;
 	IWeaponInterface _leftWeapon;
 	IWeaponInterface _rightWeapon;
 	UILevelSO _uiso;
@@ -62,10 +68,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	public string Nickname
 	{
-		set
-		{
-			_nickname = value;
-		}
+		set => _nickname = value;
 	}
 
 	public Color PersonalColor 
@@ -76,24 +79,23 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			_bodyIndicator.PersonalColor = value;
 		}
 	}
-
-	public InputSystem InputSystem
-	{
-		set => _inputSystem = value;
-	}
-
+	public InputSystem InputSystem { set => _inputSystem = value; }
 	public NetworkObject NO => NetworkObject;
-
 	public GameObject GO => gameObject;
+	public IPlayerSpawnObserver SpawnObserver { set => _spawnObserver = value; }
+	public Transform CameraTarget => _cameraTarget.transform;
 
 	public override void OnNetworkSpawn()
 	{
+		_spawnObserver.NotifyPlayerSpawned(this);
 		if (!IsOwner)
 		{
 			_hand.gameObject.SetActive(false);
+			_collider.gameObject.SetActive(false);
+			_colliderTrigger.gameObject.SetActive(false);
 			return;
 		}
-
+		
 		_inputSystem = FindAnyObjectByType<InputSystem>();
 		_pds = FindAnyObjectByType<PooledDynamicSpawner>();
 
@@ -105,6 +107,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 				+ $"pooled dynamic spawner is {_pds}");
 		}
 
+		_collider.gameObject.SetActive(true);
+		_colliderTrigger.gameObject.SetActive(true);
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 		_health.OnValueChanged += HealthChanged;
 		_health.Value = 100;
@@ -154,11 +158,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			var ce = _collisionEventList[0];
 			_collisionEventList.RemoveAt(0);
-
-			if (ce.Effect == CollisionEffect.Suicide)
-			{
-				_health.Value -= ce.Damage;
-			}
+			_health.Value -= ce.Damage;
 		}
 
 		long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
@@ -201,9 +201,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg + gunCorrectionAngle;
 
-		if (_inputMovement.magnitude > float.Epsilon)
+		if (_inputMovement.sqrMagnitude > float.Epsilon)
 		{
-			
 			var newPosition = _rigidbody.position + _inputMovement.normalized * 5f * Time.fixedDeltaTime;
 			_rigidbody.MovePosition(newPosition);
 		}
@@ -229,9 +228,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 						MaxAngularVelocity = 720f,
 						CollisionEvent = new CollisionEventStruct()
 						{
+							SenderId = NetworkObjectId,
 							Effect = CollisionEffect.Knockback,
-							EffectDuration = 0.02f,
-							EffectIntensity = 5f
+							EffectDuration = 0.025f,
+							EffectIntensity = 1.5f,
+							Damage = 10
 						},
 						EffectColor = _personalColor,
 						LifeTime = 5f,
@@ -321,10 +322,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		_collisionEventList.Add(new CollisionEvent().FromCollisionEventStruct(ces));
 	}
 
-	public void InvalidateUntilDespawn()
-	{
-	}
-
 	public void SendCollisionEvent(CollisionEvent ces)
 	{
 		SendCollisionEventRpc(ces);
@@ -335,6 +332,4 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	{
 		return _collisionEventCache;
 	}
-
-
 }

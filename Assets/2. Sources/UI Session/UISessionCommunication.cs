@@ -24,6 +24,10 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 	TMP_InputField _inputField;
 	[SerializeField]
 	CanvasGroup _chatGroup;
+	[Space]
+	[Header("Test Input Message")]
+	[SerializeField]
+	string _message;
 
 	UISessionSO _uiso;
 	bool _isHost;
@@ -82,6 +86,7 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 	public void SetReadyButtonHighlight(bool bright)
 	{
+		GLogger.Log($"set highlist {bright}");
 		if (bright)
 		{
 			var c = new Color(0f, 218f / 255f, 1f);
@@ -93,6 +98,14 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 			var c = new Color(1f, 127f / 255f, 0f);
 			_readyBorderImage.color = c;
 			_readyButtonBackground.Color = c;
+		}
+	}
+
+	public void TestChatMessage()
+	{
+		if (_message != null)
+		{
+			AddMessage("Editor", _message, Color.white);
 		}
 	}
 }

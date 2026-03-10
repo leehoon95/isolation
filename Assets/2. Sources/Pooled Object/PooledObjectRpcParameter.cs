@@ -42,8 +42,10 @@ public struct ProjectileRpcParameter : INetworkSerializable
 
 public struct EffectRpcParameter : INetworkSerializable
 {
+	public Color EffectColor;
+
 	public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 	{
-		
+		serializer.SerializeValue(ref EffectColor);
 	}
 }

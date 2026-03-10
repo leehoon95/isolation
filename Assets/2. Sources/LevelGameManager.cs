@@ -29,7 +29,7 @@ public class LevelGameManager : MonoBehaviour
 		//_networkEventHandler.
 	}
 
-	void SceneLoadRequested()
+	void SceneLoadRequested(string sceneName)
 	{
 		//NetworkManager.Singleton.SceneManager.LoadScene
 	}

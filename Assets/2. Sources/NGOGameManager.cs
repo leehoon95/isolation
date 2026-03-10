@@ -92,8 +92,7 @@ public class NGOGameManager : MonoBehaviour
 			}
 			else
 			{
-				//_ = StartClient(_playerInfo.LobbyIdForEntry);
-				StartCoroutine(StartClientCo(_playerInfo.LobbyIdForEntry));
+				//StartCoroutine(StartClientCo(_playerInfo.LobbyIdForEntry));
 			}
 		}
 
@@ -163,7 +162,7 @@ public class NGOGameManager : MonoBehaviour
 		//	}
 		//};
 		
-		// relay ÃÖ´ë ¿¬°á¼ö (host.¿¡°Ô ¿¬°áµÉ ¼ö ÀÖ´Â client ¼ö)
+		// relay ìµœëŒ€ ì—°ê²°ìˆ˜ (host.ì—ê²Œ ì—°ê²°ë  ìˆ˜ ìˆëŠ” client ìˆ˜)
 		(var successRelay, var joinCode) = await UGSRelayManager.StartHostAndGetJoinCode(_maxPeerConnection - 1, "dtls");
 		
 		if (successRelay)
@@ -183,7 +182,7 @@ public class NGOGameManager : MonoBehaviour
 			
 			(var successLobby, var lobby, var lobbyEvents) = await UGSLobbyManager.CreateLobby(
 				_playerInfo.LobbyName,
-				_maxPeerConnection + 1, // lobby ÃÖ´ë ÀÎ¿ø(host + client)
+				_maxPeerConnection + 1, // lobby ìµœëŒ€ ì¸ì›(host + client)
 				joinCode,
 				callbacks,
 				_playerInfo.LobbyPassword);
@@ -197,13 +196,13 @@ public class NGOGameManager : MonoBehaviour
 			}
 			else
 			{
-				GLogger.LogError("Lobby »ı¼º ½ÇÆĞ");
+				GLogger.LogError("Lobby ìƒì„± ì‹¤íŒ¨");
 				LoadScene("LobbyScene");
 			}
 		}
 		else
 		{
-			GLogger.LogError("Host ½ÃÀÛ ½ÇÆĞ");
+			GLogger.LogError("Host ì‹œì‘ ì‹¤íŒ¨");
 			LoadScene("LobbyScene");
 		}
 
@@ -388,7 +387,7 @@ public class NGOGameManager : MonoBehaviour
 			$"local client id: {nm.LocalClientId}\n" +
 			$"is host: {nm.IsHost}\n" +
 			$"is client: {nm.IsClient}\n" +
-			$"is connected client: {nm.IsConnectedClient}\n" + // ¼­¹ö(host)¿¡ ¿¬°áµÇ°í ½ÂÀÎµÇ°í µ¿±âÈ­µÇ°í ÀÖ´Â°¡
+			$"is connected client: {nm.IsConnectedClient}\n" + // ì„œë²„(host)ì— ì—°ê²°ë˜ê³  ìŠ¹ì¸ë˜ê³  ë™ê¸°í™”ë˜ê³  ìˆëŠ”ê°€
 			$"is active and enabled: {nm.isActiveAndEnabled}\n" +
 			$"is approved: {nm.IsApproved}\n" +
 			$"is listening: {nm.IsListening}\n" +

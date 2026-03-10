@@ -31,8 +31,8 @@ public class EnemyPrefabWithDataHandler : NetworkPrefabInstanceHandlerWithData<E
 	GameObject _prefabToSpawn;
 	NetworkManager _networkManager;
 	IEnemySpawner _spawner;
+	IPooledDynamicSpawner _ipds;
 	
-	//ObjectPool<IEnemyHandler> _pool;
 	Dictionary<string, PoolConfig> _poolConfig = new();
 	Dictionary<string, ObjectPool<IEnemyHandler>> _pools = new();
 	public event Action<NetworkObject> NetworkObjectDestroyed;
@@ -41,11 +41,13 @@ public class EnemyPrefabWithDataHandler : NetworkPrefabInstanceHandlerWithData<E
 		NetworkManager networkManager, 
 		GameObject prefabToSpawn, 
 		List<PoolConfig> poolConfigs,
-		IEnemySpawner spawner)
+		IEnemySpawner spawner,
+		IPooledDynamicSpawner pds)
 	{
 		_networkManager = networkManager;
 		_prefabToSpawn = prefabToSpawn;
 		_spawner = spawner;
+		_ipds = pds;
 		//_networkManager.PrefabHandler.AddHandler(_prefabToSpawn, this);
 
 		foreach (var config in poolConfigs)
@@ -92,6 +94,7 @@ public class EnemyPrefabWithDataHandler : NetworkPrefabInstanceHandlerWithData<E
 	{
 		var instance = GetPrefabInstance(position, rotation, instantiationData);
 		_networkManager.PrefabHandler.SetInstantiationData(instance.GO, instantiationData);
+		instance.SetData(instantiationData);
 		instance.NO.Spawn(true);
 
 		return instance;
@@ -105,14 +108,13 @@ public class EnemyPrefabWithDataHandler : NetworkPrefabInstanceHandlerWithData<E
 		obj.GO.SetActive(true);
 		obj.GO.transform.SetPositionAndRotation(position, rotation);
 		obj.Spawner = _spawner;
-		obj.SetData(enemyInstantiateData);
+		obj.IPDS = _ipds;
 
 		return obj;
 	}
 
 	public override NetworkObject Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation, EnemyInstantiateData instantiationData)
 	{
-		
 		var instance = GetPrefabInstance(position, rotation, instantiationData);
 		return instance.NO;
 	}

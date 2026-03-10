@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 3506969248109295523}
   - component: {fileID: 5084273130884254710}
   m_Layer: 7
-  m_Name: Bullet Normal
+  m_Name: Trail Bullet
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,6 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 3506969248109295523}
   _collider: {fileID: 1012433963530159234}
+  _spriteRenderer: {fileID: 7970020709355959117}
   _trailRenderer: {fileID: 5084273130884254710}
 --- !u!212 &7970020709355959117
 SpriteRenderer:
@@ -348,7 +349,7 @@ GameObject:
   - component: {fileID: 5159764851288856665}
   - component: {fileID: 1012433963530159234}
   m_Layer: 16
-  m_Name: Collision
+  m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

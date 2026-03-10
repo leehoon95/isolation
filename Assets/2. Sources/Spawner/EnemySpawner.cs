@@ -19,7 +19,6 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	
 	EnemyPrefabWithDataHandler _spawnHandler;
 	Dictionary<ulong, IEnemyHandler> _activedEnemys;
-	Coroutine _updatePlayerCo;
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
@@ -27,9 +26,10 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 			networkManager, 
 			_prefabToSpawn, 
 			_poolConfig,
-			this);
+			this,
+			_pds);
 
-		if (IsHost)
+		if (networkManager.IsHost)
 		{
 			_activedEnemys = new();
 			_spawnHandler.NetworkObjectDestroyed += OnNetworkObjectDestroyed;

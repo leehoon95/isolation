@@ -172,10 +172,6 @@ MonoBehaviour:
     m_Localized: No response from host
     m_Metadata:
       m_Items: []
-  - m_Id: 12817835333640192
-    m_Localized: Exit
-    m_Metadata:
-      m_Items: []
   - m_Id: 12818038321176576
     m_Localized: Go out to the lobby and find another session
     m_Metadata:
@@ -210,6 +206,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 22403691360169984
     m_Localized: Bolt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28903825174573056
+    m_Localized: Create Room
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28904322778411008
+    m_Localized: Refresh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28904390436728832
+    m_Localized: Exit
     m_Metadata:
       m_Items: []
   references:
