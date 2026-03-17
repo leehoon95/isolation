@@ -23,6 +23,7 @@ public class PlayerHand : MonoBehaviour
 	Coroutine _calcCo;
 
 	public event UnityAction<IItemHandler> OnGrabbedItem;
+	public event UnityAction<IItemHandler> OnGetBuffItem;
 
 	public void ActiveHand()
 	{
@@ -91,6 +92,12 @@ public class PlayerHand : MonoBehaviour
 				if (!item.Value.GO.activeInHierarchy)
 				{
 					inactivedItems.Add(item.Key);
+					continue;
+				}
+
+				if (item.Value.ItemType == ItemType.Buff)
+				{
+					OnGetBuffItem?.Invoke(item.Value);
 					continue;
 				}
 

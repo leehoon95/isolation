@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 public enum ItemType : int
 {
 	Weapon = 0,
+	FrontWeapon,
 	Buff,
 
 }
@@ -27,15 +28,14 @@ public class Item : NetworkBehaviour, IItemHandler
 	[SerializeField]
 	SortingGroup _sortingGroup;
 	[SerializeField]
-	List<Sprite> _weaponIconSprites = new();
+	List<Sprite> _weaponIconSprites;
 	[SerializeField]
-	List<Sprite> _buffSprites = new();
+	List<Sprite> _frontWeaponSprites;
+	[SerializeField]
+	List<Sprite> _buffSprites;
 
-	NetworkObject _no;
 	bool _isSelected;
-	DateTime _spawnedTime;
-	Coroutine _timeoutCo;
-	WaitForSeconds _wait = new WaitForSeconds(10f);
+	WaitForSeconds _wait = new WaitForSeconds(15f);
 
 	public NetworkObject NO
 	{
@@ -48,12 +48,33 @@ public class Item : NetworkBehaviour, IItemHandler
 	public ItemType ItemType
 	{
 		get => _type;
-		set => _type = value;
 	}
 	public string ItemEffect
 	{
 		get => _effect;
-		set => _effect = value;
+		set
+		{
+			_effect = value;
+			switch (value)
+			{
+				case "bolt":
+				case "missile":
+				case "laser":
+					_type = ItemType.Weapon;
+					break;
+				case "shield":
+				case "shock":
+					_type = ItemType.FrontWeapon;
+					break;
+				case "burst":
+				case "bomb":
+					_type = ItemType.Buff;
+					break;
+				default:
+					_effect = "";
+					break;
+			}
+		}
 	}
 	public bool IsSelected
 	{
@@ -89,32 +110,33 @@ public class Item : NetworkBehaviour, IItemHandler
 		}
 	}
 
-	public DateTime SpawnedTime => _spawnedTime;
+	public override void OnNetworkSpawn()
+	{
+		if (IsHost)
+		{
+			StartCoroutine(ReleaseTimeout());
+		}
+	}
 
 	void OnEnable()
 	{
 		_sortingGroup.sortingOrder = 0;
 		IsSelected = false;
-		if (IsHost)
-		{
-			_spawnedTime = DateTime.Now;
-			_timeoutCo = StartCoroutine(ReleaseTimeout());
-		}
+		
 	}
 
 	void OnDisable()
 	{
-		if (IsHost && _timeoutCo != null)
+		if (IsHost )
 		{
-			StopCoroutine(_timeoutCo);
+			StopAllCoroutines();
 		}
 	}
+
 
 	IEnumerator ReleaseTimeout()
 	{
 		yield return _wait;
-
-		_timeoutCo = null;
 		DespawnItemRpc();
 	}
 
@@ -132,13 +154,22 @@ public class Item : NetworkBehaviour, IItemHandler
 			Sprite s = null;
 			switch (_effect)
 			{
-				case "shield": s = _weaponIconSprites[0]; break;
-				case "shock": s = _weaponIconSprites[1]; break;
-				case "homing": s = _weaponIconSprites[2]; break;
-				case "cluster": s = _weaponIconSprites[3]; break;
-				case "wave": s = _weaponIconSprites[4]; break;
-				case "laser": s = _weaponIconSprites[5]; break;
-				case "bolt": s = _weaponIconSprites[6]; break;
+				case "missile": s = _weaponIconSprites[0]; break;
+				case "laser": s = _weaponIconSprites[1]; break;
+				case "bolt": s = _weaponIconSprites[2]; break;
+				default: s = null; break;
+			}
+
+			_itemSprite.sprite = s;
+		}
+		else if (_type == ItemType.FrontWeapon)
+		{
+			_backgroundSprite.color = new Color(14f / 255f, 180f / 255f, 252f / 255f);
+			Sprite s = null;
+			switch (_effect)
+			{
+				case "shield": s = _frontWeaponSprites[0]; break;
+				case "shock": s = _frontWeaponSprites[1]; break;
 				default: s = null; break;
 			}
 
@@ -146,13 +177,12 @@ public class Item : NetworkBehaviour, IItemHandler
 		}
 		else if (_type == ItemType.Buff)
 		{
-			_backgroundSprite.color = new Color(60f / 255f, 179f / 255f, 161f / 255f);
+			_backgroundSprite.color = new Color(237f / 255f, 84f / 255f, 74f / 255f);
 			Sprite s = null;
 			switch (_effect)
 			{
 				case "burst": s = _buffSprites[0]; break;
-				case "healing": s = _buffSprites[1]; break;
-				case "bomb": s = _buffSprites[2]; break;
+				case "bomb": s = _buffSprites[1]; break;
 				default: s = null; break;
 			}
 			_itemSprite.sprite = s;

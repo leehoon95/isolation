@@ -184,7 +184,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 22401958537998336
-    m_Key: weapon-homing
+    m_Key: weapon-missile
     m_Metadata:
       m_Items: []
   - m_Id: 22402103778357248

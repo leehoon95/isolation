@@ -39,14 +39,9 @@ public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 		_count.OnValueChanged += (previoudValue, newValue) => { _text.text = $"{newValue}"; };
 	}
 
-	public CollisionEvent GetEffect()
-	{
-		return new();
-	}
-
 	void FixedUpdate()
 	{
-		if (!IsServer)
+		if (!IsHost)
 		{
 			return;
 		}
@@ -79,10 +74,6 @@ public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 	public void SendCollisionEventRpc(CollisionEventStruct ce)
 	{
 		_collisionEventList.Add(new CollisionEvent().FromCollisionEventStruct(ce));
-	}
-
-	public void InvalidateUntilDespawn()
-	{
 	}
 
 	public void SendCollisionEvent(CollisionEvent ce)

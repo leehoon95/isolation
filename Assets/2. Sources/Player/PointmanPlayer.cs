@@ -19,13 +19,9 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	[SerializeField]
 	CircleCollider2D _colliderTrigger;
 	[SerializeField]
-	GameObject _leftWeaponPosition;
+	WeaponContainer _weaponContainer;
 	[SerializeField]
-	GameObject _rightWeaponPosition;
-	[SerializeField]
-	WeaponListSO _weaponList;
-	[SerializeField]
-	SpriteRenderer _bodySprite;
+	SpriteRenderer _bodyInlineSprite;
 	[SerializeField]
 	PlayerBodyIndicator _bodyIndicator;
 	[SerializeField]
@@ -33,15 +29,23 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	[SerializeField]
 	PlayerCameraTarget _cameraTarget;
 
-	InputSystem _inputSystem;
-	PooledDynamicSpawner _pds;
 	NetworkVariable<int> _health = new(
 		100, 
 		NetworkVariableReadPermission.Everyone, 
 		NetworkVariableWritePermission.Owner);
-	IPlayerSpawnObserver _spawnObserver;
+	//NetworkVariable<string> _leftWeaponName = new(
+	//	"null",
+	//	NetworkVariableReadPermission.Everyone,
+	//	NetworkVariableWritePermission.Owner
+	//	);
+	//NetworkVariable<string> _rightWeaponName = new(
+	//	"null",
+	//	NetworkVariableReadPermission.Everyone,
+	//	NetworkVariableWritePermission.Owner
+	//	);
 	IWeaponInterface _leftWeapon;
 	IWeaponInterface _rightWeapon;
+	IPlayerSpawnObserver _spawnObserver;
 	UILevelSO _uiso;
 	PlayerSpawner _spawner;
 	IItemHandler _grabbedItem;
@@ -73,17 +77,21 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	public Color PersonalColor 
 	{
+		get => _personalColor;
 		set
 		{
 			_personalColor = value;
 			_bodyIndicator.PersonalColor = value;
+			_bodyInlineSprite.color = value;
 		}
 	}
-	public InputSystem InputSystem { set => _inputSystem = value; }
+
+	public InputSystem InputSystem { get; set; }
 	public NetworkObject NO => NetworkObject;
 	public GameObject GO => gameObject;
 	public IPlayerSpawnObserver SpawnObserver { set => _spawnObserver = value; }
 	public Transform CameraTarget => _cameraTarget.transform;
+	public IPooledDynamicSpawner IPDS { get; set; }
 
 	public override void OnNetworkSpawn()
 	{
@@ -96,35 +104,23 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			return;
 		}
 		
-		_inputSystem = FindAnyObjectByType<InputSystem>();
-		_pds = FindAnyObjectByType<PooledDynamicSpawner>();
-
-		if (_inputSystem == null
-			|| _pds == null)
-		{
-			throw new NullReferenceException($"Check null reference"
-				+ $"input system is {_inputSystem}\n"
-				+ $"pooled dynamic spawner is {_pds}");
-		}
-
+		
 		_collider.gameObject.SetActive(true);
 		_colliderTrigger.gameObject.SetActive(true);
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 		_health.OnValueChanged += HealthChanged;
 		_health.Value = 100;
 		_hand.OnGrabbedItem += OnGrabbedItem;
+		_hand.OnGetBuffItem += OnGetBuffItem;
 		_hand.ActiveHand();
 		_spawner = FindAnyObjectByType<PlayerSpawner>();
-		
-		if (_uiso == null)
-		{
-			GLogger.LogError("uiso is null");
-		}
+		_weaponContainer.IPDS = IPDS;
+		_weaponContainer.PersonalColor = PersonalColor;
 
-		_inputSystem.Move += OnMove;
-		_inputSystem.LeftTrigger += OnLeftTrigger;
-		_inputSystem.RightTrigger += OnRightTrigger;
-		_inputSystem.UseItem += OnUseItem;
+		InputSystem.Move += OnMove;
+		InputSystem.LeftTrigger += OnLeftTrigger;
+		InputSystem.RightTrigger += OnRightTrigger;
+		InputSystem.UseItem += OnUseItem;
 
 		_collisionEventCache.SenderId = NetworkObjectId;
 	}
@@ -145,6 +141,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		}
 
 		transform.rotation = Quaternion.Euler(0f, 0f, _angle);
+
+		if (_uiso.IsShowingItemPicker())
+		{
+			_uiso.MoveItemPicket(_grabbedItem.GO.transform.position);
+		}
 	}
 
 	void FixedUpdate()
@@ -207,39 +208,38 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			_rigidbody.MovePosition(newPosition);
 		}
 
-		//if (_leftWeapon != null)
+		_weaponContainer.TargetPosition = mousePosition;
+		_weaponContainer.Trigger(_inputLeftTrigger);
+		if (_inputLeftTrigger)
 		{
-			if (_inputLeftTrigger && ((now - _lastFiredTime) >= 100))
-			{
-				var muzzle = mousePosition.normalized;
-				_pds.CreateProjectile(
-					"BulletNormal",
-					(Vector2)transform.position,
-					Quaternion.Euler(0f, 0f, _angle + 90),
-					new ProjectileRpcParameter()
-					{
-						FlyingType = ProjectileFlyingType.Homing,
-						StartPosition = transform.position,
-						TartgetPosition = mousePosition + new Vector2(
-							UnityEngine.Random.Range(-0.2f, 0.2f), 
-							UnityEngine.Random.Range(-0.5f, 0.5f)),
-						Speed = 12f,
-						SpeedDeltaPerSec = 0f,
-						MaxAngularVelocity = 720f,
-						CollisionEvent = new CollisionEventStruct()
-						{
-							SenderId = NetworkObjectId,
-							Effect = CollisionEffect.Knockback,
-							EffectDuration = 0.025f,
-							EffectIntensity = 1.5f,
-							Damage = 10
-						},
-						EffectColor = _personalColor,
-						LifeTime = 5f,
-					});
+			
+			//if (_inputLeftTrigger && ((now - _lastFiredTime) >= 100))
+			//{
+			//	var muzzle = mousePosition.normalized;
+			//	IPDS.CreateProjectile(
+			//		"BulletNormal",
+			//		(Vector2)transform.position,
+			//		Quaternion.Euler(0f, 0f, _angle + 90),
+			//		new ProjectileRpcParameter()
+			//		{
+			//			StartPosition = transform.position,
+			//			TartgetPosition = mousePosition + new Vector2(
+			//				UnityEngine.Random.Range(-0.2f, 0.2f), 
+			//				UnityEngine.Random.Range(-0.5f, 0.5f)),
+			//			CollisionEvent = new CollisionEventStruct()
+			//			{
+			//				SenderId = NetworkObjectId,
+			//				Effect = CollisionEffect.Knockback,
+			//				EffectDuration = 0.025f,
+			//				EffectIntensity = 1.5f,
+			//				Damage = 10
+			//			},
+			//			EffectColor = _personalColor,
+			//			LifeTime = 5f,
+			//		});
 
-				_lastFiredTime = now;
-			}
+			//	_lastFiredTime = now;
+			//}
 		}
 	}
 
@@ -267,9 +267,21 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		else if (_grabbedItem != itemHandler &&
 			_uiso.IsShowingItemPicker())
 		{
-			_uiso.ShowItemPicker(itemHandler.GO.transform.position, itemHandler.ItemEffect, itemHandler.IsOnlyFront);
+			// 새로운 item을 잡음
+			_uiso.ShowItemPicker(
+				itemHandler.GO.transform.position, 
+				itemHandler.ItemEffect, 
+				itemHandler.IsOnlyFront);
 		}
+
 		_grabbedItem = itemHandler;
+	}
+
+	void OnGetBuffItem(IItemHandler itemHandler)
+	{
+		// 효과 즉시 적용
+		GLogger.Log($"use buff {itemHandler.ItemEffect}");
+		itemHandler.DespawnItemRpc();
 	}
 
 	void OnMove(Vector2 direction)
@@ -291,7 +303,10 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	{
 		if (tryPickItem && _grabbedItem != null)
 		{
-			_uiso.ShowItemPicker(_grabbedItem.GO.transform.position, _grabbedItem.ItemEffect, _grabbedItem.IsOnlyFront);
+			_uiso.ShowItemPicker(
+				_grabbedItem.GO.transform.position,
+				_grabbedItem.ItemEffect, 
+				_grabbedItem.IsOnlyFront);
 			_grabbed = true;
 			return;
 		}
@@ -305,10 +320,13 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 				return;
 			}
 
+
 			var effect = _grabbedItem.ItemEffect;
 			var onlyFront = _grabbedItem.IsOnlyFront;
+			
 
 			GLogger.Log($"Use item at {index} {_grabbedItem.ItemEffect} onlyFront: {_grabbedItem.IsOnlyFront}");
+			_weaponContainer.SetWeaponRpc(index, effect);
 			_grabbedItem.DespawnItemRpc();
 			_uiso.HideItemPicker();
 			_grabbed = false;

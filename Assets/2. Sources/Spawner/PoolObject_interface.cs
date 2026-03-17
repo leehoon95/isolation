@@ -11,8 +11,8 @@ public interface IDynamicPooledObject
 	string ObjectId { get; set; }
 	ulong OwnerClientId { get; set; }
 	GameObject GO { get; }
-	IPooledDynamicSpawner Spawner { set; }
-	IDynamicPooledObject DPO { get; }
+	IPooledDynamicSpawner IPDS { set; }
+	IDynamicPooledObject IDPO { get; }
 	bool Play { get; set; }
 	void SetTransform(Vector2 position, Quaternion rotation);
 }

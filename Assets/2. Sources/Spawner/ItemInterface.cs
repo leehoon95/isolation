@@ -6,9 +6,8 @@ public interface IItemHandler
 {
     public NetworkObject NO { get; }
 	public GameObject GO { get;}
-	public ItemType ItemType { get; set; }
+	public ItemType ItemType { get; }
 	public string ItemEffect { get; set; }
-	public DateTime SpawnedTime { get; }
 	public bool IsOnlyFront { get; }
 	public bool IsSelected { get; set; }
 	public void RefreshItemShape();

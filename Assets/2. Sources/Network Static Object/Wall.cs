@@ -3,21 +3,11 @@ using UnityEngine;
 
 public class Wall : NetworkBehaviour, INetworkObjectCollision
 {
-	CollisionEvent _collisionEventCache;
-
-	public override void OnNetworkSpawn()
+	CollisionEvent _collisionEventCache = new()
 	{
-		_collisionEventCache = new()
-		{ 
-			SenderId = NetworkObjectId,
-			Effect = CollisionEffect.Block,
-		};
-
-	}
-
-	public void InvalidateUntilDespawn()
-	{
-	}
+		SenderId = 0,
+		Effect = CollisionEffect.None,
+	};
 
 	public void SendCollisionEvent(CollisionEvent ce)
 	{

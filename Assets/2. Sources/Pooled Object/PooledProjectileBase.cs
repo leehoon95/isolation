@@ -7,7 +7,6 @@ using UnityEngine;
  */
 public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 {
-	IPooledDynamicSpawner _spawner;
 	Coroutine _timerCoroutine;
 
 	public bool IsIllusion { get; set; }
@@ -15,8 +14,8 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 	public string ObjectId { get; set; }
 	public ulong OwnerClientId { get; set; }
 	public GameObject GO => gameObject;
-	public IPooledDynamicSpawner Spawner { get => _spawner; set => _spawner = value; }
-	public IDynamicPooledObject DPO => this;
+	public IPooledDynamicSpawner IPDS { get; set; }
+	public IDynamicPooledObject IDPO => this;
 	public bool Play { get; set; }
 
 	public virtual void SetTransform(Vector2 position, Quaternion rotation)
@@ -26,6 +25,11 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 
 	protected virtual void OnDisable()
 	{
+		if(IsIllusion)
+		{
+			return;
+		}
+
 		if (_timerCoroutine != null)
 		{
 			StopCoroutine(_timerCoroutine);
@@ -48,7 +52,7 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 	{
 		yield return new WaitForSeconds(time);
 		_timerCoroutine = null;
-		Spawner.ReleaseObject(this);
+		IPDS.ReleaseObject(this);
 	}
 
 	protected void ReleaseObject()
@@ -58,6 +62,6 @@ public abstract class PooledProjectileBase : MonoBehaviour, IDynamicPooledObject
 			StopCoroutine(_timerCoroutine);
 			_timerCoroutine = null;
 		}
-		Spawner.ReleaseObject(this);
+		IPDS.ReleaseObject(this);
 	}	
 }

@@ -1,9 +1,11 @@
+using System;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 
 /*
+ * deprecated
  * None : 운동하지 않음
  * Direct : 등속 직선 운동
  * Registed : 감속 직선 운동
@@ -29,6 +31,7 @@ public enum CollisionEffect : int
 	Block
 }
 
+[Serializable]
 public struct CollisionEventStruct : INetworkSerializable
 {
 	public ulong SenderId;

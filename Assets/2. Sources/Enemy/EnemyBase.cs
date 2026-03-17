@@ -16,7 +16,6 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 	NetworkVariable<int> _healthPoint = new(
 		readPerm: NetworkVariableReadPermission.Everyone,
 		writePerm: NetworkVariableWritePermission.Server);
-	bool _isEffectInProgress;
 	Coroutine _effectInProgress;
 	Transform _target;
 
@@ -31,8 +30,7 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 
 	public bool IsEffectInProgress
 	{
-		get => _isEffectInProgress;
-		private set => _isEffectInProgress = value;
+		get => _effectInProgress != null;
 	}
 
 	// IEnemyHandler 구현
@@ -64,9 +62,16 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 		{
 			return;
 		}
+
 		if (_rigidbody == null)
 		{
 			_rigidbody = GetComponent<Rigidbody2D>();
+		}
+
+		if (_effectInProgress != null)
+		{
+			StopCoroutine(_effectInProgress);
+			_effectInProgress = null;
 		}
 	}
 
@@ -75,7 +80,7 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 		var direction = (targetPosition - (Vector2)transform.position).normalized;
 		var desiredVelocity = direction * Speed;
 		var steer = desiredVelocity - _rigidbody.linearVelocity;
-		//GLogger.Log($"desiredVelocity: {Speed} steer: {steer}");
+		//GLogger.Log($"MoveToTarget {transform.position} to {targetPosition}");
 		_rigidbody.AddForce(steer * 10f);
 	}
 
@@ -86,16 +91,13 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 			StopCoroutine(_effectInProgress);
 		}
 
-		StartCoroutine(Knockback(directionm, knockbackForce, knockbackTime));
+		_effectInProgress = StartCoroutine(Knockback(directionm, knockbackForce, knockbackTime));
 	}
 
 	IEnumerator Knockback(Vector2 direction, float knockbackForce, float knockbackTime)
 	{
-		IsEffectInProgress = true;
 		_rigidbody.AddForce(direction * knockbackForce, ForceMode2D.Impulse);
 		yield return new WaitForSeconds(knockbackTime);
-
-		IsEffectInProgress = false;
 		_effectInProgress = null;
 	}
 
@@ -106,17 +108,13 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 			StopCoroutine(Stopping(stoppingTime));
 		}
 
-		StartCoroutine(Stopping(stoppingTime));
+		_effectInProgress = StartCoroutine(Stopping(stoppingTime));
 	}
 
 	IEnumerator Stopping(float stoppingTime)
 	{
-		IsEffectInProgress = true;
-
 		_rigidbody.linearVelocity = Vector2.zero;
 		yield return new WaitForSeconds(stoppingTime);
-
-		IsEffectInProgress = false;
 		_effectInProgress = null;
 	}
 
@@ -126,7 +124,6 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 	 */
 	public virtual void SetData(in EnemyInstantiateData data)
 	{
-		GLogger.Log("SetData Enemy");
 		PrefabId = data.PrefabId;
 		Speed = data.Speed;
 		MaxHealthPoint = data.MaxHealthPoint;

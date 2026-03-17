@@ -15,10 +15,9 @@ public class UILevelSO : ScriptableObject
 	public event Action<int> OnTestEvent;
 
     public void RaiseTestEvent(int index) => OnTestEvent?.Invoke(index);
-	public void ShowItemPicker(Vector2 position, string itemEffect, bool onlyFront)
-	{
-		_itemPickerPanel.ShowItemPicker(position, itemEffect, onlyFront);
-	}
+	public void ShowItemPicker(Vector2 position, string itemEffect, bool frontMode)
+		=>_itemPickerPanel.ShowItemPicker(position, itemEffect, frontMode);
+	public void MoveItemPicket(Vector2 position) => _itemPickerPanel.MoveItemPicker(position);
 
 	public void HideItemPicker()
 	{

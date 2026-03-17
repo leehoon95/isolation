@@ -44,10 +44,6 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 		};
 		_attackProjectileCache = new()
 		{
-			FlyingType = ProjectileFlyingType.Rectilinear,
-			Speed = 5f,
-			SpeedDeltaPerSec = 0f,
-			MaxAngularVelocity = 0f,
 			CollisionEvent = new CollisionEventStruct()
 			{
 				SenderId = 0,
@@ -91,7 +87,7 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 			var ce = _collisionEventList.First();
 			_collisionEventList.RemoveAt(0);
 			HealthPoint -= ce.Damage;
-			GLogger.Log($"damage: {HealthPoint} {ce.Damage}");
+			//GLogger.Log($"damage: {HealthPoint} {ce.Damage}");
 			if (HealthPoint == 0)
 			{
 				DespawnThisEnemy();
@@ -137,7 +133,8 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 						"ParticleBullet",
 						transform.position,
 						//Quaternion.LookRotation(targetDirection, Vector3.back),
-						Quaternion.AngleAxis(Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg, Vector3.forward),
+						//Quaternion.AngleAxis(Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg, Vector3.forward),
+						Quaternion.Euler(0f, 0f, Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg),
 						_attackProjectileCache);
 
 					_lastFiredTime = now;

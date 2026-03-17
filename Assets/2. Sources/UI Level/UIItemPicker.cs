@@ -13,14 +13,15 @@ public class UIItemPicker : UIBehaviour
 	[SerializeField] Image _bottomImage;
 	[SerializeField] TMP_Text _leftText;
 	[SerializeField] TMP_Text _rightText;
+	[SerializeField] TMP_Text _frontText;
 	[SerializeField] TMP_Text _itemName;
 	
-	bool _onlyFrontMode;
+	bool _frontMode;
 
-	public bool OnlyFronMode
+	public bool FronMode
 	{
-		get => _onlyFrontMode;
-		set => _onlyFrontMode = value;
+		get => _frontMode;
+		set => _frontMode = value;
 	}
 
 	public string ItemName
@@ -30,7 +31,7 @@ public class UIItemPicker : UIBehaviour
 
 	public void SelectedTile(int index)
 	{
-		if (_onlyFrontMode)
+		if (_frontMode)
 		{
 			_frontImage.color = new Color(1f, 0.5f, 0f) / 2f;
 			_leftImage.color = _rightImage.color = new Color(0.25f, 0.25f, 0.25f);
@@ -38,7 +39,9 @@ public class UIItemPicker : UIBehaviour
 		}
 		else
 		{
-			_frontImage.color = _leftImage.color = _rightImage.color = new Color(1f, 0.5f, 0f) / 2f;
+			_frontImage.color = new Color(0.25f, 0.25f, 0.25f);
+			_frontText.color = Color.gray;
+			_leftImage.color = _rightImage.color = new Color(1f, 0.5f, 0f) / 2f;
 			_leftText.color = _rightText.color = Color.white;
 		}
 			
@@ -47,17 +50,21 @@ public class UIItemPicker : UIBehaviour
 		switch (index)
 		{
 			case 0:
-				if (_onlyFrontMode)
+				if (_frontMode)
 				{
 					return;
 				}
 				_rightImage.color = new Color(1f, 0.5f, 0f);
 				break;
 			case 1:
+				if (!_frontMode)
+				{
+					return;
+				}
 				_frontImage.color = new Color(1f, 0.5f, 0f);
 				break;
 			case 2:
-				if (_onlyFrontMode)
+				if (_frontMode)
 				{
 					return;
 				}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public struct PlayerInstantiateData : INetworkSerializable
 {
@@ -23,17 +24,23 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 	NetworkManager _networkManager;
 	Dictionary<ulong, IPlayerHandler> _instances = new();
 	IPlayerSpawnObserver _playerSpawnObserver;
-	//public event Action<IPlayerHandler> PlayerObjectInstantiated;
+	IPooledDynamicSpawner _pooledDynamicSpawner;
+	InputSystem _inputSystem;
+
 	public event Action<NetworkObject> PlayerObjectDestroyed;
 
 	public SpawnPlayerWithDataHandler(
 		NetworkManager networkManager, 
 		GameObject perfab,
-		IPlayerSpawnObserver playerSpawnObserver)
+		IPlayerSpawnObserver playerSpawnObserver,
+		IPooledDynamicSpawner pooledDynamicSpawner,
+		InputSystem inputSystem)
 	{
 		_prefabToSpawn = perfab;
 		_networkManager = networkManager;
 		_playerSpawnObserver = playerSpawnObserver;
+		_pooledDynamicSpawner = pooledDynamicSpawner;
+		_inputSystem = inputSystem;
 
 		_networkManager.PrefabHandler.AddHandler(_prefabToSpawn, this);
 	}
@@ -51,6 +58,8 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
 		_networkManager.PrefabHandler.SetInstantiationData(instance.NO, instantiationData);
 		instance.SpawnObserver = _playerSpawnObserver;
+		instance.IPDS = _pooledDynamicSpawner;
+		instance.InputSystem = _inputSystem;
 		instance.NO.SpawnWithOwnership(ownerClientId, true);
 		
 		return instance;
@@ -100,6 +109,8 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 	{
 		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
 		instance.SpawnObserver = _playerSpawnObserver;
+		instance.IPDS = _pooledDynamicSpawner;
+		instance.InputSystem = _inputSystem;
 
 		return instance.NO;
 	}

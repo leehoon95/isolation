@@ -1134,6 +1134,7 @@ MonoBehaviour:
   _bottomImage: {fileID: 5099524888385410990}
   _leftText: {fileID: 6520159909781387814}
   _rightText: {fileID: 6649202476471200624}
+  _frontText: {fileID: 8590266843723013027}
   _itemName: {fileID: 297967959462261336}
 --- !u!222 &2601578302133419986
 CanvasRenderer:
@@ -1152,7 +1153,7 @@ SortingGroup:
   m_GameObject: {fileID: 8643695711819419288}
   m_Enabled: 1
   m_SortingLayerID: 434005281
-  m_SortingLayer: 6
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!1 &8803846992051938068

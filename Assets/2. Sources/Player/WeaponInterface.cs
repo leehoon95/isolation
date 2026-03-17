@@ -3,17 +3,17 @@ using UnityEngine;
 
 public interface IWeaponInterface
 {
-	public Transform Transform { get; }
-	public Transform MuzzleTransform { get; }
-
-	public PooledDynamicSpawner PDS { get; set; }
+	public string ProjectileName { get; set; }
+	public IPooledDynamicSpawner IPDS { get; set; }
 	public Color PersonalColor { get; set; }
-	public int Round {  get; set; }
-	/*
-	 *  < 0: completed
-	 *  > 0: charging
-	 */
-	public float ChargingTime { get; set; }
-	public bool Trigger(bool on);
-	public bool SetEvent(string eventName, float time);
+	public bool IsRightWeapon { get; set; }
+	public Vector2 TargetPosition { get; set; }
+	public long FiringInterval { get; set; }
+	public Transform Muzzle { get; set; }
+	public ulong ClientId { get; set; }
+	public string WeaponName { get; }
+	
+
+	public void Trigger(bool on);
+	public void AddBuff(string buffName, float time);
 }

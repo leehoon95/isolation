@@ -69,13 +69,14 @@ public class GameProcessor : NetworkBehaviour
 	Dictionary<string, CinemachineCamera> _cameras = new();
 
 	string[] _weaponNames = new[] {
+		"bolt",
+		"missile",
 		"shield",
 		"shock",
-		"homing",
-		"cluster",
-		"wave",
 		"laser",
-		"bolt"
+		
+		"burst",
+		"bomb"
 	};
 
 	public event UnityAction<string> OnSceneLoadRequested;
@@ -239,8 +240,7 @@ public class GameProcessor : NetworkBehaviour
 				Quaternion.identity,
 				new ItemInstantiateData()
 				{
-					ItemType = (int)ItemType.Weapon,
-					ItemEffect = _weaponNames[(int)UnityEngine.Random.Range(0f, 6f)]
+					ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 2)]
 				});
 		}
 		else if (index == 3)
@@ -256,7 +256,7 @@ public class GameProcessor : NetworkBehaviour
 				{
 					PrefabId = "SuicideBomber",
 					Speed = 2f,
-					MaxHealthPoint = 100
+					MaxHealthPoint = 120
 				});
 		}
 		else if (index == 5)
@@ -268,7 +268,7 @@ public class GameProcessor : NetworkBehaviour
 				{
 					PrefabId = "RangedAttacker",
 					Speed = 1.7f,
-					MaxHealthPoint = 60
+					MaxHealthPoint = 80
 				});
 		}
 		else if (index >= 6 && index <= 8)

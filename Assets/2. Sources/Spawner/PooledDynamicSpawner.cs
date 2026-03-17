@@ -164,7 +164,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		dpo.PrefabId = pi;
 		dpo.ObjectId = oi;
 		dpo.OwnerClientId = rpcParams.Receive.SenderClientId;
-		dpo.Spawner = this;
+		dpo.IPDS = this;
 		dpo.SetTransform(position, rotation);
 
 		var ps = dpo.GO.GetComponent<IProjectileSetting>();
@@ -254,7 +254,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		dpo.PrefabId = pi;
 		dpo.ObjectId = "none";
 		dpo.OwnerClientId = rpcParams.Receive.SenderClientId;
-		dpo.Spawner = this;
+		dpo.IPDS = this;
 		dpo.SetTransform(position, rotation);
 
 		var es = dpo.GO.GetComponent<IEffectSetting>();

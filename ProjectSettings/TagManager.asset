@@ -29,7 +29,7 @@ TagManager:
   - Static Object
   - Floor
   - 
-  - 
+  - Liquid
   - 
   - 
   - 
@@ -39,11 +39,8 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: FormostSortingLayer
+  - name: CameraSortingLayer
     uniqueID: 699810149
-    locked: 0
-  - name: BackgroundLayer
-    uniqueID: 2548025625
     locked: 0
   - name: Default
     uniqueID: 0
@@ -57,14 +54,17 @@ TagManager:
   - name: Item
     uniqueID: 1534428849
     locked: 0
-  - name: Player
-    uniqueID: 7222001
-    locked: 0
   - name: Projectile
     uniqueID: 1942144009
     locked: 0
+  - name: Player
+    uniqueID: 7222001
+    locked: 0
   - name: Effect
     uniqueID: 3843907439
+    locked: 0
+  - name: Effect2
+    uniqueID: 2659288417
     locked: 0
   - name: UI
     uniqueID: 434005281

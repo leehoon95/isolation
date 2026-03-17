@@ -9,12 +9,10 @@ using UnityEngine.Pool;
 public struct ItemInstantiateData : INetworkSerializable
 {
 	public FixedString32Bytes ItemEffect;
-	public int ItemType;
 
 	public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 	{
 		serializer.SerializeValue(ref ItemEffect);
-		serializer.SerializeValue(ref ItemType);
 	}
 }
 
@@ -77,7 +75,6 @@ public class SpawnItemWithDataHandler : NetworkPrefabInstanceHandlerWithData<Ite
 		obj.GO.SetActive(true);
 		obj.GO.transform.SetPositionAndRotation(position, rotation);
 		var ih = obj.GO.GetComponent<IItemHandler>();
-		ih.ItemType = (ItemType)itemInstantiateData.ItemType;
 		ih.ItemEffect = itemInstantiateData.ItemEffect.ToString();
 		ih.RefreshItemShape();
 

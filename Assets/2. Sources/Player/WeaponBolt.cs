@@ -1,88 +1,68 @@
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.Events;
 
-/*
- * 장탄수
- */
-public class WeaponBolt : MonoBehaviour, IWeaponInterface
+public class WeaponBolt : IWeaponInterface
 {
-	[SerializeField]
-	GameObject _muzzlePositionObject;
-	[SerializeField]
-	SpriteRenderer _spriteRenderer;
-	[SerializeField]
-	int _round;
-	[SerializeField]
-	float _firingInterval;
-	[SerializeField]
-	float _bulletSpeed;
-	[SerializeField]
-	float _lifeTime;
-	[SerializeField]
-	float _minimumDistance;
-	[SerializeField]
-	CollisionEffect _collisionEffect;
-	long _lastFiredTime;
-	bool _triggerd;
 
-	public Transform Transform { get => transform; }
-	public Transform MuzzleTransform { get => _muzzlePositionObject.transform; }
-	public PooledDynamicSpawner PDS { get; set; }
+	long _lastFiredMilliSecTick;
+
+	public string ProjectileName { get; set; }
+	public IPooledDynamicSpawner IPDS { get; set; }
 	public Color PersonalColor { get; set; }
-	public float ChargingTime { get; set; }
-	public int Round { get => _round; set => _round = value; }
+	public bool IsRightWeapon { get; set; }
+	public Vector2 TargetPosition { get; set; }
+	public long FiringInterval { get; set; }
+	public Transform Muzzle { get; set; }
+	public ulong ClientId { get; set; }
+	public string WeaponName => "bolt";
 
-	void OnDisable()
+	public void Trigger(bool on)
 	{
-		StopAllCoroutines();
-	}
-
-	void FixedUpdate()
-	{
-		if (_triggerd)
+		if (!on)
 		{
-			//long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			//if ((now - _lastFiredTime) >= _firingInterval)
-			//{
-			//	PDS.CreateProjectile(
-			//		"BulletNormal",
-			//		MuzzleTransform.position,
-			//		MuzzleTransform.rotation,
-			//		new ProjectileRpcParameter()
-			//		{
-			//			FlyingType = ProjectileFlyingType.Rectilinear,
-			//			Speed = _bulletSpeed,
-			//			CollisionEvent = new CollisionEventStruct()
-			//			{
-			//				Effect = CollisionEffect.Knockback,
-			//				EffectDuration = 0.02f,
-			//				EffectIntensity = 5f,
-			//				Damage = 10,
-			//			},
-			//			EffectColor = PersonalColor,
-			//			LifeTime = _lifeTime,
-			//		});
+			return;
+		}
 
-			//	_lastFiredTime = now;
-			//}
-			_triggerd = false;
+		long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
+
+		var toTargetVector = TargetPosition - (Vector2)Muzzle.position;
+		var toTargetCenterVector = TargetPosition - (Vector2)Muzzle.parent.position;
+		
+		if (toTargetCenterVector.magnitude < 1f)
+		{
+			return;
+		}
+
+		var distanceFromTarget = toTargetVector.magnitude;
+		var correctedAccuracy = Mathf.Lerp(0f, 0.25f, distanceFromTarget / 6f);
+
+		if (now - _lastFiredMilliSecTick >= FiringInterval)
+		{
+			var angle = Mathf.Atan2(toTargetVector.y, toTargetVector.x) * Mathf.Rad2Deg;
+			IPDS.CreateProjectile(
+				ProjectileName,
+				(Vector2)Muzzle.position,
+				Quaternion.Euler(0f, 0f, angle),
+				new ProjectileRpcParameter()
+				{
+					StartPosition = (Vector2)Muzzle.position,
+					TartgetPosition = TargetPosition + Random.insideUnitCircle * correctedAccuracy,
+					CollisionEvent = new CollisionEventStruct()
+					{
+						SenderId = ClientId,
+						Effect = CollisionEffect.Knockback,
+						EffectDuration = 0.025f,
+						EffectIntensity = 1.5f,
+						Damage = 12
+					},
+					EffectColor = PersonalColor,
+					LifeTime = 5f,
+				});
+			_lastFiredMilliSecTick = now;
 		}
 	}
 
-	public bool Trigger(bool on)
+	public void AddBuff(string buffName, float time)
 	{
-		_triggerd = on;
-		return true;
-	}
-
-	public bool SetEvent(string eventName, float time)
-	{
-		GLogger.Log($"Weapon event: {eventName} {time}");
-		return true;
+		GLogger.Log($"Weapon bolt buff added: {buffName} {time}");
 	}
 }

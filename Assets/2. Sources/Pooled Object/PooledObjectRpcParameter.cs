@@ -7,12 +7,11 @@ using UnityEngine;
  */
 public struct ProjectileRpcParameter : INetworkSerializable
 {
-	public ProjectileFlyingType FlyingType;
 	public Vector2 StartPosition;
 	public Vector2 TartgetPosition;
-	public float Speed;
-	public float SpeedDeltaPerSec; // 가감속을 위한 값
-	public float MaxAngularVelocity; // 최대 각속도(flying type이 Curve일 때만 유효)
+	//public float Speed;
+	//public float SpeedDeltaPerSec; // 가감속을 위한 값
+	//public float MaxAngularVelocity; // 최대 각속도(flying type이 Curve일 때만 유효)
 	/*
 	 * LayerMask -> int: var mask = LayerMask.GetMask("Enemy", "StaticObject"); mask.value
 	 * int -> LayerMask: (LayerMask)value
@@ -26,12 +25,11 @@ public struct ProjectileRpcParameter : INetworkSerializable
 
 	public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 	{
-		serializer.SerializeValue(ref FlyingType);
 		serializer.SerializeValue(ref StartPosition);
 		serializer.SerializeValue(ref TartgetPosition);
-		serializer.SerializeValue(ref Speed);
-		serializer.SerializeValue(ref SpeedDeltaPerSec);
-		serializer.SerializeValue(ref MaxAngularVelocity);
+		//serializer.SerializeValue(ref Speed);
+		//serializer.SerializeValue(ref SpeedDeltaPerSec);
+		//serializer.SerializeValue(ref MaxAngularVelocity);
 		//serializer.SerializeValue(ref CollisionIncludeLayers);
 		//serializer.SerializeValue(ref CollisionExcludeLayers);
 		CollisionEvent.NetworkSerialize(serializer);
@@ -43,9 +41,17 @@ public struct ProjectileRpcParameter : INetworkSerializable
 public struct EffectRpcParameter : INetworkSerializable
 {
 	public Color EffectColor;
+	public float Data1;
+	public float Data2;
+	//public float Data3;
+	//public float Data4;
 
 	public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 	{
 		serializer.SerializeValue(ref EffectColor);
+		serializer.SerializeValue(ref Data1);
+		serializer.SerializeValue(ref Data2);
+		//serializer.SerializeValue(ref Data3);
+		//serializer.SerializeValue(ref Data4);
 	}
 }

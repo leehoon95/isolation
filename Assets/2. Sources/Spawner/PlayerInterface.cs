@@ -8,6 +8,8 @@ public interface IPlayerHandler
 	public string Nickname { set; }
 	public Color PersonalColor { set; }
 	public IPlayerSpawnObserver SpawnObserver { set; }
+	public IPooledDynamicSpawner IPDS { get; set; }
+	public InputSystem InputSystem { set; get; }
 	public Transform CameraTarget { get; }
 }
 

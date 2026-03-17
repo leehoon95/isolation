@@ -16,7 +16,7 @@ public class UIItemPickerController : UIBehaviour, IUIItemPickerPanel
 	UILevelSO _uiso;
 	LocalizedString _localizedString;
 	Vector2 _mouseDirection;
-	bool _onlyFronMode;
+	bool _fronMode;
 	int _selectedIndex;
 
 	protected override void Start()
@@ -40,7 +40,7 @@ public class UIItemPickerController : UIBehaviour, IUIItemPickerPanel
 				degree += 360f;
 			}
 
-			if (_onlyFronMode)
+			if (_fronMode)
 			{
 				if (degree <= 180f && degree > 0f)
 				{
@@ -55,17 +55,17 @@ public class UIItemPickerController : UIBehaviour, IUIItemPickerPanel
 			}
 			else
 			{
-				if (degree <= 45f || degree > 315f) // right
+				if (degree <= 90f || degree > 315f) // right
 				{
 					_itemPick.SelectedTile(0);
 					_selectedIndex = 0;
 				}
-				else if (degree <= 135f && degree > 45f) // top
-				{
-					_itemPick.SelectedTile(1);
-					_selectedIndex = 1;
-				}
-				else if (degree <= 225f && degree > 135f) // left
+				//else if (degree <= 135f && degree > 45f) // top
+				//{
+				//	_itemPick.SelectedTile(1);
+				//	_selectedIndex = 1;
+				//}
+				else if (degree <= 225f && degree > 90f) // left
 				{
 					_itemPick.SelectedTile(2);
 					_selectedIndex = 2;
@@ -85,14 +85,23 @@ public class UIItemPickerController : UIBehaviour, IUIItemPickerPanel
 		_lineConnector.gameObject.SetActive(false);
 	}
 
-	public void ShowItemPicker(Vector2 position, string itemEffect, bool onlyFront)
+	public void ShowItemPicker(Vector2 position, string itemEffect, bool frontItem)
 	{
-		var onScreenPosition = Camera.main.WorldToScreenPoint(position);
+		
 		_itemPick.gameObject.SetActive(true);
-		_itemPick.OnlyFronMode = onlyFront;
+		_itemPick.FronMode = frontItem;
 		_localizedString.TableEntryReference = $"weapon-{itemEffect}";
 		_itemPick.ItemName = _localizedString.GetLocalizedString();
-		
+		_fronMode = frontItem;
+		_lineConnector.gameObject.SetActive(true);
+
+		MovePickerToPosition(position);
+		//ConnectPickerToMouse();
+	}
+
+	void MovePickerToPosition(Vector2 position)
+	{
+		var onScreenPosition = Camera.main.WorldToScreenPoint(position);
 		if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
 			_canvas.transform as RectTransform,
 			onScreenPosition,
@@ -104,13 +113,9 @@ public class UIItemPickerController : UIBehaviour, IUIItemPickerPanel
 			rt.anchoredPosition = localPoint;
 			//GLogger.Log($"{position} {localPoint}");
 		}
-		_onlyFronMode = onlyFront;
-
-		_lineConnector.gameObject.SetActive(true);
-		ConnectPickerToMouse();
 	}
 
-	public void ConnectPickerToMouse()
+	void ConnectPickerToMouse()
 	{
 		var mousePosition = Mouse.current.position.value;
 		var uiCamera = _canvas.worldCamera;
@@ -129,6 +134,11 @@ public class UIItemPickerController : UIBehaviour, IUIItemPickerPanel
 		}
 		_lineConnector.SetAllDirty();
 		_mouseDirection = (_lineConnector.endPoint - _lineConnector.startPoint).normalized;
+	}
+
+	public void MoveItemPicker(Vector2 position)
+	{
+		MovePickerToPosition(position);
 	}
 
 	public int GetSelectedIndex()

@@ -1,8 +1,9 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 //
-public class PlayerCameraTarget : MonoBehaviour
+public class PlayerCameraTarget : NetworkBehaviour
 {
 	[SerializeField]
 	Vector2 _center;
@@ -12,6 +13,8 @@ public class PlayerCameraTarget : MonoBehaviour
 
 	Transform _parentTransform;
 
+	public bool IsStopped { get; set; }
+
 	void Start()
 	{
 		_parentTransform = transform.parent;
@@ -19,6 +22,11 @@ public class PlayerCameraTarget : MonoBehaviour
 
 	void Update()
 	{
+		if (!IsOwner || IsStopped)
+		{
+			return;
+		}
+
 		var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 		var mouseDirection = mousePosition - (Vector2)transform.position;
 		var midpoint = mouseDirection.magnitude / 2f;

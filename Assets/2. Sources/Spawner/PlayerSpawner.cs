@@ -28,7 +28,9 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner, IPlayerSpawnObser
 		_spawnHandler = new SpawnPlayerWithDataHandler(
 			networkManager, 
 			_prefapToSpawn,
-			this);
+			this,
+			_pooledDynamicSpawner,
+			_inputSystem);
 
 		if (networkManager.IsHost)
 		{

@@ -26,12 +26,18 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 
 	public override void OnNetworkSpawn()
 	{
+		_teethSpeed.Clear();
+		for (int i = 0; i < _teeth.Count(); ++i)
+		{
+			_teethSpeed.Add(Random.Range(-60, 60));
+		}
+
 		if (!IsHost)
 		{
 			return;
 		}
+
 		base.OnNetworkSpawn();
-		GLogger.Log("OnNetworkSpawn");
 		HealthPoint = MaxHealthPoint;
 		_collisionEventList = new();
 		_collisionEventCache = new()
@@ -41,11 +47,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			Effect = CollisionEffect.Pop,
 		};
 		_path = new();
-		_teethSpeed.Clear();
-		for (int i = 0; i < _teeth.Count(); ++i)
-		{
-			_teethSpeed.Add(Random.Range(-60, 60));
-		}
+
 		_calculatePathCo = StartCoroutine(CalculatePathToTarget());
 	}
 
@@ -56,6 +58,11 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 
 	void Update()
 	{
+		if (!IsHost)
+		{
+			return;
+		}
+
 		for (int i = 0; i < _teeth.Count(); ++i)
 		{
 			_teeth[i].transform.RotateAround(transform.position, Vector3.forward, _teethSpeed[i] * Time.deltaTime);
@@ -74,7 +81,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			var ce = _collisionEventList.First();
 			_collisionEventList.RemoveAt(0);
 			HealthPoint -= ce.Damage;
-			GLogger.Log($"damage: {HealthPoint}");
+			GLogger.Log($"{PrefabId} {HealthPoint} {ce.Damage}");
 			if (HealthPoint == 0)
 			{
 				DespawnThisEnemy();
