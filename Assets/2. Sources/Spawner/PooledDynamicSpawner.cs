@@ -149,7 +149,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 
 		if (!_pools.TryGetValue(pi, out var pool))
 		{
-			Debug.LogWarning($"PooledDynamicSpawner.CreateObject unknown prefab{prefabId}");
+			Debug.LogWarning($"PooledDynamicSpawner.CreateObject unknown prefab {prefabId}");
 			return;
 		}
 
@@ -204,7 +204,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	/*
 	 * 신뢰성 전송한다
 	 */
-	[Rpc(SendTo.Everyone, Delivery = RpcDelivery.Reliable)]
+	[Rpc(SendTo.Everyone)]
 	void CreateEffectEveryoneReliableRpc(
 		FixedString32Bytes prefabId,
 		Vector2 position,

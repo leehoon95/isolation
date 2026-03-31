@@ -30,7 +30,7 @@ public class BulletBolt : PooledProjectileBase, IProjectileSetting
 	Vector2 _startPosition;
 	Vector2 _targetPosition;
 	Color _effectColor;
-	List<CollisionEvent> _collisionEventList = new();
+	bool _hit;
 	CollisionEvent _collisionEvent = new()
 	{
 		Position = Vector2.zero,
@@ -53,10 +53,11 @@ public class BulletBolt : PooledProjectileBase, IProjectileSetting
 	void OnEnable()
 	{
 		StopAllCoroutines();
+		_hit = false;
 		_actualSpeed = _speed;
 		_actualSpeedDeltaPerSec = _speedDeltaPerSec;
 		_actualMaxAngularVelocity = _maxAngularVelocity;
-		StartCoroutine(IgnoreStaticObjectForMoment(0.45f));
+		StartCoroutine(IgnoreStaticObjectForMoment(0.35f));
 	}
 
 	protected override void OnDisable()
@@ -66,14 +67,8 @@ public class BulletBolt : PooledProjectileBase, IProjectileSetting
 
 	void FixedUpdate()
 	{
-		if (IsIllusion)
+		if (!IsIllusion && _hit)
 		{
-			return;
-		}
-
-		if (_collisionEventList.Count > 0)
-		{
-			_collisionEventList.Clear();
 			ReleaseObject();
 			return;
 		}
@@ -92,26 +87,12 @@ public class BulletBolt : PooledProjectileBase, IProjectileSetting
 
 		var ci = collision.GetComponentInParent<INetworkObjectCollision>();
 
-		if (ci != null && _collisionEventList.Count == 0)
+		if (ci != null && !_hit)
 		{
 			_collisionEvent.Position = transform.position;
 			_collisionEvent.Direction = transform.right;
 			ci.SendCollisionEvent(_collisionEvent);
-			var ce = ci.GetCollisionEvent();
-			_collisionEventList.Add(ce);
-			if (ce.Effect != CollisionEffect.None)
-			{
-				IPDS.CreateEffect(
-					"EffectDamage",
-					transform.position,
-					Quaternion.identity,
-					new EffectRpcParameter()
-					{
-						EffectColor = EffectColor,
-						Data1 = _collisionEvent.Damage
-					});
-			}
-			
+			_hit = true;
 		}
 	}
 

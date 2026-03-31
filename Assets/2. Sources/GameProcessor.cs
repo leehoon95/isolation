@@ -47,7 +47,7 @@ public struct CameraConfig
 /*
  * 게임 진행은 host가 전담한다
  */
-public class GameProcessor : NetworkBehaviour
+public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 {
 	[SerializeField]
 	LevelGameManager _GM;
@@ -67,17 +67,19 @@ public class GameProcessor : NetworkBehaviour
 	Coroutine _updateCo;
 	Coroutine _enemyTargetSettingCo;
 	Dictionary<string, CinemachineCamera> _cameras = new();
+	bool _isPlayerSpawned;
 
 	string[] _weaponNames = new[] {
 		"bolt",
 		"missile",
-		"shield",
-		"shock",
 		"laser",
-		
 		"burst",
-		"bomb"
+		"shield",
+		"heal",
+		"bomb",
 	};
+
+	public bool IsPlayerSpawned => _isPlayerSpawned;
 
 	public event UnityAction<string> OnSceneLoadRequested;
 
@@ -101,6 +103,7 @@ public class GameProcessor : NetworkBehaviour
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 		_uiso.OnTestEvent += TestEventListner;
 		_playerSpawner.PlayerSpawned += OnPlayerSpawned;
+		_playerSpawner.PlayerDespawned += OnPlayerDespawned;
 
 		foreach (var item in _cameraConfigs)
 		{
@@ -211,7 +214,14 @@ public class GameProcessor : NetworkBehaviour
 		if (ph.NO.IsOwner)
 		{
 			_cameras["PlayerCamera"].Follow = ph.CameraTarget;
+			_uiso.ShowIndicator(true);
+			_isPlayerSpawned = true;
 		}
+	}
+
+	void OnPlayerDespawned(IPlayerHandler ph)
+	{
+		_isPlayerSpawned = false;
 	}
 
 	void TestEventListner(int index)
@@ -233,15 +243,19 @@ public class GameProcessor : NetworkBehaviour
 		}
 		else if (index == 2)
 		{
-			var random = UnityEngine.Random.Range(-0.5f, 0.5f);
-			var random2 = UnityEngine.Random.Range(-0.5f, 0.5f);
-			_itemSpawner.SpawnItemRpc(
-				new Vector2(random, random2),
-				Quaternion.identity,
-				new ItemInstantiateData()
-				{
-					ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 2)]
-				});
+			for (int i = 0; i < 3; ++i)
+			{
+				var random = UnityEngine.Random.Range(-2f, 2f);
+				var random2 = UnityEngine.Random.Range(-2f, 2f);
+				_itemSpawner.SpawnItemRpc(
+					new Vector2(random, random2),
+					Quaternion.identity,
+					new ItemInstantiateData()
+					{
+						ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 7)]
+					});
+			}
+		
 		}
 		else if (index == 3)
 		{

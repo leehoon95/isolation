@@ -50,6 +50,7 @@ MonoBehaviour:
   _animator: {fileID: 8193241337436801035}
   _text: {fileID: 7439923650217730412}
   _sortingGroup: {fileID: 5276231171093192368}
+  _z: 0
 --- !u!95 &8193241337436801035
 Animator:
   serializedVersion: 7
@@ -213,8 +214,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 2
-  m_fontSizeBase: 2
+  m_fontSize: 2.6
+  m_fontSizeBase: 2.6
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

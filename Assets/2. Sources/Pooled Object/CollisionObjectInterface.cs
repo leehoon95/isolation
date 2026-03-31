@@ -20,15 +20,15 @@ public enum ProjectileFlyingType : int
 }
 
 /*
- * 충돌 후 반대편에게 줄 수 있는 물리 효과
+ * 충돌 후 반대편에게 전달하는 물리 효과
  */
 public enum CollisionEffect : int
 {
-	None = 0,
+	None = 0, // static obejct에서 사용. damage를 무시함
 	Knockback,
 	Stopping,
-	Pop,
-	Block
+	Hit,
+	Block // player 전용
 }
 
 [Serializable]

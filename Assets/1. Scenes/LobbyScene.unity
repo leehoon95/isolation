@@ -2027,7 +2027,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46
+  m_fontSize: 19.65
   m_fontSizeBase: 23.23
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3898,8 +3898,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _createSessionButton: {fileID: 8848704095600862856}
-  _refreshButton: {fileID: 0}
-  _exitButton: {fileID: 0}
+  _refreshButton: {fileID: 1688705821}
+  _exitButton: {fileID: 1528427515}
   _canvasGroup: {fileID: 1527291797}
 --- !u!114 &1527291796
 MonoBehaviour:
@@ -6999,7 +6999,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5649893862285616335}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7970,39 +7970,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3245875395174173575, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3245875395174173575, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3245875395174173575, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 184.01
       objectReference: {fileID: 0}
     - target: {fileID: 3245875395174173575, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 44.01
       objectReference: {fileID: 0}
     - target: {fileID: 3245875395174173575, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 92.005
       objectReference: {fileID: 0}
     - target: {fileID: 3245875395174173575, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -22.005
       objectReference: {fileID: 0}
     - target: {fileID: 7832927134525439191, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 184.01
       objectReference: {fileID: 0}
     - target: {fileID: 7832927134525439191, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 44.01
       objectReference: {fileID: 0}
     - target: {fileID: 9161239370889475663, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_Name
-      value: Dialog Crent Room
+      value: Dialog Create Room
+      objectReference: {fileID: 0}
+    - target: {fileID: 9161239370889475663, guid: 76f109b871674094795347a812470369, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8529,7 +8533,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6244376593600628318}
   m_HandleRect: {fileID: 1434942658629753368}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:

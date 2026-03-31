@@ -103,7 +103,7 @@ public class TCPClientSO : ScriptableObject
 	async Task ReceivingTask()
 	{
 		byte[] buffer = new byte[4096];
-		// destroyCancellationToken: MonoBehavior ÆÄ»ı Å¬·¡½º Àü¿ë
+		// destroyCancellationToken: MonoBehavior íŒŒìƒ í´ë˜ìŠ¤ ì „ìš©
 		while (!_cancelToken.IsCancellationRequested)
 		{
 			try
@@ -266,7 +266,7 @@ public class TCPClientSO : ScriptableObject
 }
 
 /*
- * ÇÊµå ÃÊ±âÈ­´Â Awake¿¡¼­ ÇÒ °Í.
+ * í•„ë“œ ì´ˆê¸°í™”ëŠ” Awakeì—ì„œ í•  ê²ƒ.
  */
 public class TCPClientSOHolder : SOHolderSinglton<TCPClientSO, TCPClientSOHolder>
 {
@@ -274,7 +274,8 @@ public class TCPClientSOHolder : SOHolderSinglton<TCPClientSO, TCPClientSOHolder
 	{
 		base.Awake();
 
-		Data.ServerAddress = "172.24.107.87";
+		//Data.ServerAddress = "172.24.107.87";
+		Data.ServerAddress = "34.11.242.48";
 		Data.Port = 51010;
 	}
 }

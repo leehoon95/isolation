@@ -130,7 +130,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a9efa4b0c2e5d3b4ca6a720b0b8360b5
+      spriteID: 5fb45a8591c73b049b1faaa2dd44a935
       internalID: -8260948094442137409
       vertices: []
       indices: 
@@ -152,7 +152,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9bb87d36c8290394a804fc55aae3678d
+      spriteID: 54ae1e3b654f0f147917b4f7a6c67c1d
       internalID: -1423429697236103356
       vertices: []
       indices: 
@@ -174,8 +174,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 38c8e7445267cfc4e99f2b9efc5eccfd
+      spriteID: e53e7fc6e51091543aff07346dc522f7
       internalID: 3439824511283540682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_buffs_3
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75c3baf7343a82745a609e472d829925
+      internalID: -1238759397
       vertices: []
       indices: 
       edges: []
@@ -197,6 +219,7 @@ TextureImporter:
       player_buffs_0: -8260948094442137409
       player_buffs_1: -1423429697236103356
       player_buffs_2: 3439824511283540682
+      player_buffs_3: -1238759397
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

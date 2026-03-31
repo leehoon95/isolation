@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EffectWave : PooledEffectBase, IEffectSetting
@@ -7,7 +6,9 @@ public class EffectWave : PooledEffectBase, IEffectSetting
 	[SerializeField]
 	SpriteRenderer _spriteRenderer;
 	[SerializeField]
-	float _processMultiplier = 2.5f;
+	float _waveSpeedMultiplier = 1f;
+	[SerializeField]
+	float _duration;
 	[SerializeField]
 	float _startThickness = 0f;
 	[SerializeField]
@@ -20,7 +21,10 @@ public class EffectWave : PooledEffectBase, IEffectSetting
 	float _startWaveDistanceFromCenter = 0.01f;
 	[SerializeField]
 	float _endDistanceFromCenter = 0.4f;
+	[SerializeField]
+	float _particleLifeTime;
 
+	Color _effectColor;
 	MaterialPropertyBlock _materialPropertyBlock;
 
 	void Awake()
@@ -30,7 +34,7 @@ public class EffectWave : PooledEffectBase, IEffectSetting
 
 	void OnEnable()
 	{
-		StartCoroutine(ProcessWave());
+		StartCoroutine(ProcessWave(_duration));
 	}
 
 	void OnDisable()
@@ -38,18 +42,20 @@ public class EffectWave : PooledEffectBase, IEffectSetting
 		StopAllCoroutines();
 	}
 
-	IEnumerator ProcessWave()
+	IEnumerator ProcessWave(float duration)
 	{
+		yield return null;
+
 		float time = 0f;
 
-		while (time < 1f)
+		while (time < duration)
 		{
 			_spriteRenderer.GetPropertyBlock(_materialPropertyBlock);
 			_materialPropertyBlock.SetFloat("_WaveThickness", Mathf.Lerp(_startThickness, _endThickness, time));
 			_materialPropertyBlock.SetFloat("_WaveStrength", Mathf.Lerp(_startStrength, _endStrength, time));
-			_materialPropertyBlock.SetFloat("_WaveDistanceFromCenter", Mathf.Lerp(_startWaveDistanceFromCenter, _endDistanceFromCenter, time));
+			_materialPropertyBlock.SetFloat("_WaveDistanceFromCenter", Mathf.Lerp(_startWaveDistanceFromCenter, _endDistanceFromCenter, time * time * _waveSpeedMultiplier));
 			_spriteRenderer.SetPropertyBlock(_materialPropertyBlock);
-			time += Time.deltaTime * _processMultiplier;
+			time += Time.deltaTime;
 			yield return null;
 		}
 
@@ -58,15 +64,6 @@ public class EffectWave : PooledEffectBase, IEffectSetting
 
 	public void SetEffectParameter(in EffectRpcParameter param)
 	{
-
+		_effectColor = param.EffectColor;
 	}
-
-#if UNITY_EDITOR
-	public void StartWaveCoroutin()
-	{
-		StopAllCoroutines();
-		StartCoroutine(ProcessWave());
-	}
-#endif
-
 }

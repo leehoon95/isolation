@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 {
@@ -23,6 +24,7 @@ public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 		Effect = CollisionEffect.None
 	};
 	float _time;
+	Vector2 _position;
 
 	public override void OnNetworkSpawn()
 	{
@@ -37,6 +39,7 @@ public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 			Effect = CollisionEffect.None
 		};
 		_count.OnValueChanged += (previoudValue, newValue) => { _text.text = $"{newValue}"; };
+		_position = transform.position;
 	}
 
 	void FixedUpdate()
@@ -54,14 +57,15 @@ public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 			_count.Value += ce.Damage;
 		}
 
-		if (_time < 1f)
+		if (_position.x < 2f)
 		{
-			_rigidbody.MovePosition(new Vector2(_time, 3f));
+			_position.x += Time.fixedDeltaTime;
+			_rigidbody.MovePosition(_position);
 			
 		}
 		else if (_time > 1f && _time < 2f)
 		{
-			_rigidbody.MovePosition(new Vector2(2f - _time, 3f));
+			_rigidbody.MovePosition(new Vector2(2f - _time, transform.position.y));
 		}
 		else
 		{

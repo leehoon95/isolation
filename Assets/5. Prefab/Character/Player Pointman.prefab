@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8095828604016339847}
+  - component: {fileID: 2836016965066302033}
   - component: {fileID: 99573677086847164}
   m_Layer: 6
   m_Name: Left Muzzle
@@ -32,6 +33,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1500852264407779024}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2836016965066302033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298808629310453575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dddfc805bff4874490dd268eac5eded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!212 &99573677086847164
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -178,6 +192,7 @@ MonoBehaviour:
   _bodyIndicator: {fileID: 2574572247563405518}
   _hand: {fileID: 6180052288741268153}
   _cameraTarget: {fileID: 2912710630573480638}
+  _speed: 3
 --- !u!50 &3971261526755865604
 Rigidbody2D:
   serializedVersion: 5
@@ -277,7 +292,7 @@ SortingGroup:
   m_GameObject: {fileID: 914662159115147965}
   m_Enabled: 1
   m_SortingLayerID: 7222001
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!1 &1977856861159601662
@@ -332,25 +347,23 @@ MonoBehaviour:
   _weaponConfig:
   - Name: bolt
     Sprite: {fileID: 975998687, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
-    ProjectileName: BoltBullet
-    FiringInterval: 200
+    Prefab: {fileID: 2309340980487256118, guid: af534e75fd002094a825a68610da8568, type: 3}
   - Name: missile
     Sprite: {fileID: 303495759, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
-    ProjectileName: MissileBullet
-    FiringInterval: 600
-  - Name: laser
+    Prefab: {fileID: 1310412030759554652, guid: 5a30d9b5062e3bb4ebc440f427d14f64, type: 3}
+  - Name: laserLeft
     Sprite: {fileID: 1618803103, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
-    ProjectileName: 
-    FiringInterval: 100
+    Prefab: {fileID: 1324608297078827869, guid: 0bd3ebb4e43fdc346883e1dab1e2d276, type: 3}
+  - Name: laserRight
+    Sprite: {fileID: 1618803103, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
+    Prefab: {fileID: 3769147872407034348, guid: 4a79d73b8f6c6b2438db39cee50e6e5a, type: 3}
   _frontWeaponConfig:
   - Name: shield
     Sprite: {fileID: -1575523158, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
-    ProjectileName: 
-    FiringInterval: 0
+    Prefab: {fileID: 0}
   - Name: shock
     Sprite: {fileID: -1264485064, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
-    ProjectileName: 
-    FiringInterval: 500
+    Prefab: {fileID: 0}
   _leftSpriteRenderer: {fileID: 99573677086847164}
   _leftMuzzle: {fileID: 8095828604016339847}
   _rightSpriteRenderer: {fileID: 1879416137769190272}
@@ -359,7 +372,6 @@ MonoBehaviour:
   _frontMuzzle: {fileID: 828836076153528486}
   _lineRenderer: {fileID: 6049365740369119467}
   _lineSegment: 36
-  _radius: 2
 --- !u!1 &3758327492398922805
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,6 +381,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1391961215579870200}
+  - component: {fileID: 1007203229369481685}
   - component: {fileID: 1879416137769190272}
   m_Layer: 6
   m_Name: Right Muzzle
@@ -392,6 +405,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1500852264407779024}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!114 &1007203229369481685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3758327492398922805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dddfc805bff4874490dd268eac5eded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!212 &1879416137769190272
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -486,7 +512,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4287773961339883284}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -676,7 +702,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 7222001
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: -4015164023294756304, guid: 625b12cf514b06f4db5fe8e767b1cf20, type: 3}
   m_Color: {r: 1, g: 0.49803922, b: 0, a: 1}
@@ -769,7 +795,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 8879087430511884895, guid: 9bdb87f0ca507494daaa2e56ce3268c0, type: 3}
+  m_Sprite: {fileID: 1419265981731152630, guid: 6c1a7bf71dee7ab4a953b2cf4e06372e, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1076,7 +1102,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 7222001
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 1419265981731152630, guid: 6c1a7bf71dee7ab4a953b2cf4e06372e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1228,7 +1254,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8647849725911478307}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1263,7 +1289,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 7222001
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: 4917798244314384307, guid: f40a2a89ac61025499f360d2beaf481c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

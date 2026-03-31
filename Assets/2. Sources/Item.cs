@@ -28,6 +28,8 @@ public class Item : NetworkBehaviour, IItemHandler
 	[SerializeField]
 	SortingGroup _sortingGroup;
 	[SerializeField]
+	Collider2D _collider;
+	[SerializeField]
 	List<Sprite> _weaponIconSprites;
 	[SerializeField]
 	List<Sprite> _frontWeaponSprites;
@@ -62,17 +64,29 @@ public class Item : NetworkBehaviour, IItemHandler
 				case "laser":
 					_type = ItemType.Weapon;
 					break;
-				case "shield":
 				case "shock":
 					_type = ItemType.FrontWeapon;
 					break;
+				case "shield":
 				case "burst":
+				case "heal":
 				case "bomb":
 					_type = ItemType.Buff;
 					break;
 				default:
 					_effect = "";
 					break;
+			}
+
+			if (_type == ItemType.Buff)
+			{
+				_collider.includeLayers = 1 << LayerMask.NameToLayer("Player Body");
+				_collider.excludeLayers = 1 << LayerMask.NameToLayer("Player Hand");
+			}
+			else
+			{
+				_collider.excludeLayers = 0;
+				_collider.includeLayers = 0;
 			}
 		}
 	}
@@ -133,7 +147,6 @@ public class Item : NetworkBehaviour, IItemHandler
 		}
 	}
 
-
 	IEnumerator ReleaseTimeout()
 	{
 		yield return _wait;
@@ -168,7 +181,7 @@ public class Item : NetworkBehaviour, IItemHandler
 			Sprite s = null;
 			switch (_effect)
 			{
-				case "shield": s = _frontWeaponSprites[0]; break;
+				
 				case "shock": s = _frontWeaponSprites[1]; break;
 				default: s = null; break;
 			}
@@ -182,7 +195,9 @@ public class Item : NetworkBehaviour, IItemHandler
 			switch (_effect)
 			{
 				case "burst": s = _buffSprites[0]; break;
-				case "bomb": s = _buffSprites[1]; break;
+				case "heal": s = _buffSprites[1]; break;
+				case "bomb": s = _buffSprites[2]; break;
+				case "shield": s = _buffSprites[3]; break;
 				default: s = null; break;
 			}
 			_itemSprite.sprite = s;

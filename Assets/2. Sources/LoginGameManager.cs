@@ -169,8 +169,8 @@ public class LoginGameManager : MonoBehaviour
 	{
 		GLogger.Log("OpenNetworkErrorDialog");
 		var title = _localizedTable.GetEntry("network-connection-error")?.LocalizedValue;
-		var content = _localizedTable.GetEntry("network-connection-error")?.LocalizedValue;
-		var okButton = _localizedTable.GetEntry("network-connection-error")?.LocalizedValue;
+		var content = _localizedTable.GetEntry("network-connection-error-massage")?.LocalizedValue;
+		var okButton = _localizedTable.GetEntry("retry")?.LocalizedValue;
 
 		//var selectedLocale = LocalizationSettings.SelectedLocale;
 		// adb = LocalizationSettings.StringDatabase;

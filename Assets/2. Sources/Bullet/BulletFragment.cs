@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +7,6 @@ public class BulletFragment : PooledProjectileBase, IProjectileSetting
 	[SerializeField]
 	Collider2D _collider;
 
-	int _contactedCount;
-	int _eventSendCount;
-	int _enemyTriggerLayer;
-
-	List<CollisionEvent> _collisionEventList = new();
 	CollisionEvent _collisionEvent = new()
 	{
 		Position = Vector2.zero,
@@ -18,12 +14,19 @@ public class BulletFragment : PooledProjectileBase, IProjectileSetting
 		Effect = CollisionEffect.Stopping,
 		EffectDuration = 0f,
 		EffectIntensity = 0f,
-		Damage = 26
+		Damage = 12
 	};
+	ContactFilter2D _contactFilter = new()
+	{
+		useTriggers = true,
+		useLayerMask = true,
+	};
+	List<Collider2D> _results = new();
+	Coroutine _ReduceSizeCo;
 
 	void Start()
 	{
-		_enemyTriggerLayer = LayerMask.NameToLayer("Enemy Trigger");
+		_contactFilter.layerMask = 1 << LayerMask.NameToLayer("Enemy Trigger");
 	}
 
 	protected override void OnDisable()
@@ -38,33 +41,18 @@ public class BulletFragment : PooledProjectileBase, IProjectileSetting
 			return;
 		}
 
-		var filter = new ContactFilter2D();
-		filter.useTriggers = true;
-		filter.SetLayerMask(1 << _enemyTriggerLayer);
-
-		List<Collider2D> results = new();
-		int count = _collider.Overlap(filter, results);
+		int count = _collider.Overlap(_contactFilter, _results);
 
 		if (count > 0)
 		{
-			//GLogger.Log($"Fragment Hit {count} {results.Count}");
-			foreach (Collider2D collider in results)
+			_collisionEvent.Position = transform.position;
+			foreach (Collider2D collider in _results)
 			{
 				var ci = collider.GetComponentInParent<INetworkObjectCollision>();
-
 
 				if (ci != null)
 				{
 					ci.SendCollisionEvent(_collisionEvent);
-					IPDS.CreateEffect(
-						"EffectDamage",
-						transform.position,
-						Quaternion.identity,
-						new EffectRpcParameter()
-						{
-							EffectColor = Color.white,
-							Data1 = _collisionEvent.Damage
-						});
 				}
 			}
 

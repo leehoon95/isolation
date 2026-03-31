@@ -25,7 +25,7 @@ public class PlayerHand : MonoBehaviour
 	public event UnityAction<IItemHandler> OnGrabbedItem;
 	public event UnityAction<IItemHandler> OnGetBuffItem;
 
-	public void ActiveHand()
+	public void ActivateHand()
 	{
 		if (_calcCo != null)
 		{
@@ -33,6 +33,11 @@ public class PlayerHand : MonoBehaviour
 		}
 		_handligItem.Clear();
 		_calcCo = StartCoroutine(FindMostNearItem());
+	}
+
+	public void DeactivateHand()
+	{
+		StopAllCoroutines();
 	}
 
 	//void FixedUpdate()
@@ -89,7 +94,7 @@ public class PlayerHand : MonoBehaviour
 			IItemHandler mostNear = null;
 			foreach (var item in _handligItem)
 			{
-				if (!item.Value.GO.activeInHierarchy)
+				if (!item.Value.GO.activeSelf)
 				{
 					inactivedItems.Add(item.Key);
 					continue;
@@ -97,7 +102,7 @@ public class PlayerHand : MonoBehaviour
 
 				if (item.Value.ItemType == ItemType.Buff)
 				{
-					OnGetBuffItem?.Invoke(item.Value);
+					//OnGetBuffItem?.Invoke(item.Value);
 					continue;
 				}
 

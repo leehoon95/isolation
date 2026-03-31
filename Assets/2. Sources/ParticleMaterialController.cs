@@ -12,6 +12,10 @@ public class ParticleMaterialController : MonoBehaviour
 	void Start()
 	{
 		//_particleSystemRenderer = _particleSystem.GetComponent<ParticleSystemRenderer>();
+		//var emission = _particleSystem.emission;
+		//var burst = emission.GetBurst(0);
+		//burst.count = new ParticleSystem.MinMaxCurve(_minParticle, _maxParticle);
+		//emission.SetBurst(0, burst);
 	}
 
 	void OnEnable()

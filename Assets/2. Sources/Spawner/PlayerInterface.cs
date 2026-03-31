@@ -27,4 +27,5 @@ public interface IPlayerSpawner
 public interface IPlayerSpawnObserver
 {
 	public void NotifyPlayerSpawned(IPlayerHandler ph);
+	public void NotifyPlayerDespawned(IPlayerHandler ph);
 }

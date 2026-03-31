@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1534428849
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.08627451, g: 0.5764706, b: 0.57254905, a: 1}
@@ -169,6 +169,7 @@ MonoBehaviour:
   _type: 0
   _effect: bolt
   _sortingGroup: {fileID: 7687584478615911008}
+  _collider: {fileID: 4727732795246846015}
   _weaponIconSprites:
   - {fileID: -9095866918990608292, guid: 82ed5775016cedb4ba30451e5f03ee5c, type: 3}
   - {fileID: 2474533417661558972, guid: 82ed5775016cedb4ba30451e5f03ee5c, type: 3}
@@ -178,7 +179,9 @@ MonoBehaviour:
   - {fileID: -1776576463066443472, guid: 82ed5775016cedb4ba30451e5f03ee5c, type: 3}
   _buffSprites:
   - {fileID: -8260948094442137409, guid: fbb3ead6f1fe5d64b97ffb0c115db96d, type: 3}
+  - {fileID: -1423429697236103356, guid: fbb3ead6f1fe5d64b97ffb0c115db96d, type: 3}
   - {fileID: 3439824511283540682, guid: fbb3ead6f1fe5d64b97ffb0c115db96d, type: 3}
+  - {fileID: -1238759397, guid: fbb3ead6f1fe5d64b97ffb0c115db96d, type: 3}
 --- !u!210 &7687584478615911008
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -188,7 +191,7 @@ SortingGroup:
   m_GameObject: {fileID: 761648994604561922}
   m_Enabled: 1
   m_SortingLayerID: 1534428849
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!1 &2381364101955520029
@@ -265,7 +268,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1534428849
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -420,7 +423,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1534428849
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 2
   m_Sprite: {fileID: -4695868886523022460, guid: 82ed5775016cedb4ba30451e5f03ee5c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

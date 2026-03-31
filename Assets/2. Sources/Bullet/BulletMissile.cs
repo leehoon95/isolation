@@ -22,11 +22,17 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 	TrailRenderer _trailRenderer;
 	[Header("Spec")]
 	[SerializeField]
+	string _fragmentProjectileName;
+	[SerializeField]
+	int _fragmentDamage;
+	[SerializeField]
 	float _speed;
 	[SerializeField]
 	float _speedDeltaPerSec;
 	[SerializeField]
 	float _maxAngularVelocity;
+	[SerializeField]
+	float _stoppingDuration;
 
 	float _actualSpeed;
 	float _actualSpeedDeltaPerSec;
@@ -34,14 +40,12 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 	Vector2 _startPosition;
 	Vector2 _targetPosition;
 	Color _effectColor;
-	List<CollisionEvent> _collisionEventList = new();
+	bool _hit;
+
 	CollisionEvent _collisionEvent = new()
 	{
 		Position = Vector2.zero,
 		Direction = Vector2.right,
-		Effect = CollisionEffect.Knockback,
-		EffectDuration = 0f,
-		EffectIntensity = 0f,
 	};
 
 	public Color EffectColor
@@ -66,10 +70,11 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 	void OnEnable()
 	{
 		StopAllCoroutines();
+		_hit = false;
 		_actualSpeed = _speed;
 		_actualSpeedDeltaPerSec = _speedDeltaPerSec;
 		_actualMaxAngularVelocity = _maxAngularVelocity;
-		StartCoroutine(IgnoreStaticObjectForMoment(0.45f));
+		StartCoroutine(IgnoreStaticObjectForMoment(0.35f));
 	}
 
 	protected override void OnDisable()
@@ -80,19 +85,8 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 
 	void FixedUpdate()
 	{
-		if (!IsIllusion && _collisionEventList.Count > 0)
+		if (!IsIllusion && _hit)
 		{
-			_collisionEventList.Clear();
-			IPDS.CreateEffect(
-				"EffectDamage",
-				transform.position,
-				Quaternion.identity,
-				new EffectRpcParameter()
-				{
-					EffectColor = Color.white,
-					Data1 = _collisionEvent.Damage
-				});
-
 			IPDS.CreateEffect(
 				"EffectNoise",
 				transform.position,
@@ -103,7 +97,7 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 				});
 
 			IPDS.CreateProjectile(
-				"FragmentBullet",
+				_fragmentProjectileName,
 				(Vector2)transform.position,
 				Quaternion.identity,
 				new ProjectileRpcParameter()
@@ -112,9 +106,9 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 					{
 						SenderId = OwnerClientId,
 						Effect = CollisionEffect.Stopping,
-						EffectDuration = 0.333f,
+						EffectDuration =_stoppingDuration,
 						EffectIntensity = 0f,
-						Damage = 16
+						Damage = _fragmentDamage
 					},
 					LifeTime = 1f
 				});
@@ -150,25 +144,12 @@ public class BulletMissile : PooledProjectileBase, IProjectileSetting
 
 		var ci = collision.GetComponentInParent<INetworkObjectCollision>();
 
-		if (ci != null && _collisionEventList.Count == 0)
+		if (ci != null && !_hit)
 		{
 			_collisionEvent.Position = transform.position;
 			_collisionEvent.Direction = transform.right;
 			ci.SendCollisionEvent(_collisionEvent);
-			var ce = ci.GetCollisionEvent();
-			_collisionEventList.Add(ce);
-			if (ce.Effect != CollisionEffect.None)
-			{
-				IPDS.CreateEffect(
-					"EffectDamage",
-					transform.position,
-					Quaternion.identity,
-					new EffectRpcParameter()
-					{
-						EffectColor = EffectColor,
-						Data1 = _collisionEvent.Damage
-					});
-			}
+			_hit = true;
 		}
 	}
 

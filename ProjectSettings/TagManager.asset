@@ -48,6 +48,9 @@ TagManager:
   - name: StaticObejct
     uniqueID: 2268750443
     locked: 0
+  - name: BackEffect
+    uniqueID: 1599035681
+    locked: 0
   - name: Enemy
     uniqueID: 704004111
     locked: 0

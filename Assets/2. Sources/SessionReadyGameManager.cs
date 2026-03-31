@@ -265,7 +265,7 @@ public class SessionGameReadyManager : MonoBehaviour
 
 				switch (clientId)
 				{
-					case 0: _playerInfo.PersonalColor = new Color(1.0f, 0.5f, 0f); break;
+					case 0: _playerInfo.PersonalColor = new Color(0.0f, 0.5f, 1f); break;
 					case 1: _playerInfo.PersonalColor = Color.yellow; break;
 					case 2: _playerInfo.PersonalColor = new Color(0f, 0.5f, 1f); break;
 					case 3: _playerInfo.PersonalColor = Color.magenta; break;
@@ -413,7 +413,6 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	void OnReady()
 	{
-		GLogger.Log("OnReady");
 		if (!_connected)
 		{
 			GLogger.LogWarning("OnReady Not connected");
@@ -432,11 +431,9 @@ public class SessionGameReadyManager : MonoBehaviour
 					ready++;
 				}
 			}
-			GLogger.Log($"ready = {ready} / count = {count}");
+			//GLogger.Log($"ready = {ready} / count = {count}");
 			if (count == ready + 1)
 			{
-				GLogger.LogWarning("ALL READY. START GAME");
-
 				LoadSceneNetwork(_nextSceneName);
 			}
 		}

@@ -11,3 +11,17 @@ public interface IUIItemPickerPanel
 	public int GetSelectedIndex();
 	public bool IsShowingItemPicker();
 }
+
+public interface IUIStatusIndicator
+{
+	public void ShowIndicator(bool show);
+	public void UpdateIndicator(int health, int shield, string buff = "");
+	public void UpdateIndicatorPosition(Vector2 position);
+}
+
+// deprecated
+public interface IUIBuffSlotPanel
+{
+	public void AddBuff(string buff);
+	public void RemoveBuff();
+}

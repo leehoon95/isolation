@@ -22,6 +22,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner, IPlayerSpawnObser
 	Dictionary<ulong, IPlayerHandler> _activedPlayer;
 
 	public event UnityAction<IPlayerHandler> PlayerSpawned;
+	public event UnityAction<IPlayerHandler> PlayerDespawned;
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
@@ -77,5 +78,10 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner, IPlayerSpawnObser
 	public void NotifyPlayerSpawned(IPlayerHandler ph)
 	{
 		PlayerSpawned?.Invoke(ph);
+	}
+
+	public void NotifyPlayerDespawned(IPlayerHandler ph)
+	{
+		PlayerDespawned?.Invoke(ph);
 	}
 }

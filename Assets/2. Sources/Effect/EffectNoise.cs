@@ -25,6 +25,8 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 	float _startAlpha = 1f;
 	[SerializeField]
 	float _endAlpha = 0f;
+	[SerializeField]
+	bool _reduceSizeEffect;
 
 	MaterialPropertyBlock _materialPropertyBlock;
 
@@ -35,10 +37,15 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 
 	void OnEnable()
 	{
-		var main = _particleSystem.main;
-		main.startLifetime = _particleLifeTime;
-		main.startColor = _areaColor;
+		_particleSystem.Stop();
+		transform.localScale = new Vector3(3f, 3f, 1f);
+	
 		StartCoroutine(ProcessNoise());
+
+		if (_reduceSizeEffect)
+		{
+			StartCoroutine(ReduceSizeAndRelease());
+		}
 	}
 
 	void OnDisable()
@@ -48,8 +55,13 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 
 	IEnumerator ProcessNoise()
 	{
+		yield return null;
+		
 		float time = 0f;
 		float endTime = Mathf.Max(_particleLifeTime, _noiseLifeTime);
+		var main = _particleSystem.main;
+		main.startLifetime = _particleLifeTime;
+		main.startColor = _areaColor;
 		_particleSystem.Play();
 
 		while (time < endTime)
@@ -63,6 +75,23 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 		}
 
 		ReleaseObject();
+	}
+
+	IEnumerator ReduceSizeAndRelease()
+	{
+		float time = 0f;
+		float endTime = Mathf.Max(_particleLifeTime, _noiseLifeTime);
+		var scale = transform.localScale;
+		yield return null;
+
+		while (time < endTime)
+		{
+			var s = Mathf.Lerp(scale.x, 0f, time / endTime);
+			transform.localScale = new Vector3(s, s, 0f);
+
+			time += Time.deltaTime;
+			yield return null;
+		}
 	}
 
 	public void SetEffectParameter(in EffectRpcParameter param)

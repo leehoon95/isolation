@@ -26,12 +26,12 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 	Vector2 _startPosition;
 	Vector2 _targetPosition;
 	Color _effectColor;
-	List<CollisionEvent> _collisionEventList = new();
+	bool _hit = false;
 	CollisionEvent _collisionEvent = new()
 	{
 		Position = Vector2.zero,
 		Direction = Vector2.right,
-		Effect = CollisionEffect.Knockback,
+		Effect = CollisionEffect.Hit,
 		EffectDuration = 0f,
 		EffectIntensity = 0f,
 		Damage = 20
@@ -57,11 +57,8 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 	}
 	void FixedUpdate()
 	{
-		if (!IsIllusion && _collisionEventList.Count > 0)
+		if (!IsIllusion && _hit)
 		{
-			//var ce = _collisionEventList.First();
-			//_collisionEventList.RemoveAt(0);
-			_collisionEventList.Clear();
 			ReleaseObject();
 			return;
 		}
@@ -80,23 +77,12 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 
 		var ci = collision.GetComponentInParent<INetworkObjectCollision>();
 
-		if (ci != null)
+		if (ci != null && !_hit)
 		{
 			_collisionEvent.Position = transform.position;
 			_collisionEvent.Direction = transform.right;
 			ci.SendCollisionEvent(_collisionEvent);
-			var ce = ci.GetCollisionEvent();
-			_collisionEventList.Add(ce);
-
-			IPDS.CreateEffect(
-				"EffectDamage",
-				collision.transform.position,
-				Quaternion.identity,
-				new EffectRpcParameter()
-				{
-					EffectColor = Color.red,
-					Data1 = _collisionEvent.Damage
-				});
+			_hit = true;
 		}
 	}
 

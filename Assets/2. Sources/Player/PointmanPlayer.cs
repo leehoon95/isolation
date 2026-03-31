@@ -1,11 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Netcode;
-using UnityEditor;
+using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 
 [DisallowMultipleComponent]
@@ -28,21 +28,18 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	PlayerHand _hand;
 	[SerializeField]
 	PlayerCameraTarget _cameraTarget;
+	[Header("Spec")]
+	[SerializeField]
+	float _speed;
 
 	NetworkVariable<int> _health = new(
-		100, 
+		6, 
 		NetworkVariableReadPermission.Everyone, 
 		NetworkVariableWritePermission.Owner);
-	//NetworkVariable<string> _leftWeaponName = new(
-	//	"null",
-	//	NetworkVariableReadPermission.Everyone,
-	//	NetworkVariableWritePermission.Owner
-	//	);
-	//NetworkVariable<string> _rightWeaponName = new(
-	//	"null",
-	//	NetworkVariableReadPermission.Everyone,
-	//	NetworkVariableWritePermission.Owner
-	//	);
+	NetworkVariable<int> _shield = new(
+		0,
+		NetworkVariableReadPermission.Everyone,
+		NetworkVariableWritePermission.Owner);
 	IWeaponInterface _leftWeapon;
 	IWeaponInterface _rightWeapon;
 	IPlayerSpawnObserver _spawnObserver;
@@ -58,7 +55,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	string _nickname;
 	Color _personalColor;
 	float _angle;
-	long _lastFiredTime = 0;
 	List<CollisionEvent> _collisionEventList = new();
 	CollisionEvent _collisionEventCache = new()
 	{
@@ -69,6 +65,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		Damage = 0,
 	};
 	long _lastHealthRecoveryTime;
+	Dictionary<string, Coroutine> _buffApplied = new();
 
 	public string Nickname
 	{
@@ -93,44 +90,20 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	public Transform CameraTarget => _cameraTarget.transform;
 	public IPooledDynamicSpawner IPDS { get; set; }
 
-	public override void OnNetworkSpawn()
+	void Awake()
 	{
-		_spawnObserver.NotifyPlayerSpawned(this);
-		if (!IsOwner)
-		{
-			_hand.gameObject.SetActive(false);
-			_collider.gameObject.SetActive(false);
-			_colliderTrigger.gameObject.SetActive(false);
-			return;
-		}
-		
-		
-		_collider.gameObject.SetActive(true);
-		_colliderTrigger.gameObject.SetActive(true);
-		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
-		_health.OnValueChanged += HealthChanged;
-		_health.Value = 100;
-		_hand.OnGrabbedItem += OnGrabbedItem;
-		_hand.OnGetBuffItem += OnGetBuffItem;
-		_hand.ActiveHand();
-		_spawner = FindAnyObjectByType<PlayerSpawner>();
-		_weaponContainer.IPDS = IPDS;
-		_weaponContainer.PersonalColor = PersonalColor;
-
-		InputSystem.Move += OnMove;
-		InputSystem.LeftTrigger += OnLeftTrigger;
-		InputSystem.RightTrigger += OnRightTrigger;
-		InputSystem.UseItem += OnUseItem;
-
 		_collisionEventCache.SenderId = NetworkObjectId;
 	}
 
+	public override void OnNetworkSpawn()
+	{
+		OnPlayerSpawned();
+	}
+
+
 	public override void OnNetworkDespawn()
 	{
-		if (!IsOwner)
-		{
-			return;
-		}
+		OnPlayerDespawned();
 	}
 
 	void Update()
@@ -146,6 +119,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			_uiso.MoveItemPicket(_grabbedItem.GO.transform.position);
 		}
+
+		_uiso.UpdateIndicatorPosition(transform.position);
 	}
 
 	void FixedUpdate()
@@ -159,13 +134,39 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			var ce = _collisionEventList[0];
 			_collisionEventList.RemoveAt(0);
-			_health.Value -= ce.Damage;
+
+			if (_shield.Value > 0)
+			{
+				_shield.Value -= ce.Damage > 0 ? 1 : 0;
+				GLogger.Log($"Health {_shield.Value}");
+			}
+			else
+			{
+				_health.Value -= ce.Damage > 0 ? 1 : 0;
+			}
+
+			if (ce.Effect > CollisionEffect.None
+				&& ce.Effect < CollisionEffect.Block)
+			{
+				var closestPoint = _colliderTrigger.ClosestPoint(ce.Position);
+				var erp = new EffectRpcParameter()
+				{
+					EffectColor = Color.red
+				};
+				erp.Data.Append(1);
+
+				IPDS.CreateEffect(
+					"EffectDamage",
+					closestPoint,
+					Quaternion.identity,
+					erp);
+			}
 		}
 
 		long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
-		if (now - _lastHealthRecoveryTime > 3000)
+		if (now - _lastHealthRecoveryTime > 10000)
 		{
-			_health.Value += 5;
+			_health.Value = Mathf.Min(_health.Value + 1, 6);
 
 			_lastHealthRecoveryTime = now;
 		}
@@ -174,7 +175,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 		var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 		var toMouseVector = mousePosition - (Vector2)transform.position;
-		float gunCorrectionAngle = 0f;
+		//float gunCorrectionAngle = 0f;
 
 		/*
 		 * 캐릭터 한 쪽에 정확히 조준해야 하는 로직이 있어야 하는 경우
@@ -200,61 +201,201 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		//	}
 		//}
 
-		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg + gunCorrectionAngle;
+		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg;// + gunCorrectionAngle;
 
 		if (_inputMovement.sqrMagnitude > float.Epsilon)
 		{
-			var newPosition = _rigidbody.position + _inputMovement.normalized * 5f * Time.fixedDeltaTime;
+			var newPosition = _rigidbody.position + _inputMovement.normalized * _speed * Time.fixedDeltaTime;
 			_rigidbody.MovePosition(newPosition);
 		}
 
 		_weaponContainer.TargetPosition = mousePosition;
 		_weaponContainer.Trigger(_inputLeftTrigger);
-		if (_inputLeftTrigger)
-		{
-			
-			//if (_inputLeftTrigger && ((now - _lastFiredTime) >= 100))
-			//{
-			//	var muzzle = mousePosition.normalized;
-			//	IPDS.CreateProjectile(
-			//		"BulletNormal",
-			//		(Vector2)transform.position,
-			//		Quaternion.Euler(0f, 0f, _angle + 90),
-			//		new ProjectileRpcParameter()
-			//		{
-			//			StartPosition = transform.position,
-			//			TartgetPosition = mousePosition + new Vector2(
-			//				UnityEngine.Random.Range(-0.2f, 0.2f), 
-			//				UnityEngine.Random.Range(-0.5f, 0.5f)),
-			//			CollisionEvent = new CollisionEventStruct()
-			//			{
-			//				SenderId = NetworkObjectId,
-			//				Effect = CollisionEffect.Knockback,
-			//				EffectDuration = 0.025f,
-			//				EffectIntensity = 1.5f,
-			//				Damage = 10
-			//			},
-			//			EffectColor = _personalColor,
-			//			LifeTime = 5f,
-			//		});
-
-			//	_lastFiredTime = now;
-			//}
-		}
 	}
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
+		if (!IsOwner)
+		{
+			return;
+		}
+
 		var ci = collision.gameObject.GetComponentInParent<INetworkObjectCollision>();
 		if (ci != null)
 		{
 			ci.SendCollisionEvent(_collisionEventCache);
+			return;
+		}
+
+		var itemHandler = collision.gameObject.GetComponentInParent<IItemHandler>();
+		if (itemHandler != null)
+		{
+			if (itemHandler.ItemType != ItemType.Buff)
+			{
+				return;
+			}
+
+			var effect = itemHandler.ItemEffect;
+			if (effect == "burst")
+			{
+				if (_buffApplied.TryGetValue("burst", out var co))
+				{
+					StopCoroutine(co);
+				}
+				_buffApplied["burst"] = StartCoroutine(Burst(7f));
+				itemHandler.DespawnItemRpc();
+			}
+			else if (effect == "shield")
+			{
+				_shield.Value = 3;
+			}
+			else if (effect == "bomb")
+			{
+				IPDS.CreateEffect(
+					"EffectBombGuidanceIndicator",
+					transform.position,
+					Quaternion.identity,
+					new EffectRpcParameter()
+					{
+						EffectColor = _personalColor
+					});
+			}
+			else if (effect == "heal")
+			{
+				_health.Value += 1;
+			}
+			else
+			{
+				GLogger.Log($"Unknown item {effect}");
+			}
+
+			itemHandler.DespawnItemRpc();
 		}
 	}
 
-	void HealthChanged(int previousValue, int newValue)
+	void OnPlayerSpawned()
+	{
+		_spawnObserver.NotifyPlayerSpawned(this);
+		_weaponContainer.PersonalColor = PersonalColor;
+
+		if (!IsOwner)
+		{
+			_hand.gameObject.SetActive(false);
+			_collider.gameObject.SetActive(false);
+			_colliderTrigger.gameObject.SetActive(false);
+			return;
+		}
+
+		_collider.gameObject.SetActive(true);
+		_colliderTrigger.gameObject.SetActive(true);
+		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+
+		_health.Value = 6;
+		_shield.Value = 0;
+		_health.OnValueChanged += StatusChanged;
+		_shield.OnValueChanged += StatusChanged;
+		_bodyIndicator.MaxHealth = 6;
+		_bodyIndicator.Health = 6;
+		_uiso.UpdateIndicator(_health.Value, _shield.Value, null);
+		_hand.OnGrabbedItem += OnGrabbedItem;
+		_hand.ActivateHand();
+		_spawner = FindAnyObjectByType<PlayerSpawner>();
+		_weaponContainer.IPDS = IPDS;
+
+		InputSystem.Move += OnMove;
+		InputSystem.LeftTrigger += OnLeftTrigger;
+		InputSystem.RightTrigger += OnRightTrigger;
+		InputSystem.UseItem += OnUseItem;
+	}
+
+	public void OnPlayerDespawned()
+	{
+		_spawnObserver.NotifyPlayerDespawned(this);
+
+		if (!IsOwner)
+		{
+			_hand.gameObject.SetActive(false);
+			_collider.gameObject.SetActive(false);
+			_colliderTrigger.gameObject.SetActive(false);
+			return;
+		}
+
+		_collider.gameObject.SetActive(false);
+		_colliderTrigger.gameObject.SetActive(true);
+
+		_health.OnValueChanged -= StatusChanged;
+		_shield.OnValueChanged -= StatusChanged;
+		_hand.OnGrabbedItem -= OnGrabbedItem;
+		_hand.DeactivateHand();
+
+		InputSystem.Move -= OnMove;
+		InputSystem.LeftTrigger -= OnLeftTrigger;
+		InputSystem.RightTrigger -= OnRightTrigger;
+		InputSystem.UseItem -= OnUseItem;
+	}
+
+	IEnumerator Burst(float time)
+	{
+		var t = 0f;
+		float t2 = 0f;
+
+		_weaponContainer.ApplyBuff("burst");
+		_uiso.UpdateIndicator(
+			_health.Value,
+			_shield.Value,
+			"burst");
+
+		while (t < time)
+		{
+			if (t2 >= 0.08f)
+			{
+				IPDS.CreateEffect(
+					"EffectBurst",
+					transform.position,
+					transform.rotation,
+					new EffectRpcParameter()
+					{
+						EffectColor = PersonalColor,
+					});
+				t2 = 0f;
+			}
+
+			t += Time.deltaTime;
+			t2 += Time.deltaTime;
+			yield return null;
+		}
+
+		_weaponContainer.RemoveBuff();
+		_buffApplied.Remove("burst");
+		_uiso.UpdateIndicator(
+			_health.Value,
+			_shield.Value,
+			"");
+	}
+
+	void StatusChanged(int previousValue, int newValue)
 	{
 		_bodyIndicator.Health = newValue;
+
+		_uiso.UpdateIndicator(
+			_health.Value, 
+			_shield.Value,
+			null);
+
+		if (newValue == 0)
+		{
+			GLogger.Log($"Player {OwnerClientId} is Dead");
+			StopAllCoroutines();
+			_colliderTrigger.gameObject.SetActive(false);
+			_collider.gameObject.SetActive(false);
+
+			if (IsOwner)
+			{
+				_hand.DeactivateHand();
+				_weaponContainer.Stop();
+				_uiso.ShowIndicator(false);
+			}
+		}
 	}
 
 	void OnGrabbedItem(IItemHandler itemHandler)
@@ -325,7 +466,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			var onlyFront = _grabbedItem.IsOnlyFront;
 			
 
-			GLogger.Log($"Use item at {index} {_grabbedItem.ItemEffect} onlyFront: {_grabbedItem.IsOnlyFront}");
+			//GLogger.Log($"Use item at {index} {_grabbedItem.ItemEffect} onlyFront: {_grabbedItem.IsOnlyFront}");
 			_weaponContainer.SetWeaponRpc(index, effect);
 			_grabbedItem.DespawnItemRpc();
 			_uiso.HideItemPicker();

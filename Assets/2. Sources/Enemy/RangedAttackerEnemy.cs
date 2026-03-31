@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
@@ -36,21 +37,22 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 		base.OnNetworkSpawn();
 		HealthPoint = MaxHealthPoint;
 		_collisionEventList = new();
+		// player 충돌
 		_collisionEventCache = new()
 		{
 			SenderId = 0,
 			Damage = 10,
-			Effect = CollisionEffect.Pop,
+			Effect = CollisionEffect.Hit,
 		};
 		_attackProjectileCache = new()
 		{
 			CollisionEvent = new CollisionEventStruct()
 			{
 				SenderId = 0,
-				Effect = CollisionEffect.None,
+				Effect = CollisionEffect.Hit,
 				Damage = 5
 			},
-			LifeTime = 5f,
+			LifeTime = 8f,
 			EffectColor = new Color(0f, 1f, 170f / 255f)
 		};
 		_path = new();
@@ -64,6 +66,11 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 
 	public override void OnNetworkDespawn()
 	{
+		if (!IsHost)
+		{
+			return;
+		}
+
 		StopCoroutine(_calculatePathCo);
 	}
 
@@ -88,6 +95,23 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 			_collisionEventList.RemoveAt(0);
 			HealthPoint -= ce.Damage;
 			//GLogger.Log($"damage: {HealthPoint} {ce.Damage}");
+			if (ce.Effect > CollisionEffect.None
+				&& ce.Effect < CollisionEffect.Block)
+			{
+				var closestPoint = _colliderTrigger.ClosestPoint(ce.Position);
+				var erp = new EffectRpcParameter()
+				{
+					EffectColor = Color.red
+				};
+				erp.Data.Append(ce.Damage);
+
+				IPDS.CreateEffect(
+					"EffectDamage",
+					closestPoint,
+					Quaternion.identity,
+					erp);
+			}
+
 			if (HealthPoint == 0)
 			{
 				DespawnThisEnemy();
@@ -107,6 +131,14 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 			}
 			else if (ce.Effect == CollisionEffect.Block)
 			{
+				if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(ce.SenderId, out var obj))
+				{
+					_collisionEventCache.Position = transform.position;
+					var pp = obj.GetComponent<PointmanPlayer>();
+					pp.SendCollisionEvent(
+						new CollisionEvent().FromCollisionEventStruct(_collisionEventCache));
+				}
+
 				DespawnThisEnemy();
 				return;
 			}
@@ -130,7 +162,7 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 					_attackProjectileCache.TartgetPosition = Target.position;
 
 					IPDS.CreateProjectile(
-						"ParticleBullet",
+						_attackProjectileName,
 						transform.position,
 						//Quaternion.LookRotation(targetDirection, Vector3.back),
 						//Quaternion.AngleAxis(Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg, Vector3.forward),

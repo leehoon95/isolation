@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
@@ -44,7 +45,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 		{
 			SenderId = 0,
 			Damage = 20,
-			Effect = CollisionEffect.Pop,
+			Effect = CollisionEffect.Hit,
 		};
 		_path = new();
 
@@ -53,16 +54,16 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 
 	public override void OnNetworkDespawn()
 	{
-		StopCoroutine(_calculatePathCo);
-	}
-
-	void Update()
-	{
 		if (!IsHost)
 		{
 			return;
 		}
 
+		StopCoroutine(_calculatePathCo);
+	}
+
+	void Update()
+	{
 		for (int i = 0; i < _teeth.Count(); ++i)
 		{
 			_teeth[i].transform.RotateAround(transform.position, Vector3.forward, _teethSpeed[i] * Time.deltaTime);
@@ -81,7 +82,25 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			var ce = _collisionEventList.First();
 			_collisionEventList.RemoveAt(0);
 			HealthPoint -= ce.Damage;
-			GLogger.Log($"{PrefabId} {HealthPoint} {ce.Damage}");
+			//GLogger.Log($"{PrefabId} {HealthPoint} {ce.Damage}");
+			
+			if (ce.Effect > CollisionEffect.None
+				&& ce.Effect < CollisionEffect.Block)
+			{
+				var closestPoint = _colliderTrigger.ClosestPoint(ce.Position);
+				var erp = new EffectRpcParameter()
+				{
+					EffectColor = Color.white
+				};
+				erp.Data.Append(ce.Damage);
+
+				IPDS.CreateEffect(
+					"EffectDamage",
+					closestPoint,
+					Quaternion.identity,
+					erp);
+			}
+
 			if (HealthPoint == 0)
 			{
 				DespawnThisEnemy();
@@ -101,9 +120,10 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			}
 			else if (ce.Effect == CollisionEffect.Block)
 			{
-				// player와 충돌함
+				// player와 충돌해서 이벤트를 전송하고 스스로 despawn한다
 				if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(ce.SenderId, out var obj))
 				{
+					_collisionEventCache.Position = transform.position;
 					var pp = obj.GetComponent<PointmanPlayer>();
 					pp.SendCollisionEvent(
 						new CollisionEvent().FromCollisionEventStruct(_collisionEventCache));
@@ -112,6 +132,10 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 				DespawnThisEnemy();
 				return;
 			}
+
+			
+
+
 		}
 
 		if (!IsEffectInProgress)
@@ -149,12 +173,12 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 				{
 					//GLogger.Log($"path status {_path.status} path count: {_path.corners.Count()}");
 #if UNITY_EDITOR
-					Vector3 prePoint = transform.position;
-					foreach (var point in _path.corners)
-					{
-						Debug.DrawLine(prePoint, point, Color.cyan);
-						prePoint = point;
-					}
+					//Vector3 prePoint = transform.position;
+					//foreach (var point in _path.corners)
+					//{
+					//	Debug.DrawLine(prePoint, point, Color.cyan);
+					//	prePoint = point;
+					//}
 #endif
 				}
 			}

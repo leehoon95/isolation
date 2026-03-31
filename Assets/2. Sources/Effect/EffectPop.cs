@@ -9,20 +9,9 @@ public class EffectPop : PooledEffectBase, IEffectSetting
 
 	Color _effectColor;
 
-	Color EffectColor
-	{
-		get => _effectColor;
-		set
-		{
-			_effectColor = value;
-			var main = _particleSystem.main;
-			main.startColor = _effectColor;
-		}
-	}
-
 	void OnEnable()
 	{
-		_particleSystem.Play();
+		_particleSystem.Stop();
 		var main = _particleSystem.main;
 		var lifeTime = main.startLifetime;
 		StartCoroutine(PlayParticleSystem(lifeTime.constantMax));
@@ -35,12 +24,18 @@ public class EffectPop : PooledEffectBase, IEffectSetting
 
 	IEnumerator PlayParticleSystem(float lifeTime)
 	{
+		yield return null;
+		var main = _particleSystem.main;
+		main.startColor = _effectColor;
+		_particleSystem.Play();
+
 		yield return new WaitForSeconds(lifeTime);
+
 		ReleaseObject();
 	}
 
 	public void SetEffectParameter(in EffectRpcParameter param)
 	{
-		EffectColor = param.EffectColor;
+		_effectColor = param.EffectColor;
 	}
 }

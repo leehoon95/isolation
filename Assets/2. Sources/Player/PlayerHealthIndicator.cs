@@ -5,14 +5,12 @@ public class PlayerBodyIndicator : MonoBehaviour
 {
 	[SerializeField]
 	SpriteRenderer _bodyRenderer;
-	[Range(0, 100)]
-	[SerializeField]
-	int _health;
 	[SerializeField]
 	Color _personalColor = Color.white;
 	[SerializeField]
 	Color _fatalSignColor = Color.black;
 
+	int _health;
 	MaterialPropertyBlock _materialPropertyBlock;
 
 	public Color PersonalColor 
@@ -30,10 +28,12 @@ public class PlayerBodyIndicator : MonoBehaviour
 		get => _health;
 		set
 		{
-			_health = Mathf.Clamp(value, 0, 100);
+			_health = value;
 			UpdateColorMaterialProperty();
 		}
 	}
+
+	public int MaxHealth { get; set; }
 
 #if UNITY_EDITOR
 	void OnValidate()
@@ -55,7 +55,7 @@ public class PlayerBodyIndicator : MonoBehaviour
 			_materialPropertyBlock = new();
 		}
 
-		var rate = _health / 100f;
+		var rate = _health / (float)MaxHealth;
 		_bodyRenderer.GetPropertyBlock(_materialPropertyBlock);
 		_materialPropertyBlock.SetColor("_Color", Color.Lerp(_fatalSignColor, _personalColor, Mathf.Clamp01(rate / 0.25f)));
 		_materialPropertyBlock.SetFloat("_Value", rate);
