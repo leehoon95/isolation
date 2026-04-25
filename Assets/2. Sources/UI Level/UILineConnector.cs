@@ -42,10 +42,13 @@ public class UILineConnector : MaskableGraphic
 		vh.AddTriangle(startIndex + 2, startIndex + 3, startIndex);
 	}
 
+
+#if UNITY_EDITOR
 	// 인스펙터에서 값을 수정할 때 즉시 반영되도록 설정
 	protected override void OnValidate()
 	{
 		base.OnValidate();
 		SetAllDirty();
 	}
+#endif
 }

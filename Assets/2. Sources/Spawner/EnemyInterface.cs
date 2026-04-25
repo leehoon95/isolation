@@ -21,4 +21,7 @@ public interface IEnemySpawner
 		Quaternion rotation,
 		EnemyInstantiateData data,
 		RpcParams rpcParam = default);
+
+	public void NotifyEnemySpawned(IEnemyHandler ph);
+	public void NotifyEnemyDespawned(IEnemyHandler ph);
 }

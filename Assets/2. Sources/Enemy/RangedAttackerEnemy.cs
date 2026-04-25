@@ -29,6 +29,14 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 
 	public override void OnNetworkSpawn()
 	{
+		base.OnNetworkSpawn();
+
+		_teethSpeed.Clear();
+		for (int i = 0; i < _teeth.Count(); ++i)
+		{
+			_teethSpeed.Add(Random.Range(-60, 60));
+		}
+
 		if (!IsHost)
 		{
 			return;
@@ -56,16 +64,14 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 			EffectColor = new Color(0f, 1f, 170f / 255f)
 		};
 		_path = new();
-		_teethSpeed.Clear();
-		for (int i = 0; i < _teeth.Count(); ++i)
-		{
-			_teethSpeed.Add(Random.Range(-60, 60));
-		}
+	
 		_calculatePathCo = StartCoroutine(CalculatePathToTarget());
 	}
 
 	public override void OnNetworkDespawn()
 	{
+		base.OnNetworkDespawn();
+
 		if (!IsHost)
 		{
 			return;
@@ -101,7 +107,7 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 				var closestPoint = _colliderTrigger.ClosestPoint(ce.Position);
 				var erp = new EffectRpcParameter()
 				{
-					EffectColor = Color.red
+					EffectColor = Color.white
 				};
 				erp.Data.Append(ce.Damage);
 
@@ -151,13 +157,8 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 				var targetDirection = Target.position - transform.position;
 				var distance = targetDirection.magnitude;
 				long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
-				if ((now - _lastFiredTime) >= 3000 && distance < 8f)
+				if ((now - _lastFiredTime) >= 3000 && distance < 12f)
 				{
-					if (IPDS == null)
-					{
-						GLogger.Log("ipds is null");
-					}
-
 					_attackProjectileCache.StartPosition = transform.position;
 					_attackProjectileCache.TartgetPosition = Target.position;
 
@@ -171,6 +172,8 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 
 					_lastFiredTime = now;
 				}
+
+				
 			}
 
 			if (_path.corners.Count() > 0)

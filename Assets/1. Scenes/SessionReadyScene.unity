@@ -2486,6 +2486,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas Notification
       objectReference: {fileID: 0}
+    - target: {fileID: 4796638545042877938, guid: e03547231f5da8149939f298b5c9263e, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 624015778}
     - target: {fileID: 5345601670698244045, guid: e03547231f5da8149939f298b5c9263e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -3179,7 +3183,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 169197639}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.99999994
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4208,8 +4212,8 @@ SceneRoots:
   - {fileID: 1098024021}
   - {fileID: 1623027952}
   - {fileID: 1853624277}
+  - {fileID: 434195785}
   - {fileID: 967842751}
   - {fileID: 17376023}
   - {fileID: 1862217027}
-  - {fileID: 434195785}
   - {fileID: 1422146576}

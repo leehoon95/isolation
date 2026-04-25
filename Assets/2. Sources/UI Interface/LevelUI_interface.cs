@@ -19,6 +19,12 @@ public interface IUIStatusIndicator
 	public void UpdateIndicatorPosition(Vector2 position);
 }
 
+public interface IUICurtain
+{
+	public void Open();
+	public void Close();
+}
+
 // deprecated
 public interface IUIBuffSlotPanel
 {

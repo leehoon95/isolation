@@ -1,10 +1,7 @@
-using Mono.Cecil;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class MovingWall : NetworkBehaviour, INetworkObjectCollision
 {

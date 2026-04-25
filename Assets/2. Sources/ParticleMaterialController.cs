@@ -1,6 +1,10 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
+/*
+ * deprecate
+ * MaterialPropertyBlock 또는 ParticleSystem 인터페이스를 사용할 것
+ */
 public class ParticleMaterialController : MonoBehaviour
 {
 	[SerializeField]

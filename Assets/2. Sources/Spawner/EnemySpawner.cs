@@ -3,6 +3,8 @@ using System.Linq;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 
 
@@ -16,6 +18,9 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	PlayerSpawner _playerSpawner;
 	[SerializeField]
 	List<PoolConfig> _poolConfig;
+
+	public event UnityAction<string> EnemySpawned;
+	public event UnityAction<string, Vector2> EnemyDespawned;
 	
 	EnemyPrefabWithDataHandler _spawnHandler;
 	Dictionary<ulong, IEnemyHandler> _activedEnemys;
@@ -28,7 +33,7 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 			_poolConfig,
 			this,
 			_pds);
-
+		
 		if (networkManager.IsHost)
 		{
 			_activedEnemys = new();
@@ -73,5 +78,15 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	public List<IEnemyHandler> GetEnemys()
 	{
 		return _activedEnemys.Values.ToList();
+	}
+
+	public void NotifyEnemySpawned(IEnemyHandler ph)
+	{
+		EnemySpawned?.Invoke(ph.PrefabId);
+	}
+
+	public void NotifyEnemyDespawned(IEnemyHandler ph)
+	{
+		EnemyDespawned?.Invoke(ph.PrefabId, ph.GO.transform.position);
 	}
 }

@@ -27,6 +27,8 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 
 	public override void OnNetworkSpawn()
 	{
+		base.OnNetworkSpawn();
+
 		_teethSpeed.Clear();
 		for (int i = 0; i < _teeth.Count(); ++i)
 		{
@@ -37,8 +39,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 		{
 			return;
 		}
-
-		base.OnNetworkSpawn();
+		
 		HealthPoint = MaxHealthPoint;
 		_collisionEventList = new();
 		_collisionEventCache = new()
@@ -54,6 +55,8 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 
 	public override void OnNetworkDespawn()
 	{
+		base.OnNetworkDespawn();
+
 		if (!IsHost)
 		{
 			return;
@@ -124,7 +127,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 				if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(ce.SenderId, out var obj))
 				{
 					_collisionEventCache.Position = transform.position;
-					var pp = obj.GetComponent<PointmanPlayer>();
+					var pp = obj.GetComponent<INetworkObjectCollision>();
 					pp.SendCollisionEvent(
 						new CollisionEvent().FromCollisionEventStruct(_collisionEventCache));
 				}
@@ -132,10 +135,6 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 				DespawnThisEnemy();
 				return;
 			}
-
-			
-
-
 		}
 
 		if (!IsEffectInProgress)

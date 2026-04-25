@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1. Scenes/LobbyScene.unity
     guid: 8ca7c767f19559441b66514925c0a03a
-  - enabled: 1
+  - enabled: 0
     path: Assets/1. Scenes/NGOTestScene.unity
     guid: 357692c9a527eb841928f29c1c278203
   - enabled: 1
@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1. Scenes/Level0_Scene.unity
     guid: 97163bbef5129b642b8dd91a92770f0e
+  - enabled: 1
+    path: Assets/1. Scenes/GameResultScene.unity
+    guid: 9508130c870dbe743851d3f60ed3a1a7
   - enabled: 0
     path: Assets/1. Scenes/NetworkBootLoader.unity
     guid: f41105f384bc78a408b4ffa447d16e9b

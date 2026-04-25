@@ -1956,7 +1956,7 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:91918a507bae7dc47b3d39959a4cb643
     m_TableEntryReference:
-      m_KeyId: 12817835333640192
+      m_KeyId: 28904390436728832
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -2027,7 +2027,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19.65
+  m_fontSize: 46
   m_fontSizeBase: 23.23
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6343,6 +6343,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas Notification
       objectReference: {fileID: 0}
+    - target: {fileID: 4796638545042877938, guid: e03547231f5da8149939f298b5c9263e, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1494921487}
     - target: {fileID: 5345601670698244045, guid: e03547231f5da8149939f298b5c9263e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -6526,7 +6530,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8973013620091590711}
   m_HandleRect: {fileID: 6134813982544686095}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -6998,7 +7002,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 804454778423457929}
   m_HandleRect: {fileID: 5649893862285616335}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8534,7 +8538,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1434942658629753368}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

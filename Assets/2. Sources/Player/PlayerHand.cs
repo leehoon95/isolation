@@ -1,12 +1,7 @@
-using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
-using Unity.VisualScripting;
-using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.PlayerLoop;
 
 [RequireComponent(typeof(Collider2D))]
 public class PlayerHand : MonoBehaviour
@@ -23,7 +18,7 @@ public class PlayerHand : MonoBehaviour
 	Coroutine _calcCo;
 
 	public event UnityAction<IItemHandler> OnGrabbedItem;
-	public event UnityAction<IItemHandler> OnGetBuffItem;
+	//public event UnityAction<IItemHandler> OnGetBuffItem;
 
 	public void ActivateHand()
 	{

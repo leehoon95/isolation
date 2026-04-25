@@ -36,7 +36,7 @@ public class UINotification : UIBehaviour, INotificationUI
 		{
 			StopCoroutine(_cachedCoroutin);
 
-			_animator.SetTrigger("Hide");
+			_animator.SetTrigger("Off");
 			_mask.SetActive(false);
 		}
 

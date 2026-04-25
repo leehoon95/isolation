@@ -1,11 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 
 [DisallowMultipleComponent]
@@ -21,16 +20,18 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	[SerializeField]
 	WeaponContainer _weaponContainer;
 	[SerializeField]
-	SpriteRenderer _bodyInlineSprite;
-	[SerializeField]
-	PlayerBodyIndicator _bodyIndicator;
+	SpriteRenderer _bodySprite;
 	[SerializeField]
 	PlayerHand _hand;
 	[SerializeField]
 	PlayerCameraTarget _cameraTarget;
+	[SerializeField]
+	SortingGroup _sortingGroup;
 	[Header("Spec")]
 	[SerializeField]
-	float _speed;
+	float _speedNormal;
+	[SerializeField]
+	float _speedBursted;
 
 	NetworkVariable<int> _health = new(
 		6, 
@@ -42,17 +43,14 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		NetworkVariableWritePermission.Owner);
 	IWeaponInterface _leftWeapon;
 	IWeaponInterface _rightWeapon;
-	IPlayerSpawnObserver _spawnObserver;
 	UILevelSO _uiso;
-	PlayerSpawner _spawner;
 	IItemHandler _grabbedItem;
 	bool _grabbed;
 
 	Vector2 _inputMovement;
 	bool _inputLeftTrigger;
 	bool _inputRightTrigger;
-
-	string _nickname;
+	float _speed;
 	Color _personalColor;
 	float _angle;
 	List<CollisionEvent> _collisionEventList = new();
@@ -67,10 +65,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	long _lastHealthRecoveryTime;
 	Dictionary<string, Coroutine> _buffApplied = new();
 
-	public string Nickname
-	{
-		set => _nickname = value;
-	}
+	public string Nickname { get; set; }
 
 	public Color PersonalColor 
 	{
@@ -78,32 +73,42 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		set
 		{
 			_personalColor = value;
-			_bodyIndicator.PersonalColor = value;
-			_bodyInlineSprite.color = value;
+			_bodySprite.color = value;
 		}
 	}
 
 	public InputSystem InputSystem { get; set; }
 	public NetworkObject NO => NetworkObject;
 	public GameObject GO => gameObject;
-	public IPlayerSpawnObserver SpawnObserver { set => _spawnObserver = value; }
+	public IPlayerSpawner Spawner { get; set; }
 	public Transform CameraTarget => _cameraTarget.transform;
 	public IPooledDynamicSpawner IPDS { get; set; }
-
-	void Awake()
-	{
-		_collisionEventCache.SenderId = NetworkObjectId;
-	}
+	public Vector3 SpawnPosition { get; set; }
+	public ulong SpawnClientId { get; set; }
+	public bool AutomaticMotion { get; set; }
 
 	public override void OnNetworkSpawn()
 	{
-		OnPlayerSpawned();
+		GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
+		Spawner.NotifyPlayerSpawned(this);
+		if (OwnerClientId == SpawnClientId)
+		{
+			OnPlayerSpawned();
+		}
 	}
-
 
 	public override void OnNetworkDespawn()
 	{
 		OnPlayerDespawned();
+	}
+
+	protected override void OnOwnershipChanged(ulong previous, ulong current)
+	{
+		GLogger.Log($"pp OnOwnershipChanged {previous} to {current}. IsOwner: {IsOwner}");
+		if (IsOwner)
+		{
+			OnPlayerSpawned();
+		}
 	}
 
 	void Update()
@@ -121,6 +126,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		}
 
 		_uiso.UpdateIndicatorPosition(transform.position);
+
+		var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+		var toMouseVector = mousePosition - (Vector2)transform.position;
+		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg;
+		_weaponContainer.TargetPosition = mousePosition;
 	}
 
 	void FixedUpdate()
@@ -130,15 +140,36 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			return;
 		}
 
-		while (_collisionEventList.Count > 0)
+		if (AutomaticMotion)
+		{
+			var ph = Spawner.GetPlayer(0);
+			if (ph == null)
+			{
+				//GLogger.Log($"AutomaticMotion ph is null");
+				return;
+			}
+
+			var direction = ph.GO.transform.position - transform.position;
+			var distance = direction.magnitude;
+			
+			if (distance > 2f)
+			{
+				var newPosition = _rigidbody.position + (Vector2)direction.normalized * _speed * Time.fixedDeltaTime;
+				_rigidbody.MovePosition(newPosition);
+			}
+		
+
+			return;
+		}
+
+		while (_collisionEventList.Count > 0 && false)
 		{
 			var ce = _collisionEventList[0];
 			_collisionEventList.RemoveAt(0);
-
+			
 			if (_shield.Value > 0)
 			{
 				_shield.Value -= ce.Damage > 0 ? 1 : 0;
-				GLogger.Log($"Health {_shield.Value}");
 			}
 			else
 			{
@@ -164,17 +195,24 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		}
 
 		long now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
-		if (now - _lastHealthRecoveryTime > 10000)
+		if (now - _lastHealthRecoveryTime > 5000)
 		{
 			_health.Value = Mathf.Min(_health.Value + 1, 6);
 
 			_lastHealthRecoveryTime = now;
 		}
 
-		_health.Value = Mathf.Clamp(_health.Value, 0, 100);
+		_weaponContainer.Trigger(_inputLeftTrigger);
 
-		var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-		var toMouseVector = mousePosition - (Vector2)transform.position;
+		if (_inputMovement.sqrMagnitude > float.Epsilon)
+		{
+			var newPosition = _rigidbody.position + _inputMovement.normalized * _speed * Time.fixedDeltaTime;
+			_rigidbody.MovePosition(newPosition);
+			//_rigidbody.linearVelocity = _inputMovement.normalized * _speed;
+			//_anticipatedNetworkTransform.AnticipateMove(
+			//	_rigidbody.position + _inputMovement.normalized * _speed * Time.deltaTime);
+		}
+
 		//float gunCorrectionAngle = 0f;
 
 		/*
@@ -201,16 +239,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		//	}
 		//}
 
-		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg;// + gunCorrectionAngle;
 
-		if (_inputMovement.sqrMagnitude > float.Epsilon)
-		{
-			var newPosition = _rigidbody.position + _inputMovement.normalized * _speed * Time.fixedDeltaTime;
-			_rigidbody.MovePosition(newPosition);
-		}
-
-		_weaponContainer.TargetPosition = mousePosition;
-		_weaponContainer.Trigger(_inputLeftTrigger);
 	}
 
 	void OnTriggerEnter2D(Collider2D collision)
@@ -275,7 +304,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	void OnPlayerSpawned()
 	{
-		_spawnObserver.NotifyPlayerSpawned(this);
+		GLogger.Log($"OnPlayerSpawned initialize {NetworkManager.LocalClientId}");
+		
 		_weaponContainer.PersonalColor = PersonalColor;
 
 		if (!IsOwner)
@@ -285,6 +315,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			_colliderTrigger.gameObject.SetActive(false);
 			return;
 		}
+		
+		_collisionEventCache.SenderId = NetworkObjectId;
 
 		_collider.gameObject.SetActive(true);
 		_colliderTrigger.gameObject.SetActive(true);
@@ -294,13 +326,13 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		_shield.Value = 0;
 		_health.OnValueChanged += StatusChanged;
 		_shield.OnValueChanged += StatusChanged;
-		_bodyIndicator.MaxHealth = 6;
-		_bodyIndicator.Health = 6;
 		_uiso.UpdateIndicator(_health.Value, _shield.Value, null);
+
+		_hand.gameObject.SetActive(true);
 		_hand.OnGrabbedItem += OnGrabbedItem;
 		_hand.ActivateHand();
-		_spawner = FindAnyObjectByType<PlayerSpawner>();
 		_weaponContainer.IPDS = IPDS;
+		_speed = _speedNormal;
 
 		InputSystem.Move += OnMove;
 		InputSystem.LeftTrigger += OnLeftTrigger;
@@ -310,13 +342,10 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	public void OnPlayerDespawned()
 	{
-		_spawnObserver.NotifyPlayerDespawned(this);
+		Spawner.NotifyPlayerDespawned(this);
 
 		if (!IsOwner)
 		{
-			_hand.gameObject.SetActive(false);
-			_collider.gameObject.SetActive(false);
-			_colliderTrigger.gameObject.SetActive(false);
 			return;
 		}
 
@@ -344,6 +373,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			_health.Value,
 			_shield.Value,
 			"burst");
+		_speed = _speedBursted;
 
 		while (t < time)
 		{
@@ -365,6 +395,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			yield return null;
 		}
 
+		_speed = _speedNormal;
 		_weaponContainer.RemoveBuff();
 		_buffApplied.Remove("burst");
 		_uiso.UpdateIndicator(
@@ -375,27 +406,41 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	void StatusChanged(int previousValue, int newValue)
 	{
-		_bodyIndicator.Health = newValue;
-
 		_uiso.UpdateIndicator(
 			_health.Value, 
 			_shield.Value,
 			null);
 
-		if (newValue == 0)
+		if (_health.Value == 0)
 		{
 			GLogger.Log($"Player {OwnerClientId} is Dead");
-			StopAllCoroutines();
-			_colliderTrigger.gameObject.SetActive(false);
 			_collider.gameObject.SetActive(false);
-
-			if (IsOwner)
-			{
-				_hand.DeactivateHand();
-				_weaponContainer.Stop();
-				_uiso.ShowIndicator(false);
-			}
+			_colliderTrigger.gameObject.SetActive(false);
+		
+			_hand.DeactivateHand();
+			_weaponContainer.Stop();
+			IPDS.CreateEffect(
+				"EffectPopBig",
+				transform.position,
+				Quaternion.identity,
+				new EffectRpcParameter()
+				{
+					EffectColor = PersonalColor
+				});
+			StartCoroutine(ProcessPlayerDeadEvent());
 		}
+	}
+
+	IEnumerator ProcessPlayerDeadEvent()
+	{
+		yield return null;
+		Spawner.SpawnPlayerDeadBodyRpc(
+			transform.position,
+			transform.rotation,
+			Nickname,
+			PersonalColor);
+	
+		Spawner.DespawnPlayerRpc();
 	}
 
 	void OnGrabbedItem(IItemHandler itemHandler)
@@ -484,7 +529,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	public void SendCollisionEvent(CollisionEvent ces)
 	{
 		SendCollisionEventRpc(ces);
-		//_collisionEventList.Add(ce);
 	}
 
 	public CollisionEvent GetCollisionEvent()

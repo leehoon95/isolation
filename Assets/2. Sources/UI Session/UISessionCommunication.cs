@@ -86,7 +86,6 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 	public void SetReadyButtonHighlight(bool bright)
 	{
-		GLogger.Log($"set highlist {bright}");
 		if (bright)
 		{
 			var c = new Color(0f, 218f / 255f, 1f);

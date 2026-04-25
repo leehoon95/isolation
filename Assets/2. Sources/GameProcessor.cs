@@ -8,7 +8,8 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.Localization.Settings;
+using UnityEngine.SceneManagement;
 
 [BurstCompile]
 public struct TargetSearchJob : IJobParallelFor
@@ -61,13 +62,24 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	PooledDynamicSpawner _pds;
 	[SerializeField]
 	List<CameraConfig> _cameraConfigs;
+	[SerializeField]
+	bool _automaticClient;
+	[Header("Quest")]
+	[SerializeField]
+	int _questEnemyCountToKill;
+
 
 	UILevelSO _uiso;
 	PlayerInfoSO _playerInfo;
-	Coroutine _updateCo;
-	Coroutine _enemyTargetSettingCo;
+	GameResultSO _gameResult;
+	StaticObjectHandler _soh;
 	Dictionary<string, CinemachineCamera> _cameras = new();
 	bool _isPlayerSpawned;
+	bool _playing;
+	int _enemyKilledCount;
+	int _levelProgress;
+	bool _firstQuestCompleted;
+	bool _levelCompleted;
 
 	string[] _weaponNames = new[] {
 		"bolt",
@@ -79,9 +91,21 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 		"bomb",
 	};
 
-	public bool IsPlayerSpawned => _isPlayerSpawned;
+	EnemyInstantiateData _seid = new EnemyInstantiateData()
+	{
+		PrefabId = "SuicideBomber",
+		Speed = 1.8f,
+		MaxHealthPoint = 120
+	};
 
-	public event UnityAction<string> OnSceneLoadRequested;
+	EnemyInstantiateData _reid = new EnemyInstantiateData()
+	{
+		PrefabId = "RangedAttacker",
+		Speed = 1.5f,
+		MaxHealthPoint = 80
+	};
+
+	public bool IsPlayerSpawned => _isPlayerSpawned;
 
 	void Awake()
 	{
@@ -97,13 +121,24 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 		}
 	}
 
+	void Start()
+	{
+		GLogger.Log("gp start");
+	}
+
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
+		GLogger.Log("gp OnNetworkPreSpawn");
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+		_uiso.Notification = FindAnyObjectByType<UINotification>();
 		_uiso.OnTestEvent += TestEventListner;
+		_uiso.Curtain = FindAnyObjectByType<UICurtain>();
+		_soh = FindAnyObjectByType<StaticObjectManager_Level_0>();
+		
 		_playerSpawner.PlayerSpawned += OnPlayerSpawned;
 		_playerSpawner.PlayerDespawned += OnPlayerDespawned;
+		
 
 		foreach (var item in _cameraConfigs)
 		{
@@ -112,8 +147,33 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 		if (networkManager.IsHost)
 		{
-			_updateCo = StartCoroutine(GameUpdate());
-			_enemyTargetSettingCo = StartCoroutine(EnemyTargetSetting());
+			_playing = true;
+			networkManager.SceneManager.OnLoadEventCompleted += OnSceneLoadEventCompleted;
+			_soh.LevelSwitchTriggered += OnLevelSwitchTriggered;
+			_enemySpawner.EnemyDespawned += OnEnemyDespawned;
+
+			var obj = new GameObject("[Game Result]");
+			_gameResult = obj.AddComponent<GameResultSOHolder>().Data;
+			DontDestroyOnLoad(obj);
+		}
+	}
+
+	public override void OnDestroy()
+	{
+		base.OnDestroy();
+		StopAllCoroutines();
+		_uiso.OnTestEvent -= TestEventListner;
+		_playerSpawner.PlayerSpawned -= OnPlayerSpawned;
+		_playerSpawner.PlayerDespawned -= OnPlayerDespawned;
+	}
+
+	public override void OnNetworkDespawn()
+	{
+		if (NetworkManager.IsHost)
+		{
+			NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoadEventCompleted;
+			_soh.LevelSwitchTriggered -= OnLevelSwitchTriggered;
+			_enemySpawner.EnemyDespawned -= OnEnemyDespawned;
 		}
 	}
 
@@ -130,7 +190,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			yield return delay;
 		}
 
-		while (true)
+		while (_playing)
 		{
 			var players = _playerSpawner.GetPlayers();
 			var enemys = _enemySpawner.GetEnemys();
@@ -191,19 +251,141 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 		}
 	}
 
-	/*
-	 * 게임 진행을 위한 코드를 작성한다
-	 * 50ms 마다 게임 진행을 업데이트한다.
-	 */
-	IEnumerator GameUpdate()
+	IEnumerator GameStart()
 	{
 		yield return null;
+
+		OpenCurtainRpc();
+
+		var startDelay = new WaitForSeconds(1f);
+
+		yield return startDelay;
+
+		SpawnEachPlayerRpc();
+
+		
+		yield return new WaitForSeconds(1);
+
+		ChangeCameraTargetToAimHelperRpc();
+
+		yield return new WaitForSeconds(1000);
+
+		StartCoroutine(EnemyTargetSetting());
+		
+		ShowNotification("quest-kill-enemy", _questEnemyCountToKill.ToString());
+
+		var firstRoomSpawnSpots = new Vector2[5]
+		{
+			_soh.GetSpawnSpot("FR", 0),
+			_soh.GetSpawnSpot("FR", 1),
+			_soh.GetSpawnSpot("FR", 2),
+			_soh.GetSpawnSpot("FR", 3),
+			_soh.GetSpawnSpot("FR", 4)
+		};
+
+		var t = 20f;
 		var delay = new WaitForSeconds(0.05f);
+
+		while (!_firstQuestCompleted)
+		{
+			if (t > 20f)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					SpawnEnemy(firstRoomSpawnSpots[0]);
+					SpawnEnemy(firstRoomSpawnSpots[1]);
+				}
+
+				yield return null;
+
+				for (int i = 0; i < 2; ++i)
+				{
+					SpawnEnemy(firstRoomSpawnSpots[2]);
+					SpawnEnemy(firstRoomSpawnSpots[3]);
+				}
+
+				t = 0f;
+			}
+				
+			t += 0.05f;
+			yield return delay;
+		}
+		
+
+		_soh.OpenDoor("FirstDoor");
+		ShowNotification("guide-hall-way");
+
+		
+		var hwSpawnSpots = new Vector2[6]
+		{
+			_soh.GetSpawnSpot("HW", 0),
+			_soh.GetSpawnSpot("HW", 1),
+			_soh.GetSpawnSpot("HW", 2),
+			_soh.GetSpawnSpot("HW", 3),
+			_soh.GetSpawnSpot("HW", 4),
+			_soh.GetSpawnSpot("HW", 5),
+		};
+
+		foreach(var spot in hwSpawnSpots)
+		{
+			GLogger.Log($"hw {spot}");
+		}
+
+		var spawnBackupEnemyCo = StartCoroutine(SpawnBackupEnemy(firstRoomSpawnSpots[4]));
+		var previousLevelProgress = -1;
+		var hallWaySpawnDelay = new WaitForSeconds(0.02f);
+
+		while (_levelProgress < 6)
+		{
+			if (previousLevelProgress != _levelProgress)
+			{
+				GLogger.Log($"Spawn hw enemy {_levelProgress}");
+				var index = Mathf.Min(_levelProgress, hwSpawnSpots.Length);
+				for (int i = 0; i < 3; i++)
+				{
+					SpawnEnemy(hwSpawnSpots[index]);
+				}
+
+				previousLevelProgress = _levelProgress;
+			}
+
+			yield return hallWaySpawnDelay;
+		}
+
+		StopCoroutine(spawnBackupEnemyCo);
+		_levelCompleted = true;
+		_enemySpawner.DespawnAllEnemysRpc();
+		ShowNotification("level-completed");
+
+		yield return new WaitForSeconds(3f);
+
+		_playerSpawner.DespawnAllPlayersRpc();
+		CloseCurtainRpc();
+		yield return new WaitForSeconds(2f);
+		NetworkManager.SceneManager.LoadScene("GameResultScene", LoadSceneMode.Single);
+	}
+
+	void SpawnEnemy(Vector2 position)
+	{
+		_enemySpawner.SpawnEnemyRpc(
+			position + UnityEngine.Random.insideUnitCircle,
+			quaternion.identity,
+			UnityEngine.Random.Range(0, 100) > 20 ? _seid : _reid);
+	}
+
+	IEnumerator SpawnBackupEnemy(Vector2 spots)
+	{
+		yield return null;
+
+		var delay = new WaitForSeconds(10f);
 
 		while (true)
 		{
+			for (int i = 0; i < 4; ++i)
+			{
+				SpawnEnemy(spots);
+			}
 			
-
 			yield return delay;
 		}
 	}
@@ -211,9 +393,12 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	void OnPlayerSpawned(IPlayerHandler ph)
 	{
 		//GLogger.LogWarning($"Player {ph.NO.NetworkObjectId} Spawned");
-		if (ph.NO.IsOwner)
+		if (ph.SpawnClientId == NetworkManager.LocalClientId)
 		{
-			_cameras["PlayerCamera"].Follow = ph.CameraTarget;
+			var cam = _cameras["PlayerCamera"];
+			cam.Follow = ph.GO.transform;
+			var lens = cam.Lens;
+			lens.OrthographicSize = 4f;
 			_uiso.ShowIndicator(true);
 			_isPlayerSpawned = true;
 		}
@@ -222,17 +407,187 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	void OnPlayerDespawned(IPlayerHandler ph)
 	{
 		_isPlayerSpawned = false;
+
+		if (IsHost)
+		{
+			_gameResult.PlayerDeadCount++;
+		}
+		
+		if (ph.NO.IsOwner)
+		{
+			var cam = _cameras["PlayerCamera"];
+			cam.Follow = ph.GO.transform;
+			var lens = cam.Lens;
+			lens.OrthographicSize = 5f;
+			_uiso.ShowIndicator(false);
+			_isPlayerSpawned = true;
+		}
+	}
+
+	void OnEnemyDespawned(string prefabId, Vector2 position)
+	{
+		_enemyKilledCount++;
+
+		if (IsHost && !_levelCompleted)
+		{
+			_gameResult.EnemyKilledCount++;
+		}
+
+		if (!_firstQuestCompleted)
+		{
+			ShowNotification(
+				"quest-kill-progress", 
+				_enemyKilledCount.ToString(), 
+				_questEnemyCountToKill.ToString());
+			if (_enemyKilledCount == _questEnemyCountToKill)
+			{
+				// door is opened
+				_firstQuestCompleted = true;
+			}
+		}
+
+		if (UnityEngine.Random.Range(0, 100) < 33)
+		{
+			_itemSpawner.SpawnItemRpc(
+				position,
+				Quaternion.identity,
+				new ItemInstantiateData()
+				{
+					ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 7)]
+				});
+		}
+	}
+
+	void OnLevelSwitchTriggered(string name, int triggered)
+	{
+		if (triggered == 0)
+		{
+			return;
+		}
+
+		GLogger.Log($"level switch {name} {triggered}");
+		if (name.Contains("LS_"))
+		{
+			var s = name.Split('_');
+			if (s.Length < 2)
+			{
+				GLogger.LogWarning($"invalid switch name {name}");
+				return;
+			}
+
+			var index = int.Parse(s[1]);
+			_levelProgress = index; // 0 -> 4, 5개
+		}
+		else if (name == "LES"
+			&& triggered == NetworkManager.Singleton.ConnectedClients.Count)
+		{
+			_levelProgress = 6;
+		}
+	}
+
+	[Rpc(SendTo.Everyone)]
+	void SpawnEachPlayerRpc()
+	{
+		var automatic = false;
+		if (NetworkManager.LocalClientId != 0)
+		{
+			automatic = _automaticClient;
+		}
+
+		_playerSpawner.SpawnPlayerRpc(
+			NetworkManager.Singleton.LocalClientId,
+			Vector2.zero + NetworkManager.LocalClientId * Vector2.right,
+			Quaternion.identity,
+			new PlayerInstantiateData()
+			{
+				OwnerClientId = NetworkManager.Singleton.LocalClientId,
+				Nickname = _playerInfo.Nickname,
+				PersonalColor = _playerInfo.PersonalColor,
+				AutomaticMotion = automatic
+			});
+	}
+
+	[Rpc(SendTo.Everyone)]
+	void OpenCurtainRpc()
+	{
+		_uiso.OpenCurtain();
+	}
+
+	[Rpc(SendTo.Everyone)]
+	void CloseCurtainRpc()
+	{
+		_uiso.CloseCurtain();
+	}
+
+	[Rpc(SendTo.Everyone)]
+	void ChangeCameraTargetToAimHelperRpc()
+	{
+		var ph = _playerSpawner.GetPlayer(NetworkManager.LocalClientId);
+		if (ph == null)
+		{
+			return;
+		}
+		GLogger.Log("ChangeCameraTargetToAimHelperRpc");
+		var cam = _cameras["PlayerCamera"];
+		cam.Follow = ph.CameraTarget;
+	}
+
+	void OnSceneLoadEventCompleted(
+		string sceneName,
+		LoadSceneMode mode, 
+		List<ulong> clientsCompleted,
+		List<ulong> clientsTimeOut)
+	{
+		var log = $"OnSceneLoadEventCompleted {sceneName} {mode}\n";
+		foreach (var client in clientsCompleted)
+		{
+			log += $"{client} completed\n";
+		}
+
+		foreach (var client in clientsTimeOut)
+		{
+			log += $"{client} timeout\n";
+		}
+
+		_soh.MaxPlayers = clientsCompleted.Count;
+		StartCoroutine(GameStart());
+	}
+
+	void ShowNotification(string localizationKey, params string[] argumetns)
+	{
+		StartCoroutine(ShowNotificationCo(localizationKey, argumetns));
+	}
+
+	IEnumerator ShowNotificationCo(string localizationKey, params string[] argumetns)
+	{
+		var task = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(
+			"DefaultStringTable", 
+			localizationKey, 
+			LocalizationSettings.SelectedLocale,
+			FallbackBehavior.UseProjectSettings,
+			argumetns);
+		yield return task;
+
+		ShowNotificationRpc(task.Result);
+	}
+
+	[Rpc(SendTo.Everyone)]
+	void ShowNotificationRpc(FixedString128Bytes text)
+	{
+		_uiso.Notification.ShowNotification(text.ToString());
 	}
 
 	void TestEventListner(int index)
-	{ 
+	{
 		if (index == 0)
 		{
 			_playerSpawner.SpawnPlayerRpc(
+				NetworkManager.Singleton.LocalClientId,
 				Vector2.zero,
 				Quaternion.identity,
 				new PlayerInstantiateData()
 				{
+					OwnerClientId = NetworkManager.Singleton.LocalClientId,
 					Nickname = _playerInfo.Nickname,
 					PersonalColor = _playerInfo.PersonalColor,
 				});
@@ -255,7 +610,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 						ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 7)]
 					});
 			}
-		
+
 		}
 		else if (index == 3)
 		{
@@ -299,6 +654,9 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 				case 8: _cameras["TestCamera"].Priority = 1; break;
 			}
 		}
+		else if (index == 9)
+		{
 
+		}
 	}
 }

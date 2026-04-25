@@ -15,6 +15,14 @@ public class LoginGameManager : MonoBehaviour
 {
 	[SerializeField]
 	SaveDataLoader _sdl;
+	[SerializeField]
+	string _serverAddress;
+	[SerializeField]
+	string _debuggingServerAddress;
+	[SerializeField]
+	int _port;
+	[SerializeField]
+	bool _connectDevelopmentSever;
 	TCPClientSO _tcpClient;
 	UILoginSO _uiso;
 	PlayerInfoSO _playerInfo;
@@ -33,7 +41,17 @@ public class LoginGameManager : MonoBehaviour
 		if (FindAnyObjectByType<TCPClientSOHolder>() == null)
 		{
 			var obj = new GameObject("[TCP Client Holder]");
-			obj.AddComponent<TCPClientSOHolder>();
+			var holder = obj.AddComponent<TCPClientSOHolder>();
+			if (_connectDevelopmentSever)
+			{
+				holder.Data.ServerAddress = _debuggingServerAddress;
+			}
+			else
+			{
+				holder.Data.ServerAddress = _serverAddress;
+			}
+				
+			holder.Data.Port = _port;
 			DontDestroyOnLoad(obj);
 		}
 

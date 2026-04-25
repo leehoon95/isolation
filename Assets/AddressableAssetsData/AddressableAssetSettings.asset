@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 0cedc56e47e2a1540b1c473af45bb4f1
   m_currentHash:
     serializedVersion: 2
-    Hash: c1351ceb047984e52f0637f9dc34a948
+    Hash: e942cb94a8bd4d9c47cde33be02e04b7
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -68,6 +68,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7af5060e1f86d5f4bb1670579750df3b, type: 2}
   - {fileID: 11400000, guid: 41402e116ebc9ca468ec165965cd18b3, type: 2}
   - {fileID: 11400000, guid: d2f23290e26c4154280924b41ff39913, type: 2}
+  - {fileID: 11400000, guid: 5b1c42e3111804247a19c38cbc895470, type: 2}
   - {fileID: 11400000, guid: cd836cf10c002ce4285567fad5df538a, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
@@ -77,6 +78,34 @@ MonoBehaviour:
     - m_InheritedParent: 
       m_Id: addf914b597126640ac5a9357b25ede0
       m_ProfileName: Default
+      m_Values:
+      - m_Id: 0f86bac14d818bd4dac083fffe7e2027
+        m_Value: <undefined>
+      - m_Id: 201bc26bb17bab1478d37dcd5c494606
+        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
+      - m_Id: 33708b0efdd6b1f4db9933b4cce09378
+        m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
+      - m_Id: 598b0f0de4b4e68478d8b97511549b82
+        m_Value: 'ServerData/[BuildTarget]'
+      - m_Id: 5caebe7dbacb34947b927c508f0fe17b
+        m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
+    - m_InheritedParent: 
+      m_Id: 5baa374df58da4d4eb47385d81715194
+      m_ProfileName: Development
+      m_Values:
+      - m_Id: 0f86bac14d818bd4dac083fffe7e2027
+        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
+      - m_Id: 201bc26bb17bab1478d37dcd5c494606
+        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
+      - m_Id: 33708b0efdd6b1f4db9933b4cce09378
+        m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
+      - m_Id: 598b0f0de4b4e68478d8b97511549b82
+        m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
+      - m_Id: 5caebe7dbacb34947b927c508f0fe17b
+        m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
+    - m_InheritedParent: 
+      m_Id: b0f0225619333b84e82824aa9c07b44b
+      m_ProfileName: Production
       m_Values:
       - m_Id: 0f86bac14d818bd4dac083fffe7e2027
         m_Value: <undefined>
@@ -112,6 +141,7 @@ MonoBehaviour:
     - Locale-en
     - Locale-ko
     - Preload
+    - AudioEffect
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: f2eb09d50c7f49249b87960ddeb1fe3f, type: 2}
@@ -124,4 +154,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 66020d855eff054429b0e6b166fed842, type: 2}
   - {fileID: 11400000, guid: 1de116a62a4ccf24fbcf08f40a0bc7e7, type: 2}
   - {fileID: 11400000, guid: ef0d8d96cd22f4a41813e3e2e4d2d691, type: 2}
-  m_ActiveProfileId: addf914b597126640ac5a9357b25ede0
+  m_ActiveProfileId: b0f0225619333b84e82824aa9c07b44b

@@ -55,6 +55,14 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 		_actualSpeedDeltaPerSec = _speedDeltaPerSec;
 		_actualMaxAngularVelocity = _maxAngularVelocity;
 	}
+
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+
+		_hit = false;
+	}
+
 	void FixedUpdate()
 	{
 		if (!IsIllusion && _hit)

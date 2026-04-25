@@ -219,6 +219,26 @@ MonoBehaviour:
     m_Key: exit
     m_Metadata:
       m_Items: []
+  - m_Id: 41745433397964800
+    m_Key: quest-kill-enemy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42073255798779904
+    m_Key: quest-kill-progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42116035019419648
+    m_Key: guide-hall-way
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42909324282834944
+    m_Key: level-completed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43989371458564096
+    m_Key: exit-to-lobby
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

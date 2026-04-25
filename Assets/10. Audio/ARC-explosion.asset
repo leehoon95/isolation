@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1233149941 &-6320480605981669771
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-14-314686_{-6320480605981669771}
+  m_AudioClip: {fileID: 8300000, guid: 0fae5a20d2a80884f980979f36fe63be, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &-1558561435735224318
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-8-314694_{-1558561435735224318}
+  m_AudioClip: {fileID: 8300000, guid: 881fc868e3ba4094db63e86a97a7b67f, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &-876994009031849454
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-13-314697_{-876994009031849454}
+  m_AudioClip: {fileID: 8300000, guid: b267cc7963b36c74697f2bbb37e2aa1d, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &898349028297495976
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-2-314685_{898349028297495976}
+  m_AudioClip: {fileID: 8300000, guid: 682712a943d30e74cb1d58b93fa190ab, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &1567732404454827821
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-4-314690_{1567732404454827821}
+  m_AudioClip: {fileID: 8300000, guid: 356b5269d7cf71e41996299c5c500413, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &1714570129851644711
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-10-314692_{1714570129851644711}
+  m_AudioClip: {fileID: 8300000, guid: ad7dae0927b2b52458f70108eb3368c0, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &2393208497708796957
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-11-314691_{2393208497708796957}
+  m_AudioClip: {fileID: 8300000, guid: 82b4671283cdcd647a92ff74a99f4842, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1307931743 &6418180475301049370
+AudioRandomContainer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ARC-explosion
+  m_Volume: 0
+  m_Pitch: 0
+  m_AutomaticTriggerTime: 0
+  m_LoopCount: 1
+  m_VolumeRandomizationRange: {x: 0, y: 0}
+  m_PitchRandomizationRange: {x: 0, y: 0}
+  m_AutomaticTriggerTimeRandomizationRange: {x: 0, y: 0}
+  m_LoopCountRandomizationRange: {x: 0, y: 0}
+  m_Elements:
+  - {fileID: 7918267690607369677}
+  - {fileID: 898349028297495976}
+  - {fileID: 6558132497516111356}
+  - {fileID: 1567732404454827821}
+  - {fileID: -1558561435735224318}
+  - {fileID: 1714570129851644711}
+  - {fileID: 2393208497708796957}
+  - {fileID: -876994009031849454}
+  - {fileID: -6320480605981669771}
+  m_AvoidRepeatingLast: 0
+  m_PlaybackMode: 1
+  m_TriggerMode: 0
+  m_AutomaticTriggerMode: 1
+  m_LoopMode: 2
+  m_VolumeRandomizationEnabled: 0
+  m_PitchRandomizationEnabled: 0
+  m_AutomaticTriggerTimeRandomizationEnabled: 0
+  m_LoopCountRandomizationEnabled: 0
+--- !u!1233149941 &6558132497516111356
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-3-314684_{6558132497516111356}
+  m_AudioClip: {fileID: 8300000, guid: 7c508e1d089f16a4e9771abfa2a3fe7f, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &7918267690607369677
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: soundreality-explosion-8-bit-1-314687_{7918267690607369677}
+  m_AudioClip: {fileID: 8300000, guid: cc7a9df0526bc2d4e98f5156b7a8d732, type: 3}
+  m_Volume: 0
+  m_Enabled: 1

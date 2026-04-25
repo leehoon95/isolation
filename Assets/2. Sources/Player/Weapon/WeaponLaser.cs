@@ -41,7 +41,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 	Coroutine _laserCo;
 	WaitForSeconds _remainderDelay;
 	Transform[] _transformCache;
-	string _buff;
+	string _buff = "";
 
 	public string ProjectileName { get; set; }
 	public IPooledDynamicSpawner IPDS { get; set; }
@@ -123,9 +123,14 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 			yield break;
 		}
 
+		int hitCount = 0;
 		if (_buff == "burst")
 		{
-			_hitCount = 4;
+			hitCount = _hitCount * 2;
+		}
+		else
+		{
+			hitCount = _hitCount;
 		}
 
 		int streamCount = Mathf.Min(_maxLaserStreamCount, collisionCount);
@@ -138,8 +143,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 			lpd[i].LaserPointFromCenter = _randomHitPoint[UnityEngine.Random.Range(0, 8)];
 		}
 
-		int hitCount = _hitCount;
-		float hitInterval = (_totalFiringInterval / _hitCount) / 1000f;
+		float hitInterval = (_totalFiringInterval / hitCount) / 1000f;
 
 		WCR.FireLaserFromOtherClinent(IsRightWeapon, lpd, _buff);
 		FireLaserStream(lpd, _buff);

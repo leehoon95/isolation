@@ -220,6 +220,26 @@ MonoBehaviour:
     m_Localized: Exit
     m_Metadata:
       m_Items: []
+  - m_Id: 41745433397964800
+    m_Localized: Eliminate {0} enemies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42073255798779904
+    m_Localized: Enemies eliminated {0}/{1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42116035019419648
+    m_Localized: Keep moving to the right
+    m_Metadata:
+      m_Items: []
+  - m_Id: 42909324282834944
+    m_Localized: Completed the level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 43989371458564096
+    m_Localized: Exit to the lobby
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

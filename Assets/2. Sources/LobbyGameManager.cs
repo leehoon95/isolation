@@ -6,8 +6,6 @@ using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using Unity.VisualScripting;
 
 /*
  * login scene에서 전달 받은 token으로 player data 요청

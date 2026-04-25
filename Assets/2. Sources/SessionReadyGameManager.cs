@@ -1,12 +1,9 @@
-using NUnit.Framework;
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Playmode;
 using Unity.Netcode;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
@@ -43,7 +40,6 @@ public class SessionGameReadyManager : MonoBehaviour
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 	static void Init()
 	{
-		GLogger.LogWarning("Init");
 		if (NetworkManager.Singleton != null)
 		{
 			GLogger.LogWarning("NetworkManager is not null");

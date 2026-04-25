@@ -104,8 +104,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 6913006412928892827}
   _particleSystem: {fileID: 4315279311543327693}
-  _particleLifeTime: 1.2
-  _noiseLifeTime: 0.25
+  _particleLifeTime: 1.5
+  _noiseLifeTime: 0.45
   _startNoiseStrength: 0.15
   _endNoiseStrength: 0
   _areaColor: {r: 1, g: 0.49803922, b: 0, a: 1}

@@ -24,13 +24,7 @@ public class LevelGameManager : MonoBehaviour
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
-		_gameProcessor.OnSceneLoadRequested += SceneLoadRequested;
 
 		//_networkEventHandler.
-	}
-
-	void SceneLoadRequested(string sceneName)
-	{
-		//NetworkManager.Singleton.SceneManager.LoadScene
 	}
 }

@@ -58,7 +58,7 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 		yield return null;
 		
 		float time = 0f;
-		float endTime = Mathf.Max(_particleLifeTime, _noiseLifeTime);
+		float endTime = _noiseLifeTime;
 		var main = _particleSystem.main;
 		main.startLifetime = _particleLifeTime;
 		main.startColor = _areaColor;
@@ -74,16 +74,24 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 			yield return null;
 		}
 
+		if (_particleLifeTime > _noiseLifeTime)
+		{
+			var waitForParticle = new WaitForSeconds(_particleLifeTime - _noiseLifeTime);
+
+			yield return waitForParticle;
+		}
+		
+
 		ReleaseObject();
 	}
 
 	IEnumerator ReduceSizeAndRelease()
 	{
 		float time = 0f;
-		float endTime = Mathf.Max(_particleLifeTime, _noiseLifeTime);
+		float endTime = _noiseLifeTime;
 		var scale = transform.localScale;
 		yield return null;
-
+		
 		while (time < endTime)
 		{
 			var s = Mathf.Lerp(scale.x, 0f, time / endTime);

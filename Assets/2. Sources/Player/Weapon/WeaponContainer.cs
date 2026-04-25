@@ -102,7 +102,7 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 
 	void SetWeaponSprite(int position, string weaponName)
 	{
-		GLogger.Log($"SetWeaponSprite {position} {weaponName}");
+		//GLogger.Log($"SetWeaponSprite {position} {weaponName}");
 		switch (position)
 		{
 			case 0:

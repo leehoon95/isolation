@@ -5,8 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UILevelSO", menuName = "Scriptable Objects/UILevelSO")]
 public class UILevelSO : ScriptableObject
 {
+	INotificationUI _notification;
 	IUIItemPickerPanel _itemPickerPanel;
 	IUIStatusIndicator _statusIndicator;
+	IUICurtain _curtain;
 
 	public IUIItemPickerPanel ItemPicker
 	{
@@ -18,6 +20,18 @@ public class UILevelSO : ScriptableObject
 	{
 		get => _statusIndicator;
 		set => _statusIndicator = value;
+	}
+
+	public INotificationUI Notification
+	{
+		get => _notification;
+		set => _notification = value;
+	}
+
+	public IUICurtain Curtain
+	{
+		get => _curtain;
+		set => _curtain = value;
 	}
 
 	public event Action<int> OnTestEvent;
@@ -41,6 +55,14 @@ public class UILevelSO : ScriptableObject
 		=> _statusIndicator.UpdateIndicator(health, sheild, buff);
 	public void UpdateIndicatorPosition(Vector2 position)
 		=> _statusIndicator.UpdateIndicatorPosition(position);
+
+	public void OpenCurtain()
+		=> _curtain.Open();
+	public void CloseCurtain()
+		=> _curtain.Close();
+
+	public void ShowNotification(string text)
+	=> _notification?.ShowNotification(text);
 }
 
 public class UILevelSOHolder : SOHolderSinglton<UILevelSO, UILevelSOHolder>

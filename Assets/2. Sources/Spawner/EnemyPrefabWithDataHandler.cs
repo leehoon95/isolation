@@ -76,6 +76,7 @@ public class EnemyPrefabWithDataHandler : NetworkPrefabInstanceHandlerWithData<E
 				},
 				actionOnDestroy: (instance) =>
 				{
+					GLogger.Log($"Destroy enemy");
 					UnityEngine.Object.Destroy(instance.GO);
 				},
 				true,

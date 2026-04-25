@@ -2,19 +2,26 @@ using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public struct PlayerInstantiateData : INetworkSerializable
 {
+	public ulong OwnerClientId;
+	public Vector3 Position;
 	public FixedString64Bytes Nickname;
 	public Color PersonalColor;
+	public bool AutomaticMotion;
 	// 필요시 추가하고, NetworkSerialize에도 추가할 것
 
 	public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 	{
+		serializer.SerializeValue(ref OwnerClientId);
+		serializer.SerializeValue(ref Position);
 		serializer.SerializeValue(ref Nickname);
 		serializer.SerializeValue(ref PersonalColor);
+		serializer.SerializeValue(ref AutomaticMotion);
 	}
 }
 
@@ -23,7 +30,7 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 	GameObject _prefabToSpawn;
 	NetworkManager _networkManager;
 	Dictionary<ulong, IPlayerHandler> _instances = new();
-	IPlayerSpawnObserver _playerSpawnObserver;
+	IPlayerSpawner _playerSpawner;
 	IPooledDynamicSpawner _pooledDynamicSpawner;
 	InputSystem _inputSystem;
 
@@ -32,13 +39,13 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 	public SpawnPlayerWithDataHandler(
 		NetworkManager networkManager, 
 		GameObject perfab,
-		IPlayerSpawnObserver playerSpawnObserver,
+		IPlayerSpawner playSpawner,
 		IPooledDynamicSpawner pooledDynamicSpawner,
 		InputSystem inputSystem)
 	{
 		_prefabToSpawn = perfab;
 		_networkManager = networkManager;
-		_playerSpawnObserver = playerSpawnObserver;
+		_playerSpawner = playSpawner;
 		_pooledDynamicSpawner = pooledDynamicSpawner;
 		_inputSystem = inputSystem;
 
@@ -50,53 +57,59 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		Vector3 position, Quaternion rotation,
 		PlayerInstantiateData instantiationData)
 	{
-		if (!_networkManager.IsServer)
-		{
-			return null;
-		}
-
-		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
+		GLogger.Log($"Spawn Player {ownerClientId}");
+		var instance = GetPrefabInstance(ownerClientId);
 		_networkManager.PrefabHandler.SetInstantiationData(instance.NO, instantiationData);
-		instance.SpawnObserver = _playerSpawnObserver;
+		instance.GO.transform.position = position;
+		instance.PersonalColor = instantiationData.PersonalColor;
+		instance.Nickname = instantiationData.Nickname.ToString();
+		instance.Spawner = _playerSpawner;
 		instance.IPDS = _pooledDynamicSpawner;
 		instance.InputSystem = _inputSystem;
-		instance.NO.SpawnWithOwnership(ownerClientId, true);
-		
+		instance.SpawnClientId = ownerClientId;
+		instance.AutomaticMotion = instantiationData.AutomaticMotion;
+
+		/*
+		 * SpawnWithOwnership 메서드는 스폰시 위치 지정이 되지 않는다
+		 */
+		//instance.NO.SpawnWithOwnership(ownerClientId, true);
+		instance.NO.Spawn(true);
+		instance.NO.ChangeOwnership(ownerClientId);
+		//instance.GO.transform.position = position;
+		GLogger.Log($"Spawn Player2 {instance.GO.transform.position}");
+
 		return instance;
 	}
 
-	public void InactiveAndDespawn(ulong ownerClientId)
+	public void DespawnPlayer(ulong ownerClientId)
 	{
-		if (!_networkManager.IsServer)
+		if (_instances.TryGetValue(ownerClientId, out var ph))
 		{
-			return;
-		}
-
-		if (_instances.ContainsKey(ownerClientId))
-		{
-			var instance = _instances[ownerClientId];
-			instance.NO.Despawn();
+			ph.NO.Despawn();
 		}
 	}
 
-	IPlayerHandler GetPrefabInstance(ulong ownerClientId,
-		Vector3 position, Quaternion rotation,
-		PlayerInstantiateData instantiationData)
+	public void DesapwnAllPlayers()
+	{
+		foreach (var p in _instances.Values)
+		{
+			p.NO.Despawn();
+		}
+	}
+
+	IPlayerHandler GetPrefabInstance(ulong ownerClientId)
 	{
 		IPlayerHandler instance = null;
-		if (_instances.ContainsKey(ownerClientId))
+		if (_instances.TryGetValue(ownerClientId, out var obj))
 		{
-			instance = _instances[ownerClientId];
+			instance = obj;
 			instance.GO.SetActive(true);
 		}
 		else
 		{
-			instance = UnityEngine.Object.Instantiate(_prefabToSpawn).GetComponent<PointmanPlayer>();
+			instance = UnityEngine.Object.Instantiate(_prefabToSpawn).GetComponent<IPlayerHandler>();
 			_instances[ownerClientId] = instance;
 		}
-
-		instance.GO.transform.SetPositionAndRotation(position, rotation);
-		instance.PersonalColor = instantiationData.PersonalColor;
 
 		return instance;
 	}
@@ -107,10 +120,15 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		Vector3 position, Quaternion rotation,
 		PlayerInstantiateData instantiationData)
 	{
-		var instance = GetPrefabInstance(ownerClientId, position, rotation, instantiationData);
-		instance.SpawnObserver = _playerSpawnObserver;
+		var instance = GetPrefabInstance(instantiationData.OwnerClientId);
+
+		instance.PersonalColor = instantiationData.PersonalColor;
+		instance.Nickname = instantiationData.Nickname.ToString();
+		instance.Spawner = _playerSpawner;
 		instance.IPDS = _pooledDynamicSpawner;
 		instance.InputSystem = _inputSystem;
+		instance.SpawnClientId = instantiationData.OwnerClientId;
+		instance.AutomaticMotion = instantiationData.AutomaticMotion;
 
 		return instance.NO;
 	}

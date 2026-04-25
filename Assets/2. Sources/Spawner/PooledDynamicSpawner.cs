@@ -99,12 +99,12 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 
 	public void PrintPoolStatus()
 	{
-		lock (_activatedObjects)
+		//lock (_activatedObjects)
 		{
 			GLogger.Log($"Activated count: {_activatedObjects.Count}");
 		}
 
-		lock (_objectIdPool)
+		//lock (_objectIdPool)
 		{
 			GLogger.Log($"object id pool count: {_objectIdPool.Count}");
 		}
@@ -120,9 +120,10 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		in ProjectileRpcParameter prp)
 	{
 		string objectId;
-		lock (_objectIdPool)
+		//lock (_objectIdPool)
 		{
 			objectId = $"{NetworkManager.LocalClientId}_{_objectIdCounter}";
+			//GLogger.Log($"{objectId}");
 			//_objectIdPool.Add(objectId);
 			_objectIdCounter++;
 		}
@@ -154,7 +155,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 
 		IDynamicPooledObject dpo;
-		lock (pool)
+		//lock (pool)
 		{
 			dpo = pool.Get();
 		}
@@ -170,12 +171,12 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		var ps = dpo.GO.GetComponent<IProjectileSetting>();
 		ps.SetProjectileParameter(prp);
 
-		lock (_activatedObjects)
+		//lock (_activatedObjects)
 		{
 			_activatedObjects[oi] = dpo;
 		}
 
-		lock (_objectIdPool)
+		//lock (_objectIdPool)
 		{
 			_objectIdPool.Add(oi);
 		}
@@ -204,7 +205,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	/*
 	 * 신뢰성 전송한다
 	 */
-	[Rpc(SendTo.Everyone)]
+	[Rpc(SendTo.Everyone, Delivery = RpcDelivery.Unreliable)]
 	void CreateEffectEveryoneReliableRpc(
 		FixedString32Bytes prefabId,
 		Vector2 position,
@@ -245,7 +246,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 
 		IDynamicPooledObject dpo;
-		lock (pool)
+		//lock (pool)
 		{
 			dpo = pool.Get();
 		}
@@ -273,7 +274,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		var oi = objectId.ToString();
 
 		IDynamicPooledObject dpo;
-		lock (_activatedObjects)
+		//lock (_activatedObjects)
 		{
 			if (_activatedObjects.TryGetValue(oi, out var obj))
 			{
@@ -288,7 +289,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 			_activatedObjects.Remove(oi);
 		}
 
-		lock (_pools)
+		//lock (_pools)
 		{
 			if (_pools.TryGetValue(pi, out var pool))
 			{
@@ -307,7 +308,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 			}
 		}
 
-		lock (_objectIdPool)
+		//lock (_objectIdPool)
 		{
 			_objectIdPool.Remove(oi);
 		}
@@ -318,7 +319,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	 */
 	public void ReleaseEffectObject(IDynamicPooledObject dpo)
 	{
-		lock (_pools)
+		//lock (_pools)
 		{
 			if (_pools.TryGetValue(dpo.PrefabId, out var pool))
 			{

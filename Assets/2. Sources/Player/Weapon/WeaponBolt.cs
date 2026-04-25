@@ -14,7 +14,7 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 	int _damage;
 
 	long _lastFiredMilliSecTick;
-	string _buff;
+	string _buff = "";
 
 	public IPooledDynamicSpawner IPDS { get; set; }
 	public Color PersonalColor { get; set; }

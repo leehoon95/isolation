@@ -1,6 +1,4 @@
-using Mono.Cecil.Cil;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -56,17 +54,22 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 		NetworkObject.Despawn();
 	}
 
-	public override void OnNetworkSpawn()
+	void Start()
 	{
-		if (!IsHost)
-		{
-			return;
-		}
-
 		if (_rigidbody == null)
 		{
 			_rigidbody = GetComponent<Rigidbody2D>();
 		}
+	}
+
+	public override void OnNetworkSpawn()
+	{
+		Spawner.NotifyEnemySpawned(this);
+	}
+
+	public override void OnNetworkDespawn()
+	{
+		Spawner.NotifyEnemyDespawned(this);
 
 		if (_effectInProgress != null)
 		{
