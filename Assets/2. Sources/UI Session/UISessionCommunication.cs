@@ -31,16 +31,18 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 	UISessionSO _uiso;
 	bool _isHost;
+	AudioContainer _ac;
 
 	protected override void Start()
 	{
+		_ac = AudioContainer.Instance;
 		_uiso = FindAnyObjectByType<UISessionSOHolder>().Data;
 		_uiso.SessionCommunication = this;
 
 		_inputField.onSubmit.AddListener(OnMessageSubmitted);
 
-		_readyButton.onClick.AddListener(() => _uiso.RaiseOnClickReady());
-		_leaveButton.onClick.AddListener(() => _uiso.RaiseOnClickLeave());
+		_readyButton.onClick.AddListener(() => { _ac.PlayAudio("chutter-click"); _uiso.RaiseOnClickReady(); });
+		_leaveButton.onClick.AddListener(() => { _ac.PlayAudio("click-mouse"); _uiso.RaiseOnClickLeave(); });
 	}
 
 	void OnMessageSubmitted(string message)
@@ -52,6 +54,8 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 			return;
 		}
+
+		_ac.PlayAudio("click-mouse2");
 
 		_inputField.text = "";
 		_inputField.Select();
@@ -86,6 +90,7 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 	public void SetReadyButtonHighlight(bool bright)
 	{
+		GLogger.Log($"SetReadyButtonHighlight {bright}");
 		if (bright)
 		{
 			var c = new Color(0f, 218f / 255f, 1f);

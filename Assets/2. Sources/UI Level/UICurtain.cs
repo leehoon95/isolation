@@ -28,7 +28,7 @@ public class UICurtain : UIBehaviour, IUICurtain
 		{
 			StopCoroutine(_task);
 		}
-		GLogger.Log("open curtain");
+		//GLogger.Log("open curtain");
 		_task = StartCoroutine(OpenCurtain());
 	}
 

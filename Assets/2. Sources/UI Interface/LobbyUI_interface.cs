@@ -33,7 +33,9 @@ public interface IUILobbyDialogManager
 {
 	public void SetOnCancelDialog(UnityAction onCancel);
 
-	public void ShowLobbyCreationDialog(UnityAction<string, string> onSubmit);
+	public void ShowLobbyCreationDialog(
+		string title,
+		UnityAction<string, string> onSubmit);
 	public void HideLobbyCreationDialog();
 	public void SetInteractable(bool interactable);
 }

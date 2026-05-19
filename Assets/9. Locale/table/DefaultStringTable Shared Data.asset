@@ -239,6 +239,18 @@ MonoBehaviour:
     m_Key: exit-to-lobby
     m_Metadata:
       m_Items: []
+  - m_Id: 48141415194963968
+    m_Key: audio-update
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48142197902422016
+    m_Key: audio-exist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48174292515303424
+    m_Key: audio-download-success
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

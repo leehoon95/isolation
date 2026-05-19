@@ -13,9 +13,16 @@ public class EffectCross : PooledEffectBase, IEffectSetting
 
 	MaterialPropertyBlock _outMaterialPropertyBlock;
 	MaterialPropertyBlock _innerMaterialPropertyBlock;
+	AudioContainer _ac;
+
+	void Start()
+	{
+		_ac = AudioContainer.Instance;
+	}
 
 	void OnEnable()
 	{
+		_ac.PlayAudio("burning");
 		_animator.SetTrigger("On");
 		UpdateColor(_flameColor);
 	}

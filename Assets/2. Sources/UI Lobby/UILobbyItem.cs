@@ -18,12 +18,14 @@ public class UISessionItem : UIBehaviour
 
 	string _lobbyId;
 	bool _isPlaying;
+	AudioContainer _ac;
 
 	public event Action<string> OnClick;
 
 	protected override void Start()
 	{
-		_button.onClick.AddListener(() => OnClick?.Invoke(_lobbyId));
+		_ac = AudioContainer.Instance;
+		_button.onClick.AddListener(() => { _ac.PlayAudio("click-mouse"); OnClick?.Invoke(_lobbyId); });
 	}
 
 	protected override void OnDisable()

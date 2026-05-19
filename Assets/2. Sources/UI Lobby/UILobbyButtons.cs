@@ -16,15 +16,16 @@ public class UILobbyButtons : UIBehaviour, IUILobbyButtons
 	CanvasGroup _canvasGroup;
 
 	UILobbySO _uiso;
-	
+	AudioContainer _ac;
 	protected override void Start()
 	{
+		_ac = AudioContainer.Instance;
 		_uiso = FindAnyObjectByType<UILobbySOHolder>().Data;
 		_uiso.Buttons = this;
 
-		_createSessionButton.onClick.AddListener(() => _uiso.RaiseOnClickCreateLobby());
-		_refreshButton.onClick.AddListener(() => _uiso.RaiseOnClickRefresh());
-		_exitButton.onClick.AddListener(() => _uiso.RaiseOnClickExit());
+		_createSessionButton.onClick.AddListener(() => { _ac.PlayAudio("click-mouse"); _uiso.RaiseOnClickCreateLobby(); });
+		_refreshButton.onClick.AddListener(() => { _ac.PlayAudio("click-mouse"); _uiso.RaiseOnClickRefresh(); });
+		_exitButton.onClick.AddListener(() => { _ac.PlayAudio("click-mouse"); _uiso.RaiseOnClickExit(); });
 	}
 
 	public void SetInteractable(bool interactable)

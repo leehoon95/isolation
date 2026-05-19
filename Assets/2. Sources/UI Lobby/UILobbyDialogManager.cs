@@ -27,10 +27,13 @@ public class UILobbyDialogManager : UIBehaviour, IUILobbyDialogManager
 		}
 	}
 
-	public void ShowLobbyCreationDialog(UnityAction<string, string> onSubmit)
+	public void ShowLobbyCreationDialog(
+		string title,
+		UnityAction<string, string> onSubmit)
 	{
 		_cancelButton.gameObject.SetActive(true);
 		_dialogCreateLobby.gameObject.SetActive(true);
+		_dialogCreateLobby.LobbyName = title;
 		_dialogCreateLobby.OnSubmit += onSubmit;
 	}
 

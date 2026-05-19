@@ -18,11 +18,13 @@ public class UIDialogOk : UIBehaviour
 	[SerializeField]
 	TMP_Text _okButtonText;
 
-	// °¡´ÉÇÏ¸é Á÷Á¢ ±¸µ¶ ÇØÁ¦ÇÒ °Í
+	// ê°€ëŠ¥í•˜ë©´ ì§ì ‘ êµ¬ë… í•´ì œí•  ê²ƒ
 	public event UnityAction OnOk;
+	AudioContainer _audioContainer;
 
 	protected override void Start()
 	{
+		_audioContainer = AudioContainer.Instance;
 		_ok.onClick.AddListener(OnClickButton);
 	}
 
@@ -38,6 +40,7 @@ public class UIDialogOk : UIBehaviour
 
 	void OnClickButton()
 	{
+		_audioContainer.PlayAudio("click-mouse");
 		OnOk?.Invoke();
 	}
 

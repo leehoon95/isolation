@@ -22,15 +22,11 @@ public class DoorDoubleSlide : NetworkBehaviour, IDoorHandler
 	float _openingDuration;
 
 	Coroutine _taskCo;
+	AudioContainer _ac;
 
 	void Start()
 	{
-
-	}
-
-	void OnEnable()
-	{
-		OpenDoor();
+		_ac = AudioContainer.Instance;
 	}
 
 	void InitChildObjectPosition()
@@ -57,6 +53,9 @@ public class DoorDoubleSlide : NetworkBehaviour, IDoorHandler
 
 	IEnumerator OpenDoor()
 	{
+		yield return null;
+		_ac.PlayAudio("door", transform.position);
+
 		var half = _height / 2f;
 		var quater = _height / 4f;
 		_doorTop.transform.localPosition = new Vector2(0f, quater);
@@ -68,11 +67,10 @@ public class DoorDoubleSlide : NetworkBehaviour, IDoorHandler
 
 		do
 		{
-			yield return null;
-
 			pos.y += speed * Time.deltaTime;
 			_doorTop.transform.localPosition = pos;
 			_doorBottom.transform.localPosition = -pos;
+			yield return null;
 		} while (pos.y < slideEndPoint.y);
 
 		_doorTop.transform.localPosition = slideEndPoint;

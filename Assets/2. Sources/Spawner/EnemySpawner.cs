@@ -4,9 +4,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
-
-
-
+using UnityEngine.UIElements;
 
 public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 {
@@ -17,6 +15,10 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	[SerializeField]
 	PlayerSpawner _playerSpawner;
 	[SerializeField]
+	ItemSpawner _itemSpawner;
+	[SerializeField]
+	float _itemSpawnRate;
+	[SerializeField]
 	List<PoolConfig> _poolConfig;
 
 	public event UnityAction<string> EnemySpawned;
@@ -24,6 +26,15 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	
 	EnemyPrefabWithDataHandler _spawnHandler;
 	Dictionary<ulong, IEnemyHandler> _activedEnemys;
+	string[] _weaponNames = new[] {
+		"bolt",
+		"missile",
+		"laser",
+		"burst",
+		"shield",
+		"heal",
+		"bomb",
+	};
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
@@ -88,5 +99,15 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	public void NotifyEnemyDespawned(IEnemyHandler ph)
 	{
 		EnemyDespawned?.Invoke(ph.PrefabId, ph.GO.transform.position);
+		if (Random.Range(0f, 100f) < _itemSpawnRate)
+		{
+			_itemSpawner.SpawnItemRpc(
+				ph.GO.transform.position,
+				Quaternion.identity,
+				new ItemInstantiateData()
+				{
+					ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 7)]
+				});
+		}
 	}
 }

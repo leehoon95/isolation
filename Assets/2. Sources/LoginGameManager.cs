@@ -2,11 +2,13 @@ using Google.Protobuf;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.SceneManagement;
-using WebSocketSharp;
+using UnityEngine.UIElements;
 
 /*
  * 특수한 예외를 제외하코 중요한 목적 코루틴의 동시 실행코드는 작성하지 말 것
@@ -23,6 +25,11 @@ public class LoginGameManager : MonoBehaviour
 	int _port;
 	[SerializeField]
 	bool _connectDevelopmentSever;
+	[SerializeField]
+	AudioContainer _audioContainer;
+	[SerializeField]
+	bool _saveAccount;
+
 	TCPClientSO _tcpClient;
 	UILoginSO _uiso;
 	PlayerInfoSO _playerInfo;
@@ -31,7 +38,6 @@ public class LoginGameManager : MonoBehaviour
 	string _inputPassword;
 	// 다수의 네트워크 작업을 동시에 진행하지 말 것
 	Coroutine _taskCo;
-	Coroutine _notifyCo;
 	PMResponseRegisterAccount _responseRegisterAccount;
 	LocalizationLoader _localizationLoader = new();
 	StringTable _localizedTable;
@@ -79,8 +85,8 @@ public class LoginGameManager : MonoBehaviour
 			 * 작업이 GC되기 전, 즉 예외가 완전히 무시되기 전에 발생하며 로깅 또는 처리할 수 있는 기회 제공
 			 * 핸들러가 없으면 app이 종료됨
 			 */
-			TaskScheduler.UnobservedTaskException
-				+= component.Data.Handler;
+			//TaskScheduler.UnobservedTaskException
+			//	+= component.Data.Handler;
 		}
 	}
 
@@ -88,12 +94,21 @@ public class LoginGameManager : MonoBehaviour
 	{
 		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
+
+		_audioContainer = AudioContainer.Instance;
+		_audioContainer.AudioDownloadable += OnAudioDownloadable;
+		_audioContainer.AudioDownloadProgress += OnAudioDownloadProgress;
+
 		_uiso = FindAnyObjectByType<UILoginSOHolder>().Data;
 		_uiso.Notification = FindAnyObjectByType<UINotification>();
 		_uiso.ClearEvent();
 		_uiso.OnLogin += OnLogin;
+		_uiso.OnDownloadAudio += OnDownloadAudio;
 		_uiso.OnRegister += OnRegister;
-		//_uiso.OnTest_1 += OnDisconnect;
+		_uiso.OnTest_1 += () =>
+		{
+			_audioContainer.PlayAudio("arc-explosion", new Vector2(UnityEngine.Random.Range(-10f, 10f), 0f));
+		};
 		_uiso.OnTest_2 += () =>
 		{
 			if (_taskCo != null)
@@ -122,6 +137,23 @@ public class LoginGameManager : MonoBehaviour
 		_taskCo = StartCoroutine(ReadyForLoginScene());
 	}
 
+	void OnAudioDownloadable(long size)
+	{
+		_uiso.ShowAudioDownloadButton(size);
+	}
+
+	void OnAudioDownloadProgress(bool complete, float progress)
+	{
+		if (complete)
+		{
+			_uiso.SetAudioDownloadProgress("");
+			ShowNotification("audio-download-success");
+			return;
+		}
+
+		_uiso.SetAudioDownloadProgress($"{(progress * 100f).ToString("0.0")} %");
+	}
+
 	/*
 	 * 이벤트 메서드에서 실행하는 비동기 작업은 
 	 */
@@ -137,15 +169,18 @@ public class LoginGameManager : MonoBehaviour
 		yield return op;
 		_localizedTable = op.Result;
 
-		var t = LocalDataSettings.Instance.LoadAsync();
-		yield return new WaitUntil(() => t.IsCompleted);
-
-		var data = LocalDataSettings.Instance.Data;
-
-		if (data.Id.Length >= 2 && data.Password.Length >= 2)
+		if (_saveAccount)
 		{
-			_uiso.LoginUI.SetId(data.Id);
-			_uiso.LoginUI.SetPassword(data.Password);
+			var t = LocalDataSettings.Instance.LoadAsync();
+			yield return new WaitUntil(() => t.IsCompleted);
+
+			var data = LocalDataSettings.Instance.Data;
+
+			if (data.Id.Length >= 2 && data.Password.Length >= 2)
+			{
+				_uiso.LoginUI.SetId(data.Id);
+				_uiso.LoginUI.SetPassword(data.Password);
+			}
 		}
 
 		yield return StartCoroutine(ConnectToServerCoroutine());
@@ -249,6 +284,12 @@ public class LoginGameManager : MonoBehaviour
 			LockInteractabilityUntilTaskComplete(
 				_tcpClient.SendDataAsync(
 					(int)ProtoAuthenticationMessage.RequestLogin, data)));
+	}
+
+	void OnDownloadAudio()
+	{
+		GLogger.Log("오디오 업데이트 진행하라");
+		_audioContainer.DownloadAudio();
 	}
 
 	void OnRegister()
@@ -454,6 +495,8 @@ public class LoginGameManager : MonoBehaviour
 		string notify;
 		string reason = "";
 
+		GLogger.Log($"message: {msg.Message} {msg.Result} {msg.ToString()}");
+
 		_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(false);
 
 		if (msg.Result)
@@ -478,7 +521,7 @@ public class LoginGameManager : MonoBehaviour
 			//yield return op;
 			//notify = op.Result;
 
-			notify = _localizedTable.GetEntry("account-creation-successful").LocalizedValue;
+			notify = _localizedTable.GetEntry("account-creation-failed").LocalizedValue;
 			string key = "account-creation-failure-reason-unknown";
 
 			switch (msg.Message)
@@ -515,19 +558,24 @@ public class LoginGameManager : MonoBehaviour
 	{
 		_uiso.ClearEvent();
 		_tcpClient.OnReceived -= OnTCPDataReceived;
+		_audioContainer.AudioDownloadable -= OnAudioDownloadable;
 		StopAllCoroutines();
 		SceneManager.LoadScene(sceneName);
 	}
 
-	void ShowNotification(string localizationKey)
+	void ShowNotification(string localizationKey, params string[] argumetns)
 	{
-		StartCoroutine(ShowNotificationCo(localizationKey));
+		StartCoroutine(ShowNotificationCo(localizationKey, argumetns));
 	}
 
-	IEnumerator ShowNotificationCo(string localizationKey)
+	IEnumerator ShowNotificationCo(string localizationKey, params string[] argumetns)
 	{
 		var task = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(
-			"DefaultStringTable", localizationKey, LocalizationSettings.SelectedLocale);
+			"DefaultStringTable", 
+			localizationKey, 
+			LocalizationSettings.SelectedLocale,
+			FallbackBehavior.UseProjectSettings,
+			argumetns);
 		yield return task;
 
 		_uiso.Notification.ShowNotification(task.Result);

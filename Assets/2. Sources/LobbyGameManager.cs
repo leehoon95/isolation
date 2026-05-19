@@ -246,7 +246,9 @@ public class LobbyGameManager : MonoBehaviour
 			_uiso.DialogManager.HideLobbyCreationDialog();
 		});
 
-		_uiso.DialogManager.ShowLobbyCreationDialog((lobbyName, lobbyPassword) =>
+		_uiso.DialogManager.ShowLobbyCreationDialog(
+			$"{_playerInfo.Nickname} {DateTime.Now.ToString()}",
+			(lobbyName, lobbyPassword) =>
 		{
 			print($"OnCreateRoom {lobbyName} {lobbyPassword}");
 

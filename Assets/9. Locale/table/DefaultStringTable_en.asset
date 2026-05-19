@@ -240,6 +240,18 @@ MonoBehaviour:
     m_Localized: Exit to the lobby
     m_Metadata:
       m_Items: []
+  - m_Id: 48141415194963968
+    m_Localized: Download Audio ({0} MB)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48142197902422016
+    m_Localized: Audio data is available
+    m_Metadata:
+      m_Items: []
+  - m_Id: 48174292515303424
+    m_Localized: Audio download complete
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

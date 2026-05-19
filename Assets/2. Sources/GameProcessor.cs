@@ -80,6 +80,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	int _levelProgress;
 	bool _firstQuestCompleted;
 	bool _levelCompleted;
+	bool _notFirstSpawn;
 
 	string[] _weaponNames = new[] {
 		"bolt",
@@ -123,32 +124,44 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 	void Start()
 	{
-		GLogger.Log("gp start");
+		//GLogger.Log("gp start");
+		
 	}
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
-		GLogger.Log("gp OnNetworkPreSpawn");
+		//GLogger.Log("gp OnNetworkPreSpawn");
+		Init();
+	}
+
+	public override void OnNetworkSpawn()
+	{
+		//GLogger.Log("gp OnNetworkSpawn");
+	}
+
+
+	void Init()
+	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 		_uiso.Notification = FindAnyObjectByType<UINotification>();
 		_uiso.OnTestEvent += TestEventListner;
 		_uiso.Curtain = FindAnyObjectByType<UICurtain>();
 		_soh = FindAnyObjectByType<StaticObjectManager_Level_0>();
-		
+
 		_playerSpawner.PlayerSpawned += OnPlayerSpawned;
 		_playerSpawner.PlayerDespawned += OnPlayerDespawned;
-		
+
 
 		foreach (var item in _cameraConfigs)
 		{
 			_cameras[item.CameraName] = item.Camera;
 		}
 
-		if (networkManager.IsHost)
+		if (NetworkManager.IsHost)
 		{
 			_playing = true;
-			networkManager.SceneManager.OnLoadEventCompleted += OnSceneLoadEventCompleted;
+			NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoadEventCompleted;
 			_soh.LevelSwitchTriggered += OnLevelSwitchTriggered;
 			_enemySpawner.EnemyDespawned += OnEnemyDespawned;
 
@@ -196,7 +209,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			var enemys = _enemySpawner.GetEnemys();
 			var playerCount = players.Count;
 			var enemyCount = enemys.Count;
-
+			//GLogger.Log($"p count {playerCount}");
 			if (playerCount == 0 || enemyCount == 0)
 			{ 
 				yield return delay;
@@ -255,6 +268,8 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	{
 		yield return null;
 
+
+		_itemSpawner.SpawnFieldItems();
 		OpenCurtainRpc();
 
 		var startDelay = new WaitForSeconds(1f);
@@ -268,7 +283,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 		ChangeCameraTargetToAimHelperRpc();
 
-		yield return new WaitForSeconds(1000);
+		//yield return new WaitForSeconds(1000);
 
 		StartCoroutine(EnemyTargetSetting());
 		
@@ -315,7 +330,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 		_soh.OpenDoor("FirstDoor");
 		ShowNotification("guide-hall-way");
 
-		
 		var hwSpawnSpots = new Vector2[6]
 		{
 			_soh.GetSpawnSpot("HW", 0),
@@ -325,11 +339,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			_soh.GetSpawnSpot("HW", 4),
 			_soh.GetSpawnSpot("HW", 5),
 		};
-
-		foreach(var spot in hwSpawnSpots)
-		{
-			GLogger.Log($"hw {spot}");
-		}
 
 		var spawnBackupEnemyCo = StartCoroutine(SpawnBackupEnemy(firstRoomSpawnSpots[4]));
 		var previousLevelProgress = -1;
@@ -392,7 +401,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 	void OnPlayerSpawned(IPlayerHandler ph)
 	{
-		//GLogger.LogWarning($"Player {ph.NO.NetworkObjectId} Spawned");
 		if (ph.SpawnClientId == NetworkManager.LocalClientId)
 		{
 			var cam = _cameras["PlayerCamera"];
@@ -401,6 +409,16 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			lens.OrthographicSize = 4f;
 			_uiso.ShowIndicator(true);
 			_isPlayerSpawned = true;
+			if (!_notFirstSpawn)
+			{
+				GLogger.Log("ChangeCameraTargetToAimHelper first");
+				_notFirstSpawn = true;
+			}
+			else
+			{
+				GLogger.Log("ChangeCameraTargetToAimHelper second");
+				ChangeCameraTargetToAimHelper();
+			}
 		}
 	}
 
@@ -522,12 +540,17 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	[Rpc(SendTo.Everyone)]
 	void ChangeCameraTargetToAimHelperRpc()
 	{
+		ChangeCameraTargetToAimHelper();
+	}
+
+	void ChangeCameraTargetToAimHelper()
+	{
 		var ph = _playerSpawner.GetPlayer(NetworkManager.LocalClientId);
 		if (ph == null)
 		{
+			GLogger.Log("ph is null!");
 			return;
 		}
-		GLogger.Log("ChangeCameraTargetToAimHelperRpc");
 		var cam = _cameras["PlayerCamera"];
 		cam.Follow = ph.CameraTarget;
 	}

@@ -191,8 +191,10 @@ MonoBehaviour:
   _hand: {fileID: 6180052288741268153}
   _cameraTarget: {fileID: 2912710630573480638}
   _sortingGroup: {fileID: 6134883239674151307}
-  _speedNormal: 10
+  _speedNormal: 3
   _speedBursted: 4.2
+  _invincible: 0
+  _maxHealth: 4
 --- !u!50 &3971261526755865604
 Rigidbody2D:
   serializedVersion: 5

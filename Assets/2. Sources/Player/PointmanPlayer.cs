@@ -32,6 +32,10 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	float _speedNormal;
 	[SerializeField]
 	float _speedBursted;
+	[SerializeField]
+	bool _invincible;
+	[SerializeField]
+	int _maxHealth;
 
 	NetworkVariable<int> _health = new(
 		6, 
@@ -64,7 +68,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	};
 	long _lastHealthRecoveryTime;
 	Dictionary<string, Coroutine> _buffApplied = new();
-
+	AudioContainer _ac;
 	public string Nickname { get; set; }
 
 	public Color PersonalColor 
@@ -89,7 +93,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	public override void OnNetworkSpawn()
 	{
-		GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
+		//GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
 		Spawner.NotifyPlayerSpawned(this);
 		if (OwnerClientId == SpawnClientId)
 		{
@@ -104,7 +108,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	protected override void OnOwnershipChanged(ulong previous, ulong current)
 	{
-		GLogger.Log($"pp OnOwnershipChanged {previous} to {current}. IsOwner: {IsOwner}");
+		//GLogger.Log($"pp OnOwnershipChanged {previous} to {current}. IsOwner: {IsOwner}");
 		if (IsOwner)
 		{
 			OnPlayerSpawned();
@@ -151,22 +155,20 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 			var direction = ph.GO.transform.position - transform.position;
 			var distance = direction.magnitude;
-			
+
 			if (distance > 2f)
 			{
 				var newPosition = _rigidbody.position + (Vector2)direction.normalized * _speed * Time.fixedDeltaTime;
 				_rigidbody.MovePosition(newPosition);
 			}
-		
-
-			return;
 		}
 
-		while (_collisionEventList.Count > 0 && false)
+		while (_collisionEventList.Count > 0)
 		{
 			var ce = _collisionEventList[0];
 			_collisionEventList.RemoveAt(0);
-			
+			//GLogger.Log($"hit {ce.SenderId}/{ce.Effect}/{ce.Position}");
+			_ac.PlayAudio("hit-2");
 			if (_shield.Value > 0)
 			{
 				_shield.Value -= ce.Damage > 0 ? 1 : 0;
@@ -179,6 +181,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			if (ce.Effect > CollisionEffect.None
 				&& ce.Effect < CollisionEffect.Block)
 			{
+				
 				var closestPoint = _colliderTrigger.ClosestPoint(ce.Position);
 				var erp = new EffectRpcParameter()
 				{
@@ -259,7 +262,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		var itemHandler = collision.gameObject.GetComponentInParent<IItemHandler>();
 		if (itemHandler != null)
 		{
-			if (itemHandler.ItemType != ItemType.Buff)
+			if (itemHandler.ItemType == ItemType.Weapon)
 			{
 				return;
 			}
@@ -280,7 +283,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			}
 			else if (effect == "bomb")
 			{
-				IPDS.CreateEffect(
+				IPDS.CreateEffectLocal(
 					"EffectBombGuidanceIndicator",
 					transform.position,
 					Quaternion.identity,
@@ -297,7 +300,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			{
 				GLogger.Log($"Unknown item {effect}");
 			}
-
+			
 			itemHandler.DespawnItemRpc();
 		}
 	}
@@ -306,6 +309,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	{
 		GLogger.Log($"OnPlayerSpawned initialize {NetworkManager.LocalClientId}");
 		
+		_ac = AudioContainer.Instance;
 		_weaponContainer.PersonalColor = PersonalColor;
 
 		if (!IsOwner)
@@ -322,7 +326,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		_colliderTrigger.gameObject.SetActive(true);
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
 
-		_health.Value = 6;
+		_health.Value = _maxHealth;
 		_shield.Value = 0;
 		_health.OnValueChanged += StatusChanged;
 		_shield.OnValueChanged += StatusChanged;
@@ -406,6 +410,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	void StatusChanged(int previousValue, int newValue)
 	{
+		
 		_uiso.UpdateIndicator(
 			_health.Value, 
 			_shield.Value,
@@ -494,9 +499,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 				_grabbedItem.ItemEffect, 
 				_grabbedItem.IsOnlyFront);
 			_grabbed = true;
+			_ac.PlayAudio("get-item");
+			
 			return;
 		}
-		
+
 		if (_grabbed && !tryPickItem)
 		{
 			var index = _uiso.GetPickedItemsIndex();
@@ -506,11 +513,18 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 				return;
 			}
 
-
 			var effect = _grabbedItem.ItemEffect;
 			var onlyFront = _grabbedItem.IsOnlyFront;
-			
 
+			if (_grabbedItem.ItemType == ItemType.Weapon)
+			{
+				_ac.PlayAudio("get-weapon");
+			}
+			else
+			{
+				_ac.PlayAudio("chutter-click");
+			}
+				
 			//GLogger.Log($"Use item at {index} {_grabbedItem.ItemEffect} onlyFront: {_grabbedItem.IsOnlyFront}");
 			_weaponContainer.SetWeaponRpc(index, effect);
 			_grabbedItem.DespawnItemRpc();
@@ -522,7 +536,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	[Rpc(SendTo.Owner)]
 	void SendCollisionEventRpc(CollisionEventStruct ces)
 	{
-		//GLogger.Log($"SendCollisionEventRpc sender {ces.SenderId}");
+		if (_invincible)
+		{
+			return;
+		}
+
 		_collisionEventList.Add(new CollisionEvent().FromCollisionEventStruct(ces));
 	}
 

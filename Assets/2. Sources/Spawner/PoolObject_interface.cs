@@ -33,6 +33,11 @@ public interface IPooledDynamicSpawner
 		Quaternion rotation,
 		in EffectRpcParameter erp,
 		bool reliable = true);
+	public void CreateEffectLocal(
+	string prefabId,
+	Vector2 position,
+	Quaternion rotation,
+	in EffectRpcParameter erp);
 	void ReleaseObject(IDynamicPooledObject dpo);
 	void ReleaseEffectObject(IDynamicPooledObject dpo);
 }

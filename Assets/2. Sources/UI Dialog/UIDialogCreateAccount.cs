@@ -31,9 +31,12 @@ public class UIDialogCreateAccount : UIBehaviour
 	uint _h = 0;
 	uint _s = 255;
 	Coroutine _taskCo;
+	AudioContainer _ac;
+	long _tick;
 
 	protected override void Start()
 	{
+		_ac = AudioContainer.Instance;
 		_id.onValueChanged.AddListener(IDFiltering);
 		_password.onValueChanged.AddListener(PasswordFiltering);
 		_password.asteriskChar = '*';
@@ -42,12 +45,24 @@ public class UIDialogCreateAccount : UIBehaviour
 		_showPasswordToggle.onValueChanged.AddListener(OnToggleChanged);
 		_colorSlider.onValueChanged.AddListener((float value) =>
 		{
+			var now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+			if (now - _tick > 50)
+			{
+				_ac.PlayAudio("gear");
+				_tick = now;
+			}
 			_h = (uint)Math.Round(value);
 			_personalColorIndicator.color 
 				= Color.HSVToRGB(value / 255f, (_saturationSlider.value / 255f), 1f);
 		});
 		_saturationSlider.onValueChanged.AddListener((float value) =>
 		{
+			var now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+			if (now - _tick > 50)
+			{
+				_ac.PlayAudio("gear");
+				_tick = now;
+			}
 			_s = (uint)Math.Round(value);
 			_personalColorIndicator.color 
 				= Color.HSVToRGB(_colorSlider.value / 255f, (value / 255f), 1f);
@@ -85,7 +100,7 @@ public class UIDialogCreateAccount : UIBehaviour
 			//		UITooltip.AnchorPreset.LeftTop);
 			//	return;
 			//}
-
+			_ac.PlayAudio("click-mouse");
 			OnSubmit?.Invoke(new AccountCreationApplication()
 			{
 				id = _id.text,
@@ -105,7 +120,7 @@ public class UIDialogCreateAccount : UIBehaviour
 		_nickname.text = "";
 		_personalColorIndicator.color = Color.HSVToRGB(0.5f, 1f, 1f);
 		_colorSlider.value = 127f;
-		_saturationSlider.value = 255f;
+		_saturationSlider.value = 192f;
 		SetOkButtonWaiting(false);
 	}
 
@@ -126,7 +141,7 @@ public class UIDialogCreateAccount : UIBehaviour
 	IEnumerator Localize(int index)
 	{
 		/*
-		 * ææÓ ºº∆√ √ ±‚»≠ øœ∑·∏¶ ±‚¥Ÿ∏≤
+		 * Ïñ∏Ïñ¥ ÏÑ∏ÌåÖ Ï¥àÍ∏∞Ìôî ÏôÑÎ£åÎ•º Í∏∞Îã§Î¶º
 		 * wait for the localization system to initialize, loading locales, preloading etc.
 		 */
 		yield return LocalizationSettings.InitializationOperation;
@@ -137,6 +152,7 @@ public class UIDialogCreateAccount : UIBehaviour
 
 	void IDFiltering(string value)
 	{
+		_ac.PlayAudio("beep");
 		string filtered = Regex.Replace(value, @"[^0-9a-zA-Z]", "");
 		if (_id.text != filtered)
 		{
@@ -146,6 +162,7 @@ public class UIDialogCreateAccount : UIBehaviour
 
 	void PasswordFiltering(string value)
 	{
+		_ac.PlayAudio("beep");
 		string filtered = Regex.Replace(value, @"[^0-9a-zA-Z*]", "");
 		if (_realPassword != filtered)
 		{
@@ -155,7 +172,8 @@ public class UIDialogCreateAccount : UIBehaviour
 
 	void NicknameFiltering(string value) 
 	{
-		string filtered = Regex.Replace(value, @"[^0-9a-zA-Z∞°-∆R§°-§æ§ø-§”]", "");
+		_ac.PlayAudio("beep");
+		string filtered = Regex.Replace(value, @"[^0-9a-zA-ZÍ∞Ä-Ìû£„Ñ±-„Öé„Öè-„Ö£]", "");
 		if (_nickname.text != filtered)
 		{
 			_nickname.text = filtered;
@@ -164,6 +182,7 @@ public class UIDialogCreateAccount : UIBehaviour
 
 	void OnToggleChanged(bool on)
 	{
+		_ac.PlayAudio("beep");
 		if (on)
 		{
 			_password.contentType = TMP_InputField.ContentType.Standard;

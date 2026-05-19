@@ -1,0 +1,293 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Audio Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Audio Group
+  m_GUID: c17af8e2dcfd3da4ba0f80d0484de304
+  m_SerializeEntries:
+  - m_GUID: 010a7b477c1e1ea4cabb392cb4bae587
+    m_Address: Assets/10. Audio/explosion-retro (9).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 02403b1ebee047843bc49120d588201c
+    m_Address: Assets/10. Audio/explosion-retro (6).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 078af025e1bfc3e46b3f47d270ff5464
+    m_Address: laser-11
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 11e0a13bae7807a458bfa0422e65ffe7
+    m_Address: get-item
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14c31d99f227b284f8fc7233feb2d0ce
+    m_Address: laser-2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15cb079e21a66ff40ad9468a3bf7405a
+    m_Address: shine-1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 166ebd0b0115cef49a90611faec1cb6d
+    m_Address: launcher-2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 22a478e3c219c0d4fa652b244cc081c9
+    m_Address: click-mouse
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 230e8badfe4e8d74ebe98518d9762b1a
+    m_Address: back-tick
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26d96872fd8571f4a90cfe720657ebe1
+    m_Address: Assets/10. Audio/explosion-retro (4).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e84dfc8c17d8c948ab4dfe84cff2e67
+    m_Address: metal-hit
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 36d131ca8c8ef16428c7f1dafc9fba0a
+    m_Address: laser-9
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 37a572a633dd0944ab19da9510a86084
+    m_Address: laser-1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38b208c9b8deb2b4a98d42f36633c9da
+    m_Address: laser-7
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39b1815a3e018ad48b8bceaae8a6accc
+    m_Address: chutter-click
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e355217240b8e44b8f1714024f78bd7
+    m_Address: door
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4430e0689060d0b4e8976fcd2c918a3e
+    m_Address: click-mouse2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 463b64da82cca4646bcc4548c26dc762
+    m_Address: Assets/10. Audio/explosion-retro (5).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4760650c53e02da4fa62d9af2c36b76d
+    m_Address: laser-10
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4854cc0f552517a4ab5359dd8ca6207a
+    m_Address: Assets/10. Audio/explosion-retro (3).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f32cadf55232054f9954153565b879c
+    m_Address: laser-6
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 50339553a5ea63a4d827baf9a328e5e3
+    m_Address: burning
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58ae1a5210c1af348b0ba0272d5a696f
+    m_Address: Assets/10. Audio/explosion-retro (8).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6328caa85c68db342a54c9440f24897c
+    m_Address: hit-1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 69ee99f286741df4db712ab41fd9d73e
+    m_Address: laser-3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7128750cb984df14ba8c7e88cf838d9c
+    m_Address: beep
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7aa2a7d9d49faff41aa6c4f4c07c5f62
+    m_Address: laser-5
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 81ab951f58f6fdb4784936fb2c9e4bcd
+    m_Address: start-game
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 826fd435729b0854d9bc9385a4ad5427
+    m_Address: coin
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 910a182c9ae9883409910b59645e461e
+    m_Address: toygun
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93270201d83c1754e8123d30d264590b
+    m_Address: arc-explosion
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98daa26b1f0e8264583e0656c2db88f2
+    m_Address: puppy-walts
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb8aaa86c264adf4a81ab9114aac8973
+    m_Address: arc-laser-burst
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c08859d75c769b64baa2843efc354f35
+    m_Address: gear
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0eb45df5b8f88b4ba7e20afcffba869
+    m_Address: Assets/10. Audio/explosion-retro (7).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d41c2e810a1a07540b4a85d0f335159a
+    m_Address: hit-2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ddaae472b88af6c488c5bfe55ce2014e
+    m_Address: explosion-noise
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df7214d66d52a914388313c5d8217fd3
+    m_Address: Assets/10. Audio/explosion-retro (1).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3534da36957f9b4aa7e82b43b38b9bc
+    m_Address: arc-laser
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e638b8246fd05494c889f47e558b0bcc
+    m_Address: shine-2
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed542b62fe3f7a14a9e4234266b365db
+    m_Address: Assets/10. Audio/laser-8.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f144b849ca05ef340a31ecfd4f57dc7b
+    m_Address: get-weapon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5ce3cf29be716e45ae35864ba63f703
+    m_Address: audio-resource-data
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5ec72498ccf7c345b976e7859fd9014
+    m_Address: power-up
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f65f7576555edd54c9aedc4ca5bad200
+    m_Address: Assets/10. Audio/explosion-retro (2).mp3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 1db74cf829284d34997680b1e631b37b, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6293e0a3d8791cc4cb32f01f02098f71, type: 2}
+    - {fileID: 11400000, guid: 913c1117846773c4896a364c86c3c056, type: 2}

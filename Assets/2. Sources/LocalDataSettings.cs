@@ -44,7 +44,7 @@ public class LocalDataSettings
 			{
 				var json = await File.ReadAllTextAsync(_dataPath);
 				_data = JsonUtility.FromJson<IsolationLocalData>(json);
-				GLogger.Log($"--- Load Local Data ---\n{json}");
+				//GLogger.Log($"--- Load Local Data ---\n{json}");
 			}
 			else
 			{

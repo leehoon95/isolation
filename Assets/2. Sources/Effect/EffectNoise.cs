@@ -29,10 +29,12 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 	bool _reduceSizeEffect;
 
 	MaterialPropertyBlock _materialPropertyBlock;
+	AudioContainer _ac;
 
-	void Awake()
+	void Start()
 	{
 		_materialPropertyBlock = new();
+		_ac = AudioContainer.Instance;
 	}
 
 	void OnEnable()
@@ -63,7 +65,7 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 		main.startLifetime = _particleLifeTime;
 		main.startColor = _areaColor;
 		_particleSystem.Play();
-
+		_ac.PlayAudio("arc-explosion");
 		while (time < endTime)
 		{
 			_spriteRenderer.GetPropertyBlock(_materialPropertyBlock);

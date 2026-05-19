@@ -16,13 +16,25 @@ public class UIDialogCreateLobby : UIBehaviour
 
     public event UnityAction<string, string> OnSubmit;
 
+	AudioContainer _ac;
+
+	public string LobbyName
+	{
+		set => _lobbyName.text = value;
+	}
+
 	protected override void Start()
 	{
-        _ok.onClick.AddListener(() => OnSubmit?.Invoke(_lobbyName.text, _lobbyPassword.text));
+		_ac = AudioContainer.Instance;
 
-#if UNITY_EDITOR
-        _lobbyName.text = DateTime.Now.ToString();
-#endif
+		_ok.onClick.AddListener(() => {
+			_ac.PlayAudio("click-mouse");
+			OnSubmit?.Invoke(_lobbyName.text, _lobbyPassword.text);
+			});
+
+//#if UNITY_EDITOR
+//        _lobbyName.text = DateTime.Now.ToString();
+//#endif
     }
 
 	protected override void OnDisable()

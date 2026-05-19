@@ -7,6 +7,13 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Pool;
 
+[Serializable]
+public struct InSceneItemConfig
+{
+	public string ItemEffect;
+	public Vector2 Position;
+}
+
 /*
  * in-scene placed 객체로 있어야 함
  * item prefab을 spawn
@@ -15,6 +22,8 @@ public class ItemSpawner : NetworkBehaviour
 {
 	[SerializeField]
 	GameObject _prefabToSpawn;
+	[SerializeField]
+	List<InSceneItemConfig> _inSceneConfigs;
 
 	SpawnItemWithDataHandler _spawnHandler;
 	Dictionary<ulong, IItemHandler> _activedItems;
@@ -79,5 +88,20 @@ public class ItemSpawner : NetworkBehaviour
 	void OnNetworkObjectDestroyed(NetworkObject networkObject)
 	{
 		_activedItems.Remove(networkObject.NetworkObjectId);
+	}
+
+	public void SpawnFieldItems()
+	{
+		if (IsHost)
+		{
+			ItemInstantiateData itemInitData = new();
+			foreach (var config in _inSceneConfigs)
+			{
+				itemInitData.ItemEffect = config.ItemEffect;
+				var item = _spawnHandler.InstantiateWithDataAndSpawn(
+					config.Position, Quaternion.identity, itemInitData);
+				_activedItems[item.NO.NetworkObjectId] = item;
+			}
+		}
 	}
 }

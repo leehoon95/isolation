@@ -76,7 +76,7 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		instance.NO.Spawn(true);
 		instance.NO.ChangeOwnership(ownerClientId);
 		//instance.GO.transform.position = position;
-		GLogger.Log($"Spawn Player2 {instance.GO.transform.position}");
+		//GLogger.Log($"Spawn Player2 {instance.GO.transform.position}");
 
 		return instance;
 	}

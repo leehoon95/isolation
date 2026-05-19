@@ -15,6 +15,7 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 
 	long _lastFiredMilliSecTick;
 	string _buff = "";
+	AudioContainer _ac;
 
 	public IPooledDynamicSpawner IPDS { get; set; }
 	public Color PersonalColor { get; set; }
@@ -24,6 +25,11 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 	public ulong ClientId { get; set; }
 	public string WeaponName => "bolt";
 	public GameObject GO => gameObject;
+
+	void Start()
+	{
+		_ac = AudioContainer.Instance;
+	}
 
 	void OnDestroy()
 	{
@@ -38,7 +44,9 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 		}
 
 		long firingInterval;
-		if (_buff == "burst")
+		bool burst = _buff == "burst";
+
+		if (burst)
 		{
 			firingInterval = (long)(_firingInterval * 0.8f);
 		}
@@ -81,6 +89,8 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 					EffectColor = PersonalColor,
 					LifeTime = 5f,
 				});
+			_ac.PlayAudio("toygun", Muzzle.position);
+
 			_lastFiredMilliSecTick = now;
 		}
 	}

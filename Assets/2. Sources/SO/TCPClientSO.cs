@@ -274,8 +274,6 @@ public class TCPClientSOHolder : SOHolderSinglton<TCPClientSO, TCPClientSOHolder
 	{
 		base.Awake();
 
-		GLogger.Log($"TCP address : {Data.ServerAddress} {Data.Port}");
-
 		//Data.ServerAddress = "172.24.107.87";
 		//Data.ServerAddress = "34.11.242.48";
 		//Data.Port = 51010;

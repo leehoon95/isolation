@@ -38,9 +38,10 @@ public class EffectGuidanceIndicator : PooledEffectBase, IEffectSetting
 	Coroutine _co;
 	IGameProjcessorInterface _GP;
 	Color _effectColor;
-
+	AudioContainer _ac;
 	void Start()
 	{
+		_ac = AudioContainer.Instance;
 		_GP = FindAnyObjectByType<GameProcessor>();
 		if (_GP == null)
 		{
@@ -69,7 +70,7 @@ public class EffectGuidanceIndicator : PooledEffectBase, IEffectSetting
 		float t = 0f;
 		var currVelocity = Vector2.zero;
 		yield return null;
-
+		_ac.PlayAudio("metal-hit");
 		while (t <= _aimingTime)
 		{
 			if (!_GP.IsPlayerSpawned)
@@ -85,18 +86,23 @@ public class EffectGuidanceIndicator : PooledEffectBase, IEffectSetting
 			var distance = vecToMouse.magnitude;
 			var norVecToMouse = vecToMouse.normalized;
 			var maxVelocity = vecToMouse.normalized * _crosshairSpeed;
-			if (maxVelocity.sqrMagnitude < vecToMouse.sqrMagnitude)
-			{
-				_rigidbody.linearVelocity = maxVelocity;
-			}
-			else if (distance < 1.75f
+			//if (maxVelocity.sqrMagnitude < vecToMouse.sqrMagnitude)
+			//{
+			//	_rigidbody.linearVelocity = maxVelocity;
+			//}
+			//else 
+			if (distance < 0.5f
 				&& distance > 0.001f)
 			{
 				Vector2.SmoothDamp(transform.position, mousePosition, ref currVelocity, 0.3333f);
 				_rigidbody.linearVelocity = currVelocity;
 			}
+			else
+			{
+				_rigidbody.linearVelocity = maxVelocity;
+			}
 
-			t += Time.deltaTime;
+				t += Time.deltaTime;
 			yield return null;
 		}
 
@@ -185,6 +191,6 @@ public class EffectGuidanceIndicator : PooledEffectBase, IEffectSetting
 	{
 	
 		_effectColor = param.EffectColor;
-		GLogger.Log($"indicatgor color {_effectColor}");
+		//GLogger.Log($"indicatgor color {_effectColor}");
 	}
 }

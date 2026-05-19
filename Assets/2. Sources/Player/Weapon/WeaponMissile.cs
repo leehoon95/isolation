@@ -12,6 +12,7 @@ public class WeaponMissile : MonoBehaviour, IWeaponInterface
 
 	long _lastFiredMilliSecTick;
 	string _buff;
+	AudioContainer _ac;
 
 	public IPooledDynamicSpawner IPDS { get; set; }
 	public Color PersonalColor { get; set; }
@@ -21,6 +22,11 @@ public class WeaponMissile : MonoBehaviour, IWeaponInterface
 	public ulong ClientId { get; set; }
 	public string WeaponName => "missile";
 	public GameObject GO => gameObject;
+
+	void Start()
+	{
+		_ac = AudioContainer.Instance;
+	}
 
 	void OnDestroy()
 	{
@@ -94,7 +100,7 @@ public class WeaponMissile : MonoBehaviour, IWeaponInterface
 					rotation,
 					prp);
 			}
-
+			_ac.PlayAudio("launcher-2", Muzzle.position);
 			_lastFiredMilliSecTick = now;
 		}
 	}

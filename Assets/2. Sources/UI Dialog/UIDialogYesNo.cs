@@ -25,8 +25,11 @@ public class UIDialogYesNo : UIBehaviour
 	public event UnityAction OnYes;
 	public event UnityAction OnNo;
 
+	AudioContainer _audioContainer;
+
 	protected override void Start()
 	{
+		_audioContainer = AudioContainer.Instance;
 		_yesButton.onClick.AddListener(OnYes);
 		_noBuutton.onClick.AddListener(OnNo);
 	}

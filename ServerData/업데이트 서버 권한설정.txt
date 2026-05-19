@@ -1,0 +1,48 @@
+# Windows->Ubuntu ssh 프로토콜을 사용하여 네트워크로 파일이나 폴더를 전송하는 명령어
+# scp -r -i gcp_key StandaloneWindows64 ganghoon95@34.11.242.48:/var/www/uploads
+# -i: ssh 접속을 위한 private key
+# -r: 디렉토리 포함하고 하위 파일까지 전부 복사
+# -p: 포트 번호
+
+
+# 다운로드용 디렉토리 생성 (예: /var/www/downloads)
+sudo mkdir /var/www/downloads
+
+# 소유권 설정 ($USER는 현재 접속한 본인 계정)
+# nginx 기본 계정이름은 www-data이다(/etc/nginx/nginx.conf 에서 확인 가능)
+# 소유자는 업로드 계정
+sudo chown -R $USER:www-data /var/www/downloads
+
+# 권한 설정 (775: 소유자/그룹은 읽기/쓰기/실행 가능, 나머지는 읽기/실행만 가능)
+sudo chmod -R 775 /var/www/downloads
+
+# nginx 설정
+# 설정파일 문법 검사
+sudo nginx -t
+
+# 설정 파일 재로드
+sudo systemctl reload nginx
+# 또는 nginx 자체 명령 사용
+녀애 nginx -s reload
+
+# 파일 수정 -> 문법 검사 -> 재로드 순서로 작업
+# reload는 서비스 중단없이 설정만 갱신
+# restart는 서비스를 완전히 껐다가 다시 킴
+
+# 에러 확인
+sudo tail -f /var/log/nginx/error.log
+
+# /etc/nginx/sites-available/default 파일 수정
+# 업데이트 서버와 다운로드 컨텐츠 주소: http://34.11.242.48/StandaloneWindows64
+# 게임은 /var/www/downloads/StandaloneWindows64 경로에 있는 어드레서블 카탈로그와 번들을 다운로드함
+server {
+        listen 80 default_server;
+
+        server_name isolation_update_server;
+
+        location / {
+                root /var/www/downloads/;
+                autoindex on;
+                charset utf-8;
+        }
+}

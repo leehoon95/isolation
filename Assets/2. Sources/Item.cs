@@ -10,7 +10,7 @@ public enum ItemType : int
 	Weapon = 0,
 	FrontWeapon,
 	Buff,
-
+	Unknown
 }
 
 public class Item : NetworkBehaviour, IItemHandler
@@ -24,7 +24,7 @@ public class Item : NetworkBehaviour, IItemHandler
 	[SerializeField]
 	ItemType _type;
 	[SerializeField]
-	string _effect;
+	string _initEffect;
 	[SerializeField]
 	SortingGroup _sortingGroup;
 	[SerializeField]
@@ -37,7 +37,8 @@ public class Item : NetworkBehaviour, IItemHandler
 	List<Sprite> _buffSprites;
 
 	bool _isSelected;
-	WaitForSeconds _wait = new WaitForSeconds(15f);
+	WaitForSeconds _wait = new WaitForSeconds(30f);
+	string _effect;
 
 	public NetworkObject NO
 	{
@@ -75,6 +76,7 @@ public class Item : NetworkBehaviour, IItemHandler
 					break;
 				default:
 					_effect = "";
+					_type = ItemType.Unknown;
 					break;
 			}
 
@@ -131,6 +133,14 @@ public class Item : NetworkBehaviour, IItemHandler
 			StartCoroutine(ReleaseTimeout());
 		}
 	}
+
+#if UNITY_EDITOR
+	void OnValidate()
+	{
+		ItemEffect = _initEffect;
+		RefreshItemShape();
+	}
+#endif
 
 	void OnEnable()
 	{

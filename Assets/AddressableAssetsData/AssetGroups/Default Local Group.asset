@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Default Local Group
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
-  m_GUID: 0cedc56e47e2a1540b1c473af45bb4f1
+  m_GUID: 4b15ef540cb7d2e4dbd97cddc1c8429c
   m_SerializeEntries:
   - m_GUID: 12bea31d5cb48a84b838174d8f7ab746
     m_Address: Assets/9. Locale/Localization Settings.asset

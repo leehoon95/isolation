@@ -8,6 +8,12 @@ public class EffectPop : PooledEffectBase, IEffectSetting
 	ParticleSystem _particleSystem;
 
 	Color _effectColor;
+	AudioContainer _ac;
+
+	void Start()
+	{
+		_ac = AudioContainer.Instance;
+	}
 
 	void OnEnable()
 	{
@@ -28,7 +34,7 @@ public class EffectPop : PooledEffectBase, IEffectSetting
 		var main = _particleSystem.main;
 		main.startColor = _effectColor;
 		_particleSystem.Play();
-
+		_ac.PlayAudio("hit-1");
 		yield return new WaitForSeconds(lifeTime);
 
 		ReleaseObject();

@@ -202,6 +202,20 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 	}
 
+	public void CreateEffectLocal(
+		string prefabId,
+		Vector2 position,
+		Quaternion rotation,
+		in EffectRpcParameter erp)
+	{
+		CreateEffectImplementation(
+			prefabId, position, rotation, erp,
+			new RpcParams() { 
+				Receive = new RpcReceiveParams() { 
+					SenderClientId = NetworkManager.LocalClientId } 
+			});
+	}
+
 	/*
 	 * 신뢰성 전송한다
 	 */
@@ -274,44 +288,35 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		var oi = objectId.ToString();
 
 		IDynamicPooledObject dpo;
-		//lock (_activatedObjects)
+		if (_activatedObjects.TryGetValue(oi, out var obj))
 		{
-			if (_activatedObjects.TryGetValue(oi, out var obj))
-			{
-				dpo = obj;
-			}
-			else
-			{
-				Debug.LogWarning($"PooledDynamicSpawner.ReleaseObjectImplement no activated object found({oi})");
-				return;
-			}
-
-			_activatedObjects.Remove(oi);
+			dpo = obj;
+		}
+		else
+		{
+			Debug.LogWarning($"PooledDynamicSpawner.ReleaseObjectImplement no activated object found({oi})");
+			return;
 		}
 
-		//lock (_pools)
+		_activatedObjects.Remove(oi);
+
+		if (_pools.TryGetValue(pi, out var pool))
 		{
-			if (_pools.TryGetValue(pi, out var pool))
+			try
 			{
-				try
-				{
-					pool.Release(dpo);
-				}
-				catch (InvalidOperationException e)
-				{
-					GLogger.LogException(e);
-				}
+				pool.Release(dpo);
 			}
-			else
+			catch (InvalidOperationException e)
 			{
-				GLogger.LogWarning($"PooledDynamicSpawner.ReleaseObjectImplement unknown pool({prefabId})");
+				GLogger.LogException(e);
 			}
+		}
+		else
+		{
+			GLogger.LogWarning($"PooledDynamicSpawner.ReleaseObjectImplement unknown pool({prefabId})");
 		}
 
-		//lock (_objectIdPool)
-		{
-			_objectIdPool.Remove(oi);
-		}
+		_objectIdPool.Remove(oi);
 	}
 
 	/*
@@ -319,23 +324,20 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	 */
 	public void ReleaseEffectObject(IDynamicPooledObject dpo)
 	{
-		//lock (_pools)
+		if (_pools.TryGetValue(dpo.PrefabId, out var pool))
 		{
-			if (_pools.TryGetValue(dpo.PrefabId, out var pool))
+			try
 			{
-				try
-				{
-					pool.Release(dpo);
-				}
-				catch (InvalidOperationException e)
-				{
-					GLogger.LogException(e);
-				}
+				pool.Release(dpo);
 			}
-			else
+			catch (InvalidOperationException e)
 			{
-				GLogger.LogWarning($"PooledDynamicSpawner.ReleaseObjectImplement unknown pool({dpo.PrefabId})");
+				GLogger.LogException(e);
 			}
+		}
+		else
+		{
+			GLogger.LogWarning($"PooledDynamicSpawner.ReleaseObjectImplement unknown pool({dpo.PrefabId})");
 		}
 	}
 

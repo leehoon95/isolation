@@ -74,7 +74,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 			rotation, 
 			data);
 
-		_activedPlayer[pp.NO.NetworkObjectId] = pp;
+		//_activedPlayer[pp.NO.NetworkObjectId] = pp;
 	}
 
 	[Rpc(SendTo.Server)]
@@ -153,14 +153,15 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 
 	public void NotifyPlayerSpawned(IPlayerHandler ph)
 	{
-		GLogger.Log($"NotifyPlayerSpawned count: {_activedPlayer.Count}");
-		PlayerSpawned?.Invoke(ph);
 		_activedPlayer[ph.SpawnClientId] = ph;
+		PlayerSpawned?.Invoke(ph);
+		GLogger.Log($"NotifyPlayerSpawned {ph.SpawnClientId} count: {_activedPlayer.Count}");
 	}
 
 	public void NotifyPlayerDespawned(IPlayerHandler ph)
 	{
-		PlayerDespawned?.Invoke(ph);
 		_activedPlayer.Remove(ph.SpawnClientId);
+		PlayerDespawned?.Invoke(ph);
+		GLogger.Log($"NotifyPlayerDespawned count: {_activedPlayer.Count}");
 	}
 }

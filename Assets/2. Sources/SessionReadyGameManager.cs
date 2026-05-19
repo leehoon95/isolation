@@ -250,8 +250,6 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	void OnClientConnected(ulong clientId)
 	{
-		GLogger.Log($"OnClientConnected {clientId}");
-
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
 #if UNITY_EDITOR

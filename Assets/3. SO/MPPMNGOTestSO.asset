@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4c0052c5491cd341a50813ad3d5e2fb, type: 3}
   m_Name: MPPMNGOTestSO
   m_EditorClassIdentifier: 
-  IsOn: 1
+  IsOn: 0
   HostTarget: 0

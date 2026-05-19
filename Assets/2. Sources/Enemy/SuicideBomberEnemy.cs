@@ -22,8 +22,15 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 	CollisionEventStruct _collisionEventCache;
 	NavMeshPath _path;
 	Coroutine _calculatePathCo;
-	
 	List<float> _teethSpeed = new();
+
+	//void Start()
+	//{
+	//	for (int i = 0; i < _teeth.Count(); ++i)
+	//	{
+	//		_teethSpeed.Add(Random.Range(-60, 60));
+	//	}
+	//}
 
 	public override void OnNetworkSpawn()
 	{
@@ -105,7 +112,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			}
 
 			if (HealthPoint == 0)
-			{
+			{;
 				DespawnThisEnemy();
 				return;
 			}

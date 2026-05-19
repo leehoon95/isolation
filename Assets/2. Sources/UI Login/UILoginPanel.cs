@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Components;
+
 
 
 #if UNITY_EDITOR
@@ -22,47 +24,58 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 	[SerializeField]
 	Button _loginButton;
 	[SerializeField]
+	Button _audioDownloadButton;
+	[SerializeField]
 	Button _registerButton;
+	[SerializeField]
+	LocalizeStringEvent _locStringEvent;
+	[SerializeField]
+	TMP_Text _audioDownloadProgress;
 
 	// test ui
 	[SerializeField]
-	Button _disconnectButton;
+	Button _testButton1;
 	[SerializeField]
-	Button _sendAccountCreationMessage;
+	Button _testButton2;
 	[SerializeField]
-	Button _notifyButton;
+	Button _testButton3;
 	[SerializeField] 
 	CanvasGroup _canvasGroup;
 
 	UILoginSO _uiso;
 	UITooltip _tooltip;
+	AudioContainer _audioContainer;
 
 	protected override void Start()
 	{
 		_uiso = FindAnyObjectByType<UILoginSOHolder>().Data;
 		_uiso.LoginUI = this;
 		_tooltip = Instantiate(_tooltipPrefab, transform).GetComponent<UITooltip>();
-
+		_audioContainer = AudioContainer.Instance;
 		_id.onValueChanged.AddListener(OnIdValueChanged);
-		//_id.onValidateInput += (text, index, addedText) => {
-		//	GLogger.Log($"{text} {index} {addedText}");
-		//	return addedText;
-		//};
 		_password.onValueChanged.AddListener(OnPasswordValueChanged);
+		_locStringEvent.StringReference.SetReference(
+			"DefaultStringTable",
+			"audio-exist");
 		
 		_loginButton.onClick.AddListener(OnClickLogin);
 		_registerButton.onClick.AddListener(OnClickRegister);
 
+		_audioDownloadButton.onClick.AddListener(() => {
+			OnDownloadAudio();
+			_audioDownloadButton.gameObject.SetActive(false);
+		});
+
 		//test
-		_disconnectButton.onClick.AddListener(() => {
+		_testButton1.onClick.AddListener(() => {
 			_uiso.RaiseTestEvent_1();
 		});
 
-		_sendAccountCreationMessage.onClick.AddListener(() => {
+		_testButton2.onClick.AddListener(() => {
 			_uiso.RaiseTestEvent_2();
 		});
 
-		_notifyButton.onClick.AddListener(() => {
+		_testButton3.onClick.AddListener(() => {
 			_uiso.ShowNotification($"fkdjskfjkdf {Random.Range(0f, 130f)}");
 		});
 	}
@@ -70,6 +83,7 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 	{
 		_uiso.LoginUI = null;
 	}
+
 	public void SetId(string id)
 	{
 		_id.text = id;
@@ -82,6 +96,7 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 
 	void OnClickLogin()
 	{
+		_audioContainer.PlayAudio("click-mouse");
 		if (_id.text.Length < 2)
 		{
 			_tooltip.ShowTooltip(
@@ -105,24 +120,32 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 		_uiso.RaiseOnLogin(_id.text, _password.text);
 	}
 
+	void OnDownloadAudio()
+	{
+		_uiso.RaiseOnDownloadAudio();
+	}
+
 	void OnClickRegister()
 	{
+		_audioContainer.PlayAudio("click-mouse");
 		_uiso.RaiseOnRegister();
 	}
 
 	void OnIdValueChanged(string value)
 	{
+		_audioContainer.PlayAudio("beep");
 		_id.text = FilterText(value);
 	}
 
 	void OnPasswordValueChanged(string value)
 	{
+		_audioContainer.PlayAudio("beep");
 		_password.text = FilterText(value);
 	}
 
 	string FilterText(string value)
 	{
-		return Regex.Replace(value, @"[^0-9a-zA-Z°¡-ÆR¤¡-¤¾¤¿-¤Ó]", "");
+		return Regex.Replace(value, @"[^0-9a-zA-Zê°€-íž£ã„±-ã…Žã…-ã…£]", "");
 	}
 
 	public void SetInteractable(bool interactable)
@@ -132,5 +155,21 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 		//_password.interactable = interactable;
 		//_loginButton.interactable = interactable;
 		//_registerButton.interactable = interactable;
+	}
+
+	public void ShowAudioDownloadButton(long size)
+	{
+		_audioDownloadButton.gameObject.SetActive(true);
+		_locStringEvent.StringReference.SetReference(
+			"DefaultStringTable",
+			"audio-update");
+		_locStringEvent.StringReference.Arguments
+			= new[] { $"{(size / (1024f * 1024f)).ToString("0.00")}" };
+		_locStringEvent.RefreshString();
+	}
+
+	public void SetAudioDownloadProgress(string progress)
+	{
+		_audioDownloadProgress.text = progress;
 	}
 }

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d500c28c9939a154c9deac9c7127fe7b, type: 3}
+  m_Name: AudioResourceDataSO
+  m_EditorClassIdentifier: 
+  Configs:
+  - Key: arc-explosion
+    Audio: {fileID: 6418180475301049370, guid: 93270201d83c1754e8123d30d264590b, type: 2}
+    Length: 2
+  - Key: arc-laser
+    Audio: {fileID: 6418180475301049370, guid: e3534da36957f9b4aa7e82b43b38b9bc, type: 2}
+    Length: 1
+  - Key: arc-laser-burst
+    Audio: {fileID: 6418180475301049370, guid: bb8aaa86c264adf4a81ab9114aac8973, type: 2}
+    Length: 1

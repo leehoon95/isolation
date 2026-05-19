@@ -74,6 +74,8 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 
 		if (!IsHost)
 		{
+
+
 			return;
 		}
 

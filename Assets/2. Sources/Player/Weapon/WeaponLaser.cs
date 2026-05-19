@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public struct LaserPointData : INetworkSerializable
 {
@@ -42,6 +43,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 	WaitForSeconds _remainderDelay;
 	Transform[] _transformCache;
 	string _buff = "";
+	AudioContainer _ac;
 
 	public string ProjectileName { get; set; }
 	public IPooledDynamicSpawner IPDS { get; set; }
@@ -57,6 +59,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 
 	void Start()
 	{
+		_ac = AudioContainer.Instance;
 		_maxLaserStreamCount = _laserHandlers.Count;
 		_enemyTriggerLayer = LayerMask.NameToLayer("Enemy Trigger");
 		int remainder = _totalFiringInterval % _hitCount;
@@ -123,8 +126,10 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 			yield break;
 		}
 
+		bool burst = _buff == "burst";
 		int hitCount = 0;
-		if (_buff == "burst")
+
+		if (burst)
 		{
 			hitCount = _hitCount * 2;
 		}
@@ -183,7 +188,6 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 						});
 
 					hitCount--;
-					
 				}
 			}
 
@@ -211,7 +215,8 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 
 	IEnumerator FireLaserStreamCoroutin(LaserPointData[] lpd, string buffName)
 	{
-		if (buffName == "burst")
+		bool burst = buffName == "burst";
+		if (burst)
 		{
 			for (int i = 0; i < _maxLaserStreamCount; i++)
 			{
@@ -244,6 +249,15 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 			{
 				_laserHandlers[i].Stop();
 			}
+		}
+
+		if (burst)
+		{
+			_ac.PlayAudio("laser-7", Muzzle.position);
+		}
+		else
+		{
+			_ac.PlayAudio("arc-laser", Muzzle.position);
 		}
 
 		while (time > 0f)

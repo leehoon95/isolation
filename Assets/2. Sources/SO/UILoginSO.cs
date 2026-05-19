@@ -31,6 +31,7 @@ public class UILoginSO : ScriptableObject
 	}
 
 	public event Action<string, string> OnLogin;
+	public event Action OnDownloadAudio;
 	public event Action OnRegister;
 
 	// test
@@ -46,6 +47,8 @@ public class UILoginSO : ScriptableObject
 	// UI Event service
 	public void RaiseOnLogin(string nickName, string password) 
 		=> OnLogin?.Invoke(nickName, password);
+	public void RaiseOnDownloadAudio()
+		=> OnDownloadAudio?.Invoke();
 	public void RaiseOnRegister()
 		=> OnRegister?.Invoke();
 	public void RaiseTestEvent_1() 
@@ -65,6 +68,10 @@ public class UILoginSO : ScriptableObject
 		_loginUI.SetInteractable(interactable);
 		_dialogManager.SetInteractable(interactable);
 	}
+	public void ShowAudioDownloadButton(long size)
+		=> _loginUI.ShowAudioDownloadButton(size);
+	public void SetAudioDownloadProgress(string progress)
+		=> _loginUI.SetAudioDownloadProgress(progress);
 }
 
 public class UILoginSOHolder : SOHolderSinglton<UILoginSO, UILoginSOHolder>

@@ -16,6 +16,8 @@ public interface IUILoginPannel
 	public void SetId(string Id);
 	public void SetPassword(string password);
 	public void SetInteractable(bool interactable);
+	public void ShowAudioDownloadButton(long size);
+	public void SetAudioDownloadProgress(string progress);
 }
 
 public interface IUILoginDialogManager
