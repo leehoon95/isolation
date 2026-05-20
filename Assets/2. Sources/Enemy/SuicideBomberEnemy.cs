@@ -112,7 +112,7 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			}
 
 			if (HealthPoint == 0)
-			{;
+			{
 				DespawnThisEnemy();
 				return;
 			}

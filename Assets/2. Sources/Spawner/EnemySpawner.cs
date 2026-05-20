@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
 
 public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 {
@@ -77,7 +75,10 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 		foreach (var item in items)
 		{
 			//GLogger.Log($"Despawn {item}");
-			item.NO.Despawn();
+			if (item.NO.IsSpawned)
+			{
+				item.NO.Despawn();
+			}
 		}
 	}
 

@@ -116,6 +116,13 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			obj.AddComponent<UILevelSOHolder>();
 		}
 
+		if (FindAnyObjectByType<GameResultSOHolder>() == null)
+		{
+			var obj = new GameObject("[Game Result]");
+			_gameResult = obj.AddComponent<GameResultSOHolder>().Data;
+			DontDestroyOnLoad(obj);
+		}
+
 		{
 			var obj = new GameObject("[Game Player]");
 			obj.AddComponent<GamePlayerSOHolder>();
@@ -144,6 +151,9 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
+		_gameResult = FindAnyObjectByType<GameResultSOHolder>().Data;
+
+		_gameResult.PlayerDeadCount = 0;
 		_uiso.Notification = FindAnyObjectByType<UINotification>();
 		_uiso.OnTestEvent += TestEventListner;
 		_uiso.Curtain = FindAnyObjectByType<UICurtain>();
@@ -165,9 +175,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			_soh.LevelSwitchTriggered += OnLevelSwitchTriggered;
 			_enemySpawner.EnemyDespawned += OnEnemyDespawned;
 
-			var obj = new GameObject("[Game Result]");
-			_gameResult = obj.AddComponent<GameResultSOHolder>().Data;
-			DontDestroyOnLoad(obj);
+		
 		}
 	}
 

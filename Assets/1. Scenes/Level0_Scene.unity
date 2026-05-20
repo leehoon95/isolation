@@ -6566,7 +6566,7 @@ MonoBehaviour:
   _pds: {fileID: 1259715513}
   _playerSpawner: {fileID: 738275766}
   _itemSpawner: {fileID: 1856016263}
-  _itemSpawnRate: 50
+  _itemSpawnRate: 40
   _poolConfig:
   - PrefabId: SuicideBomber
     Prefab: {fileID: 2659514499809380546, guid: fc05e8ae31424184caa6496c67bd163d, type: 3}

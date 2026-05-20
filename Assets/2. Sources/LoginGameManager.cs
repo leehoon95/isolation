@@ -327,7 +327,7 @@ public class LoginGameManager : MonoBehaviour
 					ShowNotification("another-task-in-progress");
 					return;
 				}
-
+				GLogger.Log($"send account creation data {application.h} {application.s} {application.v}");
 				PMRequestRegisterAccount request = new()
 				{
 					Id = application.id,

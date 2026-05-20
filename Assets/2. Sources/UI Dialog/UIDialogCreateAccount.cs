@@ -34,35 +34,34 @@ public class UIDialogCreateAccount : UIBehaviour
 	AudioContainer _ac;
 	long _tick;
 
-	protected override void Start()
+	protected override void Awake()
 	{
 		_ac = AudioContainer.Instance;
+		_id.text = "";
+		_password.text = "";
+		_nickname.text = "";
+		_colorSlider.value = 127f;
+		_h = 127;
+		_saturationSlider.value = 192f;
+		_s = 192;
+
 		_id.onValueChanged.AddListener(IDFiltering);
 		_password.onValueChanged.AddListener(PasswordFiltering);
 		_password.asteriskChar = '*';
 		_nickname.onValueChanged.AddListener(NicknameFiltering);
 		_showPasswordToggle.isOn = true;
 		_showPasswordToggle.onValueChanged.AddListener(OnToggleChanged);
+
 		_colorSlider.onValueChanged.AddListener((float value) =>
 		{
-			var now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-			if (now - _tick > 50)
-			{
-				_ac.PlayAudio("gear");
-				_tick = now;
-			}
+			PlayTick();
 			_h = (uint)Math.Round(value);
 			_personalColorIndicator.color 
 				= Color.HSVToRGB(value / 255f, (_saturationSlider.value / 255f), 1f);
 		});
 		_saturationSlider.onValueChanged.AddListener((float value) =>
 		{
-			var now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-			if (now - _tick > 50)
-			{
-				_ac.PlayAudio("gear");
-				_tick = now;
-			}
+			PlayTick();
 			_s = (uint)Math.Round(value);
 			_personalColorIndicator.color 
 				= Color.HSVToRGB(_colorSlider.value / 255f, (value / 255f), 1f);
@@ -71,35 +70,6 @@ public class UIDialogCreateAccount : UIBehaviour
 		_tooltip = Instantiate(_tooltipPrefab, transform).GetComponent<UITooltip>();
 
 		_ok.onClick.AddListener(() => {
-			//if (_id.text.Length < 2)
-			//{
-			//	_tooltip.ShowTooltip(
-			//		"DefaultStringTable", 
-			//		"warning-id-too-short", 
-			//		_id.transform.position, 
-			//		UITooltip.AnchorPreset.LeftTop);
-			//	return;
-			//}
-
-			//if (_password.text.Length < 2)
-			//{
-			//	_tooltip.ShowTooltip(
-			//		"DefaultStringTable",
-			//		"warning-password-too-short",
-			//		_password.transform.position,
-			//		UITooltip.AnchorPreset.LeftTop);
-			//	return;
-			//}
-
-			//if (_nickname.text.Length < 2)
-			//{
-			//	_tooltip.ShowTooltip(
-			//		"DefaultStringTable",
-			//		"warning-nickname-too-short",
-			//		_password.transform.position,
-			//		UITooltip.AnchorPreset.LeftTop);
-			//	return;
-			//}
 			_ac.PlayAudio("click-mouse");
 			OnSubmit?.Invoke(new AccountCreationApplication()
 			{
@@ -111,18 +81,20 @@ public class UIDialogCreateAccount : UIBehaviour
 				v = 255
 			});
 		});
-	}
 
-	protected override void OnEnable()
-	{
-		_id.text = "";
-		_password.text = "";
-		_nickname.text = "";
-		_personalColorIndicator.color = Color.HSVToRGB(0.5f, 1f, 1f);
-		_colorSlider.value = 127f;
-		_saturationSlider.value = 192f;
 		SetOkButtonWaiting(false);
 	}
+
+	//protected override void OnEnable()
+	//{
+	//	_id.text = "";
+	//	_password.text = "";
+	//	_nickname.text = "";
+	//	_personalColorIndicator.color = Color.HSVToRGB(0.5f, 1f, 1f);
+	//	_colorSlider.value = 127f;
+	//	_saturationSlider.value = 192f;
+	//	SetOkButtonWaiting(false);
+	//}
 
 	protected override void OnDisable()
 	{
@@ -130,6 +102,16 @@ public class UIDialogCreateAccount : UIBehaviour
 		if (_taskCo != null)
 		{
 			StopCoroutine(_taskCo);
+		}
+	}
+
+	void PlayTick()
+	{
+		var now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+		if (now - _tick > 50)
+		{
+			_ac.PlayAudio("gear");
+			_tick = now;
 		}
 	}
 

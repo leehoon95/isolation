@@ -90,7 +90,7 @@ public class LobbyGameManager : MonoBehaviour
 		yield return new WaitUntil(() => t.IsCompleted);
 		yield return new WaitUntil(() => _playerDataReceived);
 
-		GLogger.Log("Received player data");
+		GLogger.Log($"Received player data {_playerInfo.Nickname} {_playerInfo.PersonalColor}");
 
 		_uiso.SetPlayerLabel(_playerInfo.Nickname, _playerInfo.PersonalColor);
 

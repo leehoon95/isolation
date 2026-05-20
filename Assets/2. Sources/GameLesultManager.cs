@@ -21,12 +21,9 @@ public class GameLesultManager : NetworkBehaviour
 
 	public override void OnNetworkSpawn()
 	{
-		
 		_uiso = FindAnyObjectByType<UIGameResultSOHolder>().Data;
 		_uiso.OnExitToLobby += OnExitToLobby;
 		_uiso.Curtain = FindAnyObjectByType<UICurtain>();
-
-	
 		
 		if (IsHost)
 		{
@@ -50,7 +47,7 @@ public class GameLesultManager : NetworkBehaviour
 	{
 		base.OnDestroy();
 		_uiso.ClearEvent();
-		Destroy(_gameResult);
+		//Destroy(_gameResult);
 
 		//if (NetworkManager.IsHost)
 		//{
