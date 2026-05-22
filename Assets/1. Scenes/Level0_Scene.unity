@@ -7335,8 +7335,6 @@ MonoBehaviour:
     Position: {x: 0, y: -4}
   - ItemEffect: shield
     Position: {x: 2, y: -4}
-  - ItemEffect: bomb
-    Position: {x: 2, y: -6}
 --- !u!1 &1867145837
 GameObject:
   m_ObjectHideFlags: 0
