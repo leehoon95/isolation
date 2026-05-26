@@ -18,10 +18,6 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 	[SerializeField]
 	Color _areaColor = Color.red;
 	[SerializeField]
-	float _startAreaOpacity = 1f;
-	[SerializeField]
-	float _endAreaOpacity = 0f;
-	[SerializeField]
 	float _startAlpha = 1f;
 	[SerializeField]
 	float _endAlpha = 0f;

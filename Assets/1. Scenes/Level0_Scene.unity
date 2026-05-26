@@ -7675,17 +7675,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 7155848712587739475, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7936108928264200911, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
       propertyPath: m_SortingOrder
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8145289690352830156, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
       propertyPath: m_Size.x
-      value: 140
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8145289690352830156, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
+      propertyPath: m_Size.y
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 8755120045295011686, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9158192848199336204, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.007142857
+      value: 0.0625
+      objectReference: {fileID: 0}
+    - target: {fileID: 9158192848199336204, guid: e5cbafeca1df9de4abc92d0e4ee10846, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.03125
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8105,7 +8121,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 137, y: 0}
-  m_SizeDelta: {x: 20, y: 5}
+  m_SizeDelta: {x: 4, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1966273181
 MonoBehaviour:

@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-// deprecated
 public class MaintainPPU : MonoBehaviour
 {
 	[SerializeField]
@@ -35,7 +33,7 @@ public class MaintainPPU : MonoBehaviour
 		}
 		else if (_spriteRenderer.drawMode == SpriteDrawMode.Tiled)
 		{
-
+			// ...
 		}
 	}
 }

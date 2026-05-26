@@ -24,7 +24,5 @@ public class LevelGameManager : MonoBehaviour
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UILevelSOHolder>().Data;
-
-		//_networkEventHandler.
 	}
 }

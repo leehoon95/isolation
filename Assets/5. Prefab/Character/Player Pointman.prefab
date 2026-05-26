@@ -193,7 +193,7 @@ MonoBehaviour:
   _sortingGroup: {fileID: 6134883239674151307}
   _speedNormal: 3
   _speedBursted: 4.2
-  _invincible: 0
+  _invincible: 1
   _maxHealth: 4
 --- !u!50 &3971261526755865604
 Rigidbody2D:

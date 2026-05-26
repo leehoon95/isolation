@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 
 public class PathDefines
 {
+	// GCP VM 인스턴스(instance-20260324-084128) 외부 IP
 	public static string RemoteLoadPath = "http://34.11.242.48";
 }
 
@@ -91,20 +92,6 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 			}
 			);
 
-		//SceneManager.sceneUnloaded += (_) =>
-		//{
-		//	GLogger.Log("AC scene unloaded");
-		//	_activedHolderList.Clear();
-		//	_releaseReservedList.Clear();
-		//	_audioHolderPool.Clear();
-		//	//foreach (var holder in _activedHolderList)
-		//	//{
-		//	//	Release(holder);
-		//	//}
-			
-		//	CollectHolder();
-		//};
-
 		StartCoroutine(CheckAudioUpdatableCo());
 	}
 
@@ -139,7 +126,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 
 		if (sizeHandle.Status == AsyncOperationStatus.Succeeded)
 		{
-			//GLogger.Log($"Audio 다운로드 사이즈: {sizeHandle.Result}");
+			GLogger.Log($"Audio 다운로드 사이즈: {sizeHandle.Result}");
 			if (sizeHandle.Result > 0)
 			{
 				AudioDownloadable?.Invoke(sizeHandle.Result);
@@ -175,12 +162,12 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 
 		if (downloadHandle.Status == AsyncOperationStatus.Succeeded)
 		{
-			GLogger.Log("다운로드 완료");
 			_loadAssetsCo = StartCoroutine(LoadAudioAssets());
 		}
 		else
 		{
 			GLogger.LogWarning("다운로드 실패");
+			AudioDownloadProgress?.Invoke(true, -1f);
 		}
 
 		AudioDownloadProgress?.Invoke(true, 1f);
@@ -193,6 +180,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 	{
 		if (_loadAssetsCo != null)
 		{
+			GLogger.LogWarning("오디오 에셋 로드가 이미 진행 중");
 			yield break;
 		}
 
@@ -205,10 +193,8 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 		{
 			foreach (var location in loadAudioLocationsHandle.Result)
 			{
-				
 				if (location.ResourceType == typeof(AudioClip))
 				{
-					//GLogger.Log($"오디오 클립 {location.PrimaryKey} {location.ResourceType}");
 					var loadAssetHandle = Addressables.LoadAssetAsync<AudioClip>(location);
 					yield return loadAssetHandle;
 
@@ -219,7 +205,6 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 				}
 				else if (location.ResourceType == typeof(AudioResourceDataSO))
 				{
-					//GLogger.Log($"오디오 리소스 데이터 {location.PrimaryKey} {location.ResourceType}");
 					var ard = Addressables.LoadAssetAsync<AudioResourceDataSO>(location);
 					yield return ard;
 
@@ -230,7 +215,6 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 						{
 							if (!_audioResourceConfigPool.ContainsKey(config.Key))
 							{
-								//GLogger.Log($"오디오 리소스 config {config.Key} {config.Audio.name} {config.Length}");
 								_audioResourceConfigPool[config.Key] = config;
 							}
 						}
@@ -238,10 +222,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 				}
 						
 			}
-
-			//GLogger.Log($"audio 에셋 로드 완료 clip count: {_audioClipPool.Count}, arc count: {_audioResourceConfigPool.Count}");
 		}
-		
 		
 		_loadAssetsCo = null;
 	}

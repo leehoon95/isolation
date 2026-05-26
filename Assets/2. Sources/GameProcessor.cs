@@ -174,8 +174,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoadEventCompleted;
 			_soh.LevelSwitchTriggered += OnLevelSwitchTriggered;
 			_enemySpawner.EnemyDespawned += OnEnemyDespawned;
-
-		
 		}
 	}
 
@@ -556,7 +554,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 		var ph = _playerSpawner.GetPlayer(NetworkManager.LocalClientId);
 		if (ph == null)
 		{
-			GLogger.Log("ph is null!");
 			return;
 		}
 		var cam = _cameras["PlayerCamera"];
