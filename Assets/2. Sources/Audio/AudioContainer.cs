@@ -222,8 +222,14 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 				}
 						
 			}
+
+			GLogger.Log("audio load complete");
 		}
-		
+		else
+		{
+			GLogger.LogWarning($"오디오 로드 실패 {loadAudioLocationsHandle.Status}");
+		}
+
 		_loadAssetsCo = null;
 	}
 
