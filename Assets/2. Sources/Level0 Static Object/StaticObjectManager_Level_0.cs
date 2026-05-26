@@ -116,6 +116,13 @@ public class StaticObjectManager_Level_0 : NetworkBehaviour, StaticObjectHandler
 
 	public void SetLevelEndCounter(int newValue, int maxValue)
 	{
+		SetLevelEndCounterRpc(newValue, maxValue);
+	}
+
+	[Rpc(SendTo.Everyone)]
+	void SetLevelEndCounterRpc(int newValue, int maxValue)
+	{
+		
 		_endCounterText.text = $"{newValue:D2} / {maxValue:D2}";
 	}
 }
