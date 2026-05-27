@@ -2,6 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// deprecated
 public class NetworkBootLoader : MonoBehaviour
 {
 	[SerializeField]

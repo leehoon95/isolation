@@ -7,7 +7,6 @@ using UnityEngine.Pool;
 
 /*
  * prefab 용도에 따라 PrefabId으로 구분하고 해당하는 pool을 생성하기 위한 설정클래스
- * 특수화를 위한 ScriptableObject또는 serialize 가능한 struct를 포함할 수 있다
  */
 [Serializable]
 public class PoolConfig
@@ -31,13 +30,12 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	List<PoolConfig> _poolConfig;
 
 	/*
-	 * inspector에서 생성한 _poolConfig를 pool생성에 사용하고 빠름 검색을 위해 Dictionary 타입에 옮김
+	 * inspector에서 설정한 pool config에 따라 pool 초기화
 	 */
 	Dictionary<string, PoolConfig> _configs = new();
 
 	/*
-	 * PoolConfig에 따라 ObjectPool을 보관
-	 * prefapId으로 원하는 prefab을 관리하는 pool을 찾을 수 있다
+	 * prefapId으로 원하는 prefab을 관리하는 pool을 검색
 	 */
 	Dictionary<string, ObjectPool<IDynamicPooledObject>> _pools = new();
 	
@@ -47,10 +45,9 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	Dictionary<string, IDynamicPooledObject> _activatedObjects = new();
 
 	/*
-	 * CreateObject 메서드에서 생성한 object를 관리
-	 * 생성과 삭제는 이벤트로 동기화되어 모든 client(host)가 같은 상태를 유지한다
-	 * objectId는 네트워크에서 각 client(host) 소유의 object를 구분하기 위한 고유 식별자
-	 * objectId는 {client id}_{counter} 형식이고 고유하다
+	 * 생성과 삭제는 동기화되어 모든 client(host)가 같은 상태를 유지
+	 * object id는 네트워크에서 고유 식별자를 가짐
+	 * object id는 {client id}_{counter} 형식이다
 	 */
 	HashSet<string> _objectIdPool = new HashSet<string>();
 	uint _objectIdCounter;
@@ -62,7 +59,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 			foreach (var config in _poolConfig)
 			{
 				var prefabId = config.PrefabId;
-				var pool = new UnityEngine.Pool.ObjectPool<IDynamicPooledObject>(
+				var pool = new ObjectPool<IDynamicPooledObject>(
 				createFunc: () =>
 				{
 					var obj = GameObject.Instantiate(config.Prefab);
@@ -99,20 +96,10 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 
 	public void PrintPoolStatus()
 	{
-		//lock (_activatedObjects)
-		{
-			GLogger.Log($"Activated count: {_activatedObjects.Count}");
-		}
-
-		//lock (_objectIdPool)
-		{
-			GLogger.Log($"object id pool count: {_objectIdPool.Count}");
-		}
+		GLogger.Log($"Activated count: {_activatedObjects.Count}");
+		GLogger.Log($"object id pool count: {_objectIdPool.Count}");
 	}
 
-	/*
-	 * projectile 생성용
-	 */
 	public void CreateProjectile(
 		string prefabId,
 		Vector2 position,
@@ -120,13 +107,10 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		in ProjectileRpcParameter prp)
 	{
 		string objectId;
-		//lock (_objectIdPool)
-		{
-			objectId = $"{NetworkManager.LocalClientId}_{_objectIdCounter}";
-			//GLogger.Log($"{objectId}");
-			//_objectIdPool.Add(objectId);
-			_objectIdCounter++;
-		}
+		objectId = $"{NetworkManager.LocalClientId}_{_objectIdCounter}";
+		//GLogger.Log($"{objectId}");
+		//_objectIdPool.Add(objectId);
+		_objectIdCounter++;
 
 		CreateProjectileEveryoneRpc(
 			prefabId,
@@ -155,11 +139,8 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 
 		IDynamicPooledObject dpo;
-		//lock (pool)
-		{
-			dpo = pool.Get();
-		}
 
+		dpo = pool.Get();
 		dpo.GO.SetActive(true);
 		dpo.IsIllusion = rpcParams.Receive.SenderClientId != NetworkManager.LocalClientId;
 		dpo.PrefabId = pi;
@@ -171,15 +152,8 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		var ps = dpo.GO.GetComponent<IProjectileSetting>();
 		ps.SetProjectileParameter(prp);
 
-		//lock (_activatedObjects)
-		{
-			_activatedObjects[oi] = dpo;
-		}
-
-		//lock (_objectIdPool)
-		{
-			_objectIdPool.Add(oi);
-		}
+		_activatedObjects[oi] = dpo;
+		_objectIdPool.Add(oi);
 	}
 
 	/*
@@ -260,11 +234,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 
 		IDynamicPooledObject dpo;
-		//lock (pool)
-		{
-			dpo = pool.Get();
-		}
-
+		dpo = pool.Get();
 		dpo.GO.SetActive(true);
 		dpo.PrefabId = pi;
 		dpo.ObjectId = "none";

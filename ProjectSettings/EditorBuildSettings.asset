@@ -24,7 +24,7 @@ EditorBuildSettings:
     path: Assets/1. Scenes/GameResultScene.unity
     guid: 9508130c870dbe743851d3f60ed3a1a7
   - enabled: 0
-    path: Assets/1. Scenes/NetworkBootLoader.unity
+    path: Assets/1. Scenes/deprecated/NetworkBootLoader.unity
     guid: f41105f384bc78a408b4ffa447d16e9b
   - enabled: 0
     path: Assets/1. Scenes/Test/TestScene.unity

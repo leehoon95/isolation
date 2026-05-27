@@ -245,17 +245,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			};
 
 			var handle = job.Schedule(enemyCount, 64);
-			//while (!handle.IsCompleted)
-			//{
-			//	yield return smallDelay;
-			//}
 			handle.Complete();
-			//string log = "indices ";
-			//for (int i = 0; i < enemyCount; i++)
-			//{
-			//	log += $" {nearestIndices[i]}";
-			//}
-			//GLogger.Log(log);
 
 			for (int i = 0; i < enemyCount;i++)
 			{
