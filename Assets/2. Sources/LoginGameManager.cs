@@ -105,33 +105,6 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.OnLogin += OnLogin;
 		_uiso.OnDownloadAudio += OnDownloadAudio;
 		_uiso.OnRegister += OnRegister;
-		_uiso.OnTest_1 += () =>
-		{
-			_audioContainer.PlayAudio("arc-explosion", new Vector2(UnityEngine.Random.Range(-10f, 10f), 0f));
-		};
-		_uiso.OnTest_2 += () =>
-		{
-			if (_taskCo != null)
-			{
-				GLogger.LogWarning("OnRegister 다른 작업이 진행 중");
-				return;
-			}
-
-			PMRequestRegisterAccount request = new()
-			{
-				Id = "qqq",
-				Password = "d2",
-				Nickname = "3d",
-				PersonalColor = $"255/255/255"
-			};
-
-			var data = request.ToByteArray();
-
-			_taskCo = StartCoroutine(
-				LockInteractabilityUntilTaskComplete(
-					_tcpClient.SendDataAsync(
-						(int)ProtoAuthenticationMessage.RequestRegisterAccount, data)));
-		};
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 		_taskCo = StartCoroutine(ReadyForLoginScene());
@@ -150,7 +123,7 @@ public class LoginGameManager : MonoBehaviour
 			ShowNotification("audio-download-success");
 			return;
 		}
-
+		
 		_uiso.SetAudioDownloadProgress($"{(progress * 100f).ToString("0.0")} %");
 	}
 

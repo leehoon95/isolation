@@ -94,11 +94,6 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 	}
 
-	public void PrintPoolStatus()
-	{
-		GLogger.Log($"Activated count: {_activatedObjects.Count}");
-		GLogger.Log($"object id pool count: {_objectIdPool.Count}");
-	}
 
 	public void CreateProjectile(
 		string prefabId,
@@ -290,7 +285,7 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 	}
 
 	/*
-	 * effect object는 스스로 pool에 반납할 수 있게 한다
+	 * effect object는 스스로 pool에 반납할 수 있다
 	 */
 	public void ReleaseEffectObject(IDynamicPooledObject dpo)
 	{
@@ -311,40 +306,9 @@ public class PooledDynamicSpawner : NetworkBehaviour, IPooledDynamicSpawner
 		}
 	}
 
-	/*
-	 * 가능하면 pool에 들어있는 object는 스스로 상태를 조절하여 release되도록 한다
-	 */
-	//public void RemovePlayerObjects(ulong clientId)
-	//{
-	//	RemovePlayerObjectsRpc(clientId);
-	//}
-
-	//[Rpc(SendTo.Everyone)]
-	//void RemovePlayerObjectsRpc(ulong clientId)
-	//{
-	//	Task.Run(() =>
-	//	{
-	//		List<string> listMatched;
-	//		Dictionary<string, IDynamicPooledObject> temp = new();
-	//		lock (_activatedObjects)
-	//		{
-	//			var regex = new Regex(@$"{clientId}_");
-	//			listMatched = _activatedObjects.Keys.Where(key => regex.IsMatch(key)).ToList();
-
-	//			foreach (var key in listMatched)
-	//			{
-	//				temp[key] = _activatedObjects[key];
-	//				_activatedObjects.Remove(key);
-	//			}
-	//		}
-
-	//		lock(_pools)
-	//		{
-	//			foreach (var pair in temp)
-	//			{
-	//				_pools[pair.Key].Release(pair.Value);
-	//			}
-	//		}
-	//	});
-	//}
+	public void PrintPoolStatus()
+	{
+		GLogger.Log($"Activated count: {_activatedObjects.Count}");
+		GLogger.Log($"object id pool count: {_objectIdPool.Count}");
+	}
 }

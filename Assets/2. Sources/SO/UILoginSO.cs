@@ -12,6 +12,8 @@ public class UILoginSO : ScriptableObject
 	INotificationUI _notification;
 	IUILoginDialogManager _dialogManager;
 
+
+
 	public IUILoginPannel LoginUI
 	{
 		get { return _loginUI; }

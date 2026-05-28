@@ -24,14 +24,6 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 	Coroutine _calculatePathCo;
 	List<float> _teethSpeed = new();
 
-	//void Start()
-	//{
-	//	for (int i = 0; i < _teeth.Count(); ++i)
-	//	{
-	//		_teethSpeed.Add(Random.Range(-60, 60));
-	//	}
-	//}
-
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
@@ -92,7 +84,6 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 			var ce = _collisionEventList.First();
 			_collisionEventList.RemoveAt(0);
 			HealthPoint -= ce.Damage;
-			//GLogger.Log($"{PrefabId} {HealthPoint} {ce.Damage}");
 			
 			if (ce.Effect > CollisionEffect.None
 				&& ce.Effect < CollisionEffect.Block)
@@ -177,7 +168,6 @@ public class SuicideBomberEnemy : EnemyBase, INetworkObjectCollision
 					_path);
 				if (res)
 				{
-					//GLogger.Log($"path status {_path.status} path count: {_path.corners.Count()}");
 #if UNITY_EDITOR
 					//Vector3 prePoint = transform.position;
 					//foreach (var point in _path.corners)
