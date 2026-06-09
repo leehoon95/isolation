@@ -43,18 +43,7 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 			return;
 		}
 
-		long firingInterval;
 		bool burst = _buff == "burst";
-
-		if (burst)
-		{
-			firingInterval = (long)(_firingInterval * 0.8f);
-		}
-		else
-		{
-			firingInterval = _firingInterval;
-		}
-
 		var now = System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond;
 		var toTargetVector = TargetPosition - (Vector2)Muzzle.position;
 		var toTargetCenterVector = TargetPosition - (Vector2)Muzzle.parent.position;
@@ -84,7 +73,7 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 						Effect = CollisionEffect.Knockback,
 						EffectDuration = _knockbackDuration,
 						EffectIntensity = _knockbackIntensity,
-						Damage = _damage
+						Damage = _damage + (burst ? 2 : 0)
 					},
 					EffectColor = PersonalColor,
 					LifeTime = 5f,

@@ -3,8 +3,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Components;
+using System.Collections;
+using UnityEngine.Localization.Settings;
 
 
 
@@ -31,6 +32,12 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 	LocalizeStringEvent _locStringEvent;
 	[SerializeField]
 	TMP_Text _audioDownloadProgress;
+	[SerializeField]
+	Button _koreanButton;
+	[SerializeField]
+	Button _englishButton;
+	[SerializeField]
+	Button _clearCacheButton;
 
 	// test ui
 	[SerializeField]
@@ -64,6 +71,21 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 		_audioDownloadButton.onClick.AddListener(() => {
 			OnDownloadAudio();
 			_audioDownloadButton.gameObject.SetActive(false);
+		});
+
+		_koreanButton.onClick.AddListener(() =>
+		{
+			_uiso.RaiseChangeLocalization(0);
+		});
+
+		_englishButton.onClick.AddListener(() =>
+		{
+			_uiso.RaiseChangeLocalization(1);
+		});
+
+		_clearCacheButton.onClick.AddListener(() =>
+		{
+			_uiso.RaiseClearCache();
 		});
 
 		//test

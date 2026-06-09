@@ -502,11 +502,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	[Rpc(SendTo.Everyone)]
 	void SpawnEachPlayerRpc()
 	{
-		var automatic = false;
-		if (NetworkManager.LocalClientId != 0)
-		{
-			automatic = _automaticClient;
-		}
+		var automatic = NetworkManager.LocalClientId != 0 ? _automaticClient : false;
 
 		_playerSpawner.SpawnPlayerRpc(
 			NetworkManager.Singleton.LocalClientId,

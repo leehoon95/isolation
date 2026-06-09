@@ -41,6 +41,7 @@ public class LoginGameManager : MonoBehaviour
 	PMResponseRegisterAccount _responseRegisterAccount;
 	LocalizationLoader _localizationLoader = new();
 	StringTable _localizedTable;
+	bool _localizationChanging;
 
 	void Awake()
 	{
@@ -73,7 +74,7 @@ public class LoginGameManager : MonoBehaviour
 			var obj = new GameObject("[UI Login Holder]");
 			obj.AddComponent<UILoginSOHolder>();
 		}
-
+		
 		if (FindAnyObjectByType<UnobservedTaskExceptionHandlerHolder>() == null)
 		{
 			var obj = new GameObject("[Unobserved Task Exception Handler Holder]");
@@ -105,9 +106,30 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.OnLogin += OnLogin;
 		_uiso.OnDownloadAudio += OnDownloadAudio;
 		_uiso.OnRegister += OnRegister;
+		_uiso.OnChangeLocaliztion += ChangeLocalization;
+		_uiso.OnClearCache += ClearCache;
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 		_taskCo = StartCoroutine(ReadyForLoginScene());
+	}
+
+	void ChangeLocalization(int index)
+	{
+		LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+	}
+
+	void ClearCache()
+	{
+		_audioContainer.ReleaseAudioResources();
+		var res = Caching.ClearCache();
+		if (res)
+		{
+			GLogger.Log("캐시 삭제 성공");
+		}
+		else
+		{
+			GLogger.Log("캐시 삭제 실패");
+		}
 	}
 
 	void OnAudioDownloadable(long size)

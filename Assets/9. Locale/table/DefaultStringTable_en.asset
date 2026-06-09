@@ -252,6 +252,10 @@ MonoBehaviour:
     m_Localized: Audio download complete
     m_Metadata:
       m_Items: []
+  - m_Id: 60794489256423424
+    m_Localized: Clear Cache
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

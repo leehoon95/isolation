@@ -35,6 +35,8 @@ public class UILoginSO : ScriptableObject
 	public event Action<string, string> OnLogin;
 	public event Action OnDownloadAudio;
 	public event Action OnRegister;
+	public event Action<int> OnChangeLocaliztion;
+	public event Action OnClearCache;
 
 	// test
 	public event Action OnTest_1;
@@ -53,6 +55,10 @@ public class UILoginSO : ScriptableObject
 		=> OnDownloadAudio?.Invoke();
 	public void RaiseOnRegister()
 		=> OnRegister?.Invoke();
+	public void RaiseChangeLocalization(int index)
+		=> OnChangeLocaliztion?.Invoke(index);
+	public void RaiseClearCache()
+		=> OnClearCache?.Invoke();
 	public void RaiseTestEvent_1() 
 		=> OnTest_1?.Invoke();
 	public void RaiseTestEvent_2() 

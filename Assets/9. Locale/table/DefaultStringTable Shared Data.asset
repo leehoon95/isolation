@@ -251,6 +251,10 @@ MonoBehaviour:
     m_Key: audio-download-success
     m_Metadata:
       m_Items: []
+  - m_Id: 60794489256423424
+    m_Key: clear-cache
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

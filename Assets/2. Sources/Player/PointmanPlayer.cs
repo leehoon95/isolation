@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -45,18 +46,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		0,
 		NetworkVariableReadPermission.Everyone,
 		NetworkVariableWritePermission.Owner);
-	IWeaponInterface _leftWeapon;
-	IWeaponInterface _rightWeapon;
-	UILevelSO _uiso;
-	IItemHandler _grabbedItem;
-	bool _grabbed;
-
-	Vector2 _inputMovement;
-	bool _inputLeftTrigger;
-	bool _inputRightTrigger;
-	float _speed;
-	Color _personalColor;
-	float _angle;
 	List<CollisionEvent> _collisionEventList = new();
 	CollisionEvent _collisionEventCache = new()
 	{
@@ -66,9 +55,23 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		EffectDuration = 0f,
 		Damage = 0,
 	};
+	IWeaponInterface _leftWeapon;
+	IWeaponInterface _rightWeapon;
+	UILevelSO _uiso;
+	IItemHandler _grabbedItem;
+	bool _grabbed;
+	Vector2 _inputMovement;
+	bool _inputLeftTrigger;
+	bool _inputRightTrigger;
+	float _speed;
+	Color _personalColor;
+	float _angle;
 	long _lastHealthRecoveryTime;
 	Dictionary<string, Coroutine> _buffApplied = new();
 	AudioContainer _ac;
+	long _automaticAttackEndTick;
+	long _automaticRelaxEndTick;
+
 	public string Nickname { get; set; }
 
 	public Color PersonalColor 
@@ -78,6 +81,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			_personalColor = value;
 			_bodySprite.color = value;
+			_weaponContainer.PersonalColor = value;
 		}
 	}
 
@@ -121,9 +125,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			return;
 		}
-
-		transform.rotation = Quaternion.Euler(0f, 0f, _angle);
-
 		if (_uiso.IsShowingItemPicker())
 		{
 			_uiso.MoveItemPicket(_grabbedItem.GO.transform.position);
@@ -131,10 +132,17 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 		_uiso.UpdateIndicatorPosition(transform.position);
 
+		if (AutomaticMotion)
+		{
+			return;
+		}
+
 		var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 		var toMouseVector = mousePosition - (Vector2)transform.position;
 		_angle = Mathf.Atan2(toMouseVector.y, toMouseVector.x) * Mathf.Rad2Deg;
 		_weaponContainer.TargetPosition = mousePosition;
+
+		transform.rotation = Quaternion.Euler(0f, 0f, _angle);
 	}
 
 	void FixedUpdate()
@@ -149,11 +157,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			var ph = Spawner.GetPlayer(0);
 			if (ph == null)
 			{
-				//GLogger.Log($"AutomaticMotion ph is null");
 				return;
 			}
 
 			var direction = ph.GO.transform.position - transform.position;
+			var hostPlayerRotation = ph.GO.transform.rotation;
 			var distance = direction.magnitude;
 
 			if (distance > 2f)
@@ -161,6 +169,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 				var newPosition = _rigidbody.position + (Vector2)direction.normalized * _speed * Time.fixedDeltaTime;
 				_rigidbody.MovePosition(newPosition);
 			}
+
+			_angle = hostPlayerRotation.eulerAngles.z;
+			transform.rotation = Quaternion.Euler(0f, 0f, _angle);
+			_weaponContainer.TargetPosition = transform.position + (hostPlayerRotation * Vector3.right) * 10f;
+			GLogger.Log($"t{_weaponContainer.TargetPosition}");
 		}
 
 		while (_collisionEventList.Count > 0)
@@ -205,44 +218,27 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			_lastHealthRecoveryTime = now;
 		}
 
+		if (AutomaticMotion)
+		{
+			if (_inputLeftTrigger && now - _automaticRelaxEndTick > 3000f)
+			{
+				_inputLeftTrigger = false;
+				_automaticAttackEndTick = now;
+			}
+			else if (!_inputLeftTrigger && now - _automaticAttackEndTick > 1000f)
+			{
+				_inputLeftTrigger = true;
+				_automaticRelaxEndTick = now;
+			}
+		}
+
 		_weaponContainer.Trigger(_inputLeftTrigger);
 
 		if (_inputMovement.sqrMagnitude > float.Epsilon)
 		{
 			var newPosition = _rigidbody.position + _inputMovement.normalized * _speed * Time.fixedDeltaTime;
 			_rigidbody.MovePosition(newPosition);
-			//_rigidbody.linearVelocity = _inputMovement.normalized * _speed;
-			//_anticipatedNetworkTransform.AnticipateMove(
-			//	_rigidbody.position + _inputMovement.normalized * _speed * Time.deltaTime);
 		}
-
-		//float gunCorrectionAngle = 0f;
-
-		/*
-		 * 캐릭터 한 쪽에 정확히 조준해야 하는 로직이 있어야 하는 경우
-		 */
-		//if (_rightWeapon != null)
-		//{
-		//	var distance = (mousePosition - (Vector2)transform.position).magnitude;
-		//	var gunWorldVector = _rightWeapon.MuzzleTransform.position - transform.position;
-		//	/*
-		//	 * 마우스가 캐릭터 중심과 gun muzzle 사이에 있으면 계산 불가
-		//	 */
-		//	if (distance > gunWorldVector.magnitude)
-		//	{
-		//		var gunX = Mathf.Abs(_rightWeaponPosition.transform.localPosition.x + _rightWeapon.MuzzleTransform.localPosition.x);
-		//		var gunTargetY = Mathf.Sqrt(distance * distance - gunX * gunX);
-		//		gunCorrectionAngle = Vector2.Angle(
-		//			new Vector2(gunX, gunTargetY),
-		//			new Vector2(0f, distance));
-		//	}
-		//	else
-		//	{
-		//		gunCorrectionAngle = 0f;
-		//	}
-		//}
-
-
 	}
 
 	void OnTriggerEnter2D(Collider2D collision)
@@ -310,7 +306,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		GLogger.Log($"OnPlayerSpawned initialize {NetworkManager.LocalClientId}");
 		
 		_ac = AudioContainer.Instance;
-		_weaponContainer.PersonalColor = PersonalColor;
 
 		if (!IsOwner)
 		{
@@ -340,7 +335,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 		InputSystem.Move += OnMove;
 		InputSystem.LeftTrigger += OnLeftTrigger;
-		InputSystem.RightTrigger += OnRightTrigger;
 		InputSystem.UseItem += OnUseItem;
 	}
 
@@ -363,7 +357,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 		InputSystem.Move -= OnMove;
 		InputSystem.LeftTrigger -= OnLeftTrigger;
-		InputSystem.RightTrigger -= OnRightTrigger;
 		InputSystem.UseItem -= OnUseItem;
 	}
 
@@ -483,11 +476,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 	void OnLeftTrigger(bool trigger)
 	{
 		_inputLeftTrigger = trigger;
-	}
-
-	void OnRightTrigger(bool trigger)
-	{
-		_inputRightTrigger = trigger;
 	}
 
 	void OnUseItem(bool tryPickItem)

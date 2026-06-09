@@ -3,9 +3,9 @@ using Unity.Netcode;
 using UnityEngine;
 
 /*
- * Enemy와 Player가 충돌했을 때 충돌 이벤트를 판단하고 전달하는 주체는 client다 (client의 scene에서 결정한다)
- * 따라서 Enemy->Player Object 방향으로 이벤트를 전하지 않는다
- * Player가 이벤트를 가져가고 Enemy에게 이벤트를 전달한다
+ * Enemy와 Player가 충돌했을 때 충돌을 판단하고 전달하는 주체는 client다 (client의 scene에서 결정한다)
+ * 따라서 Enemy->Player 방향으로 이벤트를 전달하지 않는다
+ * Player 스스로 판단 후 충돌 이벤트를 내부에 만들고, Enemy에게 충돌 이벤트를 전달한다
  */
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyBase : NetworkBehaviour, IEnemyHandler

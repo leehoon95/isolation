@@ -102,7 +102,7 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 
 	void SetWeaponSprite(int position, string weaponName)
 	{
-		//GLogger.Log($"SetWeaponSprite {position} {weaponName}");
+		GLogger.Log($"SetWeaponSprite({PersonalColor}) {position} {weaponName}");
 		switch (position)
 		{
 			case 0:
@@ -165,7 +165,6 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 
 		SetWeaponSprite(position, weaponName);
 
-
 		WeaponConfig wc;
 		_weaponConfigCache.TryGetValue(weaponName, out wc);
 
@@ -174,7 +173,7 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 			GLogger.LogWarning($"Unknown Weapon {weaponName}");
 			return;
 		}
-
+		
 		IWeaponInterface wi = null;
 		var obj = Instantiate(wc.Prefab);
 		if (weaponName.Contains("laser"))

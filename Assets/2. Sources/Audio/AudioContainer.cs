@@ -1,14 +1,11 @@
-using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.SceneManagement;
 
 public class PathDefines
 {
@@ -45,6 +42,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 	Dictionary<string, AudioResourceConfig> _audioResourceConfigPool = new();
 	Dictionary<string, IAudioPlayable> _playingHolderList = new();
 	List<IAudioPlayable> _releaseReservedList = new();
+	List<AsyncOperationHandle> handles = new();
 
 	void Awake()
 	{
@@ -110,6 +108,35 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 			_audioHolderPool.Release(holder);
 		}
 		_releaseReservedList.Clear();
+	}
+
+	public void ReleaseAudioResources()
+	{
+		CollectHolder();
+
+		_playingHolderList.Clear();
+		_audioHolderPool.Clear();
+		_audioClipPool.Clear();
+		_audioResourceConfigPool.Clear();
+
+		foreach (var handle in handles)
+		{
+			if (handle.IsValid())
+			{
+				Addressables.Release(handle);
+			}
+		}
+		handles.Clear();
+
+		////
+		//Addressables.location
+		//var bundles = AssetBundle.GetAllLoadedAssetBundles();
+		//foreach (var bundle in bundles)
+		//{
+		//	GLogger.Log($"bundle: {bundle.name}");
+			
+		//}
+		Addressables.CleanBundleCache();
 	}
 
 	IEnumerator CheckAudioUpdatableCo()
@@ -193,24 +220,27 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 		{
 			foreach (var location in loadAudioLocationsHandle.Result)
 			{
+				//GLogger.Log($"{location.InternalId} {location.ProviderId}");
 				if (location.ResourceType == typeof(AudioClip))
 				{
-					var loadAssetHandle = Addressables.LoadAssetAsync<AudioClip>(location);
-					yield return loadAssetHandle;
+					var handle = Addressables.LoadAssetAsync<AudioClip>(location);
+					yield return handle;
 
-					if (loadAssetHandle.Status == AsyncOperationStatus.Succeeded)
+					if (handle.Status == AsyncOperationStatus.Succeeded)
 					{
-						_audioClipPool[location.PrimaryKey] = loadAssetHandle.Result;
+						_audioClipPool[location.PrimaryKey] = handle.Result;
 					}
+					
+					handles.Add(handle);
 				}
 				else if (location.ResourceType == typeof(AudioResourceDataSO))
 				{
-					var ard = Addressables.LoadAssetAsync<AudioResourceDataSO>(location);
-					yield return ard;
+					var handle = Addressables.LoadAssetAsync<AudioResourceDataSO>(location);
+					yield return handle;
 
-					if (ard.Status == AsyncOperationStatus.Succeeded)
+					if (handle.Status == AsyncOperationStatus.Succeeded)
 					{
-						var data = ard.Result;
+						var data = handle.Result;
 						foreach (var config in data.Configs)
 						{
 							if (!_audioResourceConfigPool.ContainsKey(config.Key))
@@ -219,6 +249,8 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 							}
 						}
 					}
+
+					handles.Add(handle);
 				}
 						
 			}

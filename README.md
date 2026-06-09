@@ -10,16 +10,7 @@
 |플랫폼|Windows|
 |사용 기술 및 패키지|Unity NGO, Relay, Lobby, Addressables, UI Soft Mask, NavMeshPlus|
 
-### 핵심 구현 사항
-
-|기술|목적|
-|-|-|
-|Unity|
-|네트워크 동기화|Unity NGO|
-|Relay|P2P 연결|
-|Lobby|플레이|
-
-### 참고 기능과 소스 코드
+### 참고 소스 코드와 기능
 * 아이템 스포너: 기본적으로 네트워크 동기화 오브젝트를 스폰하는 스포너  
     [ItemSpawner.cs](./Assets/2.%20Sources/Spawner/ItemSpawner.cs)
 * 투사체 스포너: 실제 네트워크 스폰이 아니고 로컬에만 실체, 다른 클라이언트는 허상을 스폰  
