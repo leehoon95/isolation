@@ -195,20 +195,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - Audio
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 93270201d83c1754e8123d30d264590b
-    m_Address: arc-explosion
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Audio
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 98daa26b1f0e8264583e0656c2db88f2
     m_Address: puppy-walts
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Audio
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bb8aaa86c264adf4a81ab9114aac8973
-    m_Address: arc-laser-burst
     m_ReadOnly: 0
     m_SerializedLabels:
     - Audio
@@ -243,12 +231,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - Audio
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e3534da36957f9b4aa7e82b43b38b9bc
-    m_Address: arc-laser
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Audio
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e638b8246fd05494c889f47e558b0bcc
     m_Address: shine-2
     m_ReadOnly: 0
@@ -263,12 +245,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f144b849ca05ef340a31ecfd4f57dc7b
     m_Address: get-weapon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Audio
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f5ce3cf29be716e45ae35864ba63f703
-    m_Address: audio-resource-data
     m_ReadOnly: 0
     m_SerializedLabels:
     - Audio

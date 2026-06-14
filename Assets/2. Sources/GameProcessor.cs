@@ -67,6 +67,8 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	[Header("Quest")]
 	[SerializeField]
 	int _questEnemyCountToKill;
+	[SerializeField]
+	int _spawnEnemyPeriod;
 
 
 	UILevelSO _uiso;
@@ -299,7 +301,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 		while (!_firstQuestCompleted)
 		{
-			if (t > 20f)
+			if (t > _spawnEnemyPeriod)
 			{
 				for (int i = 0; i < 2; ++i)
 				{

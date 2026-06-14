@@ -8466,7 +8466,8 @@ MonoBehaviour:
   - CameraName: TestCamera
     Camera: {fileID: 569900077}
   _automaticClient: 1
-  _questEnemyCountToKill: 10
+  _questEnemyCountToKill: 20
+  _spawnEnemyPeriod: 60
 --- !u!4 &2101628029
 Transform:
   m_ObjectHideFlags: 0

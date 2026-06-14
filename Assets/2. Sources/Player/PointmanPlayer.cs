@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -97,7 +98,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	public override void OnNetworkSpawn()
 	{
-		//GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
+		GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
 		Spawner.NotifyPlayerSpawned(this);
 		if (OwnerClientId == SpawnClientId)
 		{
@@ -112,8 +113,8 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	protected override void OnOwnershipChanged(ulong previous, ulong current)
 	{
-		//GLogger.Log($"pp OnOwnershipChanged {previous} to {current}. IsOwner: {IsOwner}");
-		if (IsOwner)
+		GLogger.Log($"pp OnOwnershipChanged {previous} to {current}. IsOwner: {IsOwner}");
+		//if (IsOwner)
 		{
 			OnPlayerSpawned();
 		}
@@ -125,6 +126,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			return;
 		}
+
 		if (_uiso.IsShowingItemPicker())
 		{
 			_uiso.MoveItemPicket(_grabbedItem.GO.transform.position);
@@ -173,7 +175,6 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			_angle = hostPlayerRotation.eulerAngles.z;
 			transform.rotation = Quaternion.Euler(0f, 0f, _angle);
 			_weaponContainer.TargetPosition = transform.position + (hostPlayerRotation * Vector3.right) * 10f;
-			GLogger.Log($"t{_weaponContainer.TargetPosition}");
 		}
 
 		while (_collisionEventList.Count > 0)
@@ -238,6 +239,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		{
 			var newPosition = _rigidbody.position + _inputMovement.normalized * _speed * Time.fixedDeltaTime;
 			_rigidbody.MovePosition(newPosition);
+			//_rigidbody.linearVelocity = _inputMovement.normalized * _speed;
 		}
 	}
 
@@ -310,7 +312,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 		if (!IsOwner)
 		{
 			_hand.gameObject.SetActive(false);
-			_collider.gameObject.SetActive(false);
+			//_collider.gameObject.SetActive(false);
 			_colliderTrigger.gameObject.SetActive(false);
 			return;
 		}

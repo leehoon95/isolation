@@ -10,8 +10,9 @@ public interface IAudioPlayable
 	public string AudioName { get; set; }
 	public long PlayTime { get; }
 
-	void Play(AudioResource resource, float time);
-	void Play(AudioClip clip);
+	//void Play(AudioResource resource, float time);
+	//void Play(AudioClip clip);
+	void Play(AudioResource resource);
 }
 
 public class AudioHolder : MonoBehaviour, IAudioPlayable
@@ -19,8 +20,6 @@ public class AudioHolder : MonoBehaviour, IAudioPlayable
 	[SerializeField]
 	AudioSource _audioSource;
 
-	Coroutine _task;
-	string _audioName;
 	long _playTime;
 
 	public IAudioHolderPool Pool { get; set; }
@@ -33,36 +32,28 @@ public class AudioHolder : MonoBehaviour, IAudioPlayable
 		DontDestroyOnLoad(gameObject);
 	}
 
-	public void Play(AudioResource resource, float time)
+	void OnDisable()
 	{
-		if (_task != null)
-		{
-			return;
-		}
-
-		_audioSource.resource = resource;
-		_task = StartCoroutine(PlayAudio(time));
+		StopAllCoroutines();
 	}
 
-	public void Play(AudioClip clip)
+	public void Play(AudioResource ar)
 	{
-		if (_task != null)
-		{
-			return;
-		}
-
-		_audioSource.clip = clip;
-		_task = StartCoroutine(PlayAudio(clip.length));
+		_audioSource.resource = ar;
+		StartCoroutine(PlayAudio());
 	}
 
-	IEnumerator PlayAudio(float time)
+	IEnumerator PlayAudio()
 	{
 		_playTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-		yield return null;
 		_audioSource.Play();
-		yield return new WaitForSeconds(time);
+		yield return null;
 		
-		_task = null;
+		while (_audioSource.isPlaying)
+		{
+			yield return null;
+		}
+
 		Pool.Release(this);
 	}
 }

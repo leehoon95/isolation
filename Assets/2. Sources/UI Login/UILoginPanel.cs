@@ -173,10 +173,6 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 	public void SetInteractable(bool interactable)
 	{
 		_canvasGroup.interactable = interactable;
-		//_id.interactable = interactable;
-		//_password.interactable = interactable;
-		//_loginButton.interactable = interactable;
-		//_registerButton.interactable = interactable;
 	}
 
 	public void ShowAudioDownloadButton(long size)
@@ -186,7 +182,7 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 			"DefaultStringTable",
 			"audio-update");
 		_locStringEvent.StringReference.Arguments
-			= new[] { $"{(size / (1024f * 1024f)).ToString("0.00")}" };
+			= new[] { $"{size / (1024f * 1024f):F2}" };
 		_locStringEvent.RefreshString();
 	}
 

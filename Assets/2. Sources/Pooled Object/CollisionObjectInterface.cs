@@ -99,7 +99,6 @@ public class CollisionEvent
  * INetworkObjectCollision 인터페이스를 구현하는 오브젝트에게 충돌 이벤트를 전달할 수 있다
  * 충돌검사는 local scene에서 판정하되, 정확한 이벤트 전달을 위해(충돌 이벤트가 중복되는 것을 방지)
  * host가 local object에게 충돌 이벤트를 전달한다.
- * 충돌 이벤트는 NetworkManager에서 알 수 있는 Spawn된 오브젝트여야 한다
  */
 public interface INetworkObjectCollision
 {

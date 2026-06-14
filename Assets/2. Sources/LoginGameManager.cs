@@ -118,18 +118,18 @@ public class LoginGameManager : MonoBehaviour
 		LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
 	}
 
-	void ClearCache()
+	async void ClearCache()
 	{
-		_audioContainer.ReleaseAudioResources();
-		var res = Caching.ClearCache();
-		if (res)
-		{
-			GLogger.Log("캐시 삭제 성공");
-		}
-		else
-		{
-			GLogger.Log("캐시 삭제 실패");
-		}
+		await _audioContainer.ReleaseAudioResources();
+		//var res = Caching.ClearCache();
+		//if (res)
+		//{
+		//	GLogger.Log("캐시 삭제 성공");
+		//}
+		//else
+		//{
+		//	GLogger.Log("캐시 삭제 실패");
+		//}
 	}
 
 	void OnAudioDownloadable(long size)
@@ -220,12 +220,7 @@ public class LoginGameManager : MonoBehaviour
 		var content = _localizedTable.GetEntry("network-connection-error-massage")?.LocalizedValue;
 		var okButton = _localizedTable.GetEntry("retry")?.LocalizedValue;
 
-		//var selectedLocale = LocalizationSettings.SelectedLocale;
-		// adb = LocalizationSettings.StringDatabase;
 		_uiso.DialogManager.ShowOkDialog(
-			//adb.GetLocalizedString("DefaultStringTable", "network-connection-error", selectedLocale),
-			//adb.GetLocalizedString("DefaultStringTable", "network-connection-error-massage", selectedLocale),
-			//adb.GetLocalizedString("DefaultStringTable", "retry", selectedLocale),
 			title,
 			content,
 			okButton,
@@ -281,10 +276,15 @@ public class LoginGameManager : MonoBehaviour
 					(int)ProtoAuthenticationMessage.RequestLogin, data)));
 	}
 
-	void OnDownloadAudio()
+	async void OnDownloadAudio()
 	{
-		GLogger.Log("오디오 업데이트 진행하라");
-		_audioContainer.DownloadAudio();
+		_uiso.SetInteractable(false);
+		var downloadResult = await _audioContainer.DownloadBundles("Audio");
+		if (downloadResult)
+		{
+			await _audioContainer.LoadAudioAsset();
+		}
+		_uiso.SetInteractable(true);
 	}
 
 	void OnRegister()

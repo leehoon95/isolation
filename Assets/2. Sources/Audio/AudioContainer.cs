@@ -1,11 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.WSA;
 
 public class PathDefines
 {
@@ -35,13 +41,10 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 	public event UnityAction<long> AudioDownloadable;
 	public event UnityAction<bool, float> AudioDownloadProgress;
 
-	Coroutine _downloadCo;
-	Coroutine _loadAssetsCo;
 	ObjectPool<IAudioPlayable> _audioHolderPool;
-	Dictionary<string, AudioClip> _audioClipPool = new();
-	Dictionary<string, AudioResourceConfig> _audioResourceConfigPool = new();
-	Dictionary<string, IAudioPlayable> _playingHolderList = new();
-	List<IAudioPlayable> _releaseReservedList = new();
+	Dictionary<string, AudioResource> _audioResourcePool = new();
+	HashSet<IAudioPlayable> _playingHolderSet = new();
+	Dictionary<string, long> _playTimeCache = new();
 	List<AsyncOperationHandle> handles = new();
 
 	void Awake()
@@ -56,21 +59,22 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 		DontDestroyOnLoad(gameObject);
 	}
 
-	void Start()
+	async void Start()
 	{
 		_audioHolderPool = new ObjectPool<IAudioPlayable>(
 			createFunc: () =>
 			{
 				var obj = Instantiate(_audioHolderPrefab);
 				var iap = obj.GetComponent<IAudioPlayable>();
-				iap.Pool = this;
-
 #if UNITY_EDITOR
 				if (iap == null )
 				{
 					throw new InvalidOperationException("Invalid prefab");
 				}
 #endif
+
+				iap.Pool = this;
+
 				return iap;
 			},
 			actionOnGet: (instance) =>
@@ -81,7 +85,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 			actionOnRelease: (instance) =>
 			{
 				instance.GO.SetActive(false);
-				_playingHolderList.Remove(instance.AudioName);
+				_playingHolderSet.Remove(instance);
 			},
 			actionOnDestroy: (instance) =>
 			{
@@ -90,34 +94,146 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 			}
 			);
 
-		StartCoroutine(CheckAudioUpdatableCo());
-	}
-
-	void FixedUpdate()
-	{
-		if (_releaseReservedList.Count > 0)
+		try
 		{
-			CollectHolder();
+			await CheckCatalogUpdatable();
+			var downloadableSize = await GetDownloadSizeAsync("Audio");
+
+			if (downloadableSize > 0)
+			{
+				AudioDownloadable?.Invoke(downloadableSize);
+			}
+			else
+			{
+				await LoadAudioAsset();
+			}
+		}
+		catch (Exception e)
+		{
+			GLogger.LogException(e);
 		}
 	}
 
-	void CollectHolder()
+	async Awaitable CheckCatalogUpdatable()
 	{
-		foreach (var holder in _releaseReservedList)
+		await Addressables.InitializeAsync().Task;
+
+		var checkCatalogHandle = Addressables.CheckForCatalogUpdates(false);
+		await checkCatalogHandle.Task;
+
+		if (checkCatalogHandle.Status != AsyncOperationStatus.Succeeded)
 		{
-			_audioHolderPool.Release(holder);
+			GLogger.LogWarning($"카탈로그 업데이트 확인 실패({checkCatalogHandle.OperationException.Message})");
+			Addressables.Release(checkCatalogHandle);
+			return;
 		}
-		_releaseReservedList.Clear();
+
+		var catalogsToUpdate = checkCatalogHandle.Result;
+		if (catalogsToUpdate.Count == 0)
+		{
+			GLogger.LogWarning("카탈로그가 최신 버전이다");
+			Addressables.Release(checkCatalogHandle);
+			return;
+		}
+
+		GLogger.LogWarning($"업데이트 가능한 카탈로그 개수: {catalogsToUpdate.Count}. 업데이트 시작...");
+		foreach (var catalog in catalogsToUpdate) 
+		{
+			GLogger.LogWarning($"catalog: {catalog}");
+		}
+
+		var catalogUpdateHandle = Addressables.UpdateCatalogs(catalogsToUpdate, false);
+		await catalogUpdateHandle.Task;
+
+		if (catalogUpdateHandle.Status != AsyncOperationStatus.Succeeded)
+		{
+			GLogger.LogWarning($"카탈로그 업데이트 실패\n{catalogUpdateHandle.OperationException.Message}");
+		}
+		else
+		{
+			GLogger.LogWarning("카탈로그 업데이트 완료");
+		}
+
+		Addressables.Release(checkCatalogHandle);
+		Addressables.Release(catalogUpdateHandle);
 	}
 
-	public void ReleaseAudioResources()
+	async Awaitable<long> GetDownloadSizeAsync(string key)
 	{
-		CollectHolder();
+		var sizeHandle = Addressables.GetDownloadSizeAsync(key);
+		await sizeHandle.Task;
 
-		_playingHolderList.Clear();
+		var downloadSize = sizeHandle.Result;
+		GLogger.LogWarning($"다운로드 사이즈: {downloadSize / (1024f * 1024f):F2} MB");
+		return downloadSize;
+	}
+
+	public async Awaitable<bool> DownloadBundles(string key)
+	{
+		var downloadHandle = Addressables.DownloadDependenciesAsync(key);
+
+		while (!downloadHandle.IsDone)
+		{
+			var status = downloadHandle.GetDownloadStatus();
+			AudioDownloadProgress?.Invoke(false, (float)status.DownloadedBytes / status.TotalBytes);
+
+			await Task.Yield();
+		}
+
+		var result = downloadHandle.Status == AsyncOperationStatus.Succeeded;
+
+		if (result)
+		{
+			GLogger.LogWarning("에셋 번들 다운로드 완료");
+			AudioDownloadProgress?.Invoke(true, 1f);
+		}
+		else
+		{
+			GLogger.LogWarning("에셋 번들 다운로드 실패");
+		}
+
+		Addressables.Release(downloadHandle);
+		return result;
+	}
+
+	public async Awaitable LoadAudioAsset()
+	{
+		var locationsHandle = Addressables.LoadResourceLocationsAsync("Audio");
+		await locationsHandle.Task;
+
+		foreach (var location in locationsHandle.Result)
+		{
+			var loadAssetHandle = Addressables.LoadAssetAsync<AudioResource>(location);
+			await loadAssetHandle.Task;
+
+			handles.Add(loadAssetHandle);
+			if (loadAssetHandle.Result != null)
+			{
+				_audioResourcePool[location.PrimaryKey] = loadAssetHandle.Result;
+				GLogger.LogWarning($"오디오 에셋 로드: {location.PrimaryKey}");
+			}
+			else
+			{
+				GLogger.LogWarning($"오디오 에셋 로드 실패: {location.PrimaryKey}");
+			}
+		}
+
+		Addressables.Release(locationsHandle);
+	}
+
+	public async Awaitable ReleaseAudioResources()
+	{
 		_audioHolderPool.Clear();
-		_audioClipPool.Clear();
-		_audioResourceConfigPool.Clear();
+
+		foreach (var holder in _playingHolderSet)
+		{
+			Destroy(holder.GO);
+		}
+
+		_playingHolderSet.Clear();
+		_audioResourcePool.Clear();
+
+		await Task.Yield();
 
 		foreach (var handle in handles)
 		{
@@ -128,196 +244,42 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 		}
 		handles.Clear();
 
-		////
-		//Addressables.location
-		//var bundles = AssetBundle.GetAllLoadedAssetBundles();
-		//foreach (var bundle in bundles)
-		//{
-		//	GLogger.Log($"bundle: {bundle.name}");
-			
-		//}
+		await Task.Yield();
+
+		var clearHandle = Addressables.ClearDependencyCacheAsync("Audio", true);
+		await clearHandle.Task;
 		Addressables.CleanBundleCache();
-	}
-
-	IEnumerator CheckAudioUpdatableCo()
-	{
-		yield return null;
-
-		// 카탈로그 업데이트
-		var checkCatalogHandle = Addressables.CheckForCatalogUpdates(true);
-		yield return checkCatalogHandle;
-
-		// Audio 라벨 에셋을 다운로드 받아야 하는지 확인
-		var sizeHandle = Addressables.GetDownloadSizeAsync("Audio");
-		yield return sizeHandle;
-
-		if (sizeHandle.Status == AsyncOperationStatus.Succeeded)
-		{
-			GLogger.Log($"Audio 다운로드 사이즈: {sizeHandle.Result}");
-			if (sizeHandle.Result > 0)
-			{
-				AudioDownloadable?.Invoke(sizeHandle.Result);
-			}
-			else if (sizeHandle.Result == 0)
-			{
-				StartCoroutine(LoadAudioAssets());
-			}
-		}
-		Addressables.Release(sizeHandle);
-	}
-
-	public void DownloadAudio()
-	{
-		if (_downloadCo != null)
-		{
-			GLogger.LogWarning("오디오 다운로드가 진행 중");
-			return;
-		}
-
-		_downloadCo = StartCoroutine(DownloadAudioCo());
-	}
-
-	IEnumerator DownloadAudioCo()
-	{
-		var downloadHandle = Addressables.DownloadDependenciesAsync("Audio", false);
-
-		while (!downloadHandle.IsDone)
-		{
-			AudioDownloadProgress?.Invoke(false, downloadHandle.PercentComplete);
-			yield return null;
-		}
-
-		if (downloadHandle.Status == AsyncOperationStatus.Succeeded)
-		{
-			_loadAssetsCo = StartCoroutine(LoadAudioAssets());
-		}
-		else
-		{
-			GLogger.LogWarning("다운로드 실패");
-			AudioDownloadProgress?.Invoke(true, -1f);
-		}
-
-		AudioDownloadProgress?.Invoke(true, 1f);
-
-		Addressables.Release(downloadHandle);
-		_downloadCo = null;
-	}
-
-	IEnumerator LoadAudioAssets()
-	{
-		if (_loadAssetsCo != null)
-		{
-			GLogger.LogWarning("오디오 에셋 로드가 이미 진행 중");
-			yield break;
-		}
-
-		yield return null;
-
-		var loadAudioLocationsHandle = Addressables.LoadResourceLocationsAsync("Audio");
-		yield return loadAudioLocationsHandle;
-
-		if (loadAudioLocationsHandle.Status == AsyncOperationStatus.Succeeded)
-		{
-			foreach (var location in loadAudioLocationsHandle.Result)
-			{
-				//GLogger.Log($"{location.InternalId} {location.ProviderId}");
-				if (location.ResourceType == typeof(AudioClip))
-				{
-					var handle = Addressables.LoadAssetAsync<AudioClip>(location);
-					yield return handle;
-
-					if (handle.Status == AsyncOperationStatus.Succeeded)
-					{
-						_audioClipPool[location.PrimaryKey] = handle.Result;
-					}
-					
-					handles.Add(handle);
-				}
-				else if (location.ResourceType == typeof(AudioResourceDataSO))
-				{
-					var handle = Addressables.LoadAssetAsync<AudioResourceDataSO>(location);
-					yield return handle;
-
-					if (handle.Status == AsyncOperationStatus.Succeeded)
-					{
-						var data = handle.Result;
-						foreach (var config in data.Configs)
-						{
-							if (!_audioResourceConfigPool.ContainsKey(config.Key))
-							{
-								_audioResourceConfigPool[config.Key] = config;
-							}
-						}
-					}
-
-					handles.Add(handle);
-				}
-						
-			}
-
-			GLogger.Log("audio load complete");
-		}
-		else
-		{
-			GLogger.LogWarning($"오디오 로드 실패 {loadAudioLocationsHandle.Status}");
-		}
-
-		_loadAssetsCo = null;
-	}
-
-	IEnumerator PrintAddressableKeys()
-	{
-		var loadResourceHandle = Addressables.LoadResourceLocationsAsync("Audio");
-		yield return loadResourceHandle;
-
-		if (loadResourceHandle.Status == AsyncOperationStatus.Succeeded)
-		{
-			var result = loadResourceHandle.Result;
-			GLogger.Log("--- addressable keys --");
-			foreach (var location in result)
-			{
-				GLogger.Log(location.PrimaryKey);
-			}
-			GLogger.Log("-----------------------");
-		}
-
-		Addressables.Release(loadResourceHandle);
 	}
 
 	public void Release(IAudioPlayable ap)
 	{
-		_releaseReservedList.Add(ap);
+		_audioHolderPool.Release(ap);
 	}
 
 	public void PlayAudio(string key, Vector2 position = default)
 	{
-		if (_playingHolderList.TryGetValue(key, out var iap))
+		var now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+		if (_playTimeCache.TryGetValue(key, out var t))
 		{
-			if (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond -  iap.PlayTime < 50)
+			if (now - t < 50)
 			{
 				return;
 			}
 		}
 
-		if (_audioClipPool.TryGetValue(key, out var clip))
+		if (_audioResourcePool.TryGetValue(key, out var ar))
 		{
 			var holder = _audioHolderPool.Get();
-			holder.GO.transform.position = new Vector3(position.x, position.y, -5f);
-			holder.Play(clip);
+			holder.Play(ar);
 			holder.AudioName = key;
-				_playingHolderList[key] = holder;
+			_playTimeCache[key] = now;
+			_playingHolderSet.Add(holder);
 		}
-		else if (_audioResourceConfigPool.TryGetValue(key, out var config))
-		{
-			var holder = _audioHolderPool.Get();
-			holder.GO.transform.position = new Vector3(position.x, position.y, -5f);
-			holder.Play(config.Audio, config.Length);
-			holder.AudioName = key;
-			_playingHolderList[key] = holder;
-		}
+#if UNITY_EDITOR
 		else
 		{
 			GLogger.LogWarning($"Unknown audio key {key} / {position}");
 		}
+#endif
 	}
 }
