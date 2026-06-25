@@ -9,6 +9,7 @@ public class PlayerInfoSO : ScriptableObject
     public string LobbyName;
     public string LobbyIdForEntry;
     public string LobbyPassword;
+	public bool IsGuestLogin;
 
     public static Color DeserializePersonalColor(string personalColor)
     {

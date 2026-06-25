@@ -64,7 +64,7 @@ public class UGSLobbyManager : MonoBehaviour
 		_player = null;
 	}
 
-	static async Task WaitForRequestRateLimit()
+	static async Awaitable WaitForRequestRateLimit()
 	{
 		var duration = DateTime.Now - _lastRequestTime;
 		if (duration.TotalMilliseconds <= 1000)
@@ -74,7 +74,7 @@ public class UGSLobbyManager : MonoBehaviour
 		_lastRequestTime = DateTime.Now;
 	}
 
-	public static async Task<(bool, Lobby, ILobbyEvents)> CreateLobby(
+	public static async Awaitable<(bool, Lobby, ILobbyEvents)> CreateLobby(
 		string lobbyName,
 		int maxPlayers,
 		string relayJoinCode,
@@ -152,7 +152,7 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task MaintainLobbyAlive(string lobbyId)
+	public static async Awaitable MaintainLobbyAlive(string lobbyId)
 	{
 		if (lobbyId.IsNullOrEmpty())
 		{
@@ -171,7 +171,7 @@ public class UGSLobbyManager : MonoBehaviour
 	public static bool IsLobbyHost(Lobby lobby)
 		=> lobby != null && (lobby.HostId == AuthenticationService.Instance.PlayerId);
 
-	public static async Task<List<Lobby>> GetLobbyList(bool isAvailableSlot = false)
+	public static async Awaitable<List<Lobby>> GetLobbyList(bool isAvailableSlot = false)
 	{
 		try
 		{
@@ -219,7 +219,7 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task<(Lobby, string)> JoinLobbyById(string lobbyId, string password)
+	public static async Awaitable<(Lobby, string)> JoinLobbyById(string lobbyId, string password)
 	{
 		var options = new JoinLobbyByIdOptions
 		{
@@ -250,7 +250,7 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	public static async Task<Lobby> GetLobbyById(string id, string version = null)
+	public static async Awaitable<Lobby> GetLobbyById(string id, string version = null)
 	{
 		try
 		{
@@ -269,7 +269,7 @@ public class UGSLobbyManager : MonoBehaviour
 	/*
 	 * host에게 로비를 삭제할 권한이 줄 것인지
 	 */
-	public static async Task DeleteLobby(string lobbyId)
+	public static async Awaitable DeleteLobby(string lobbyId)
 	{
 		if (lobbyId.IsNullOrEmpty())
 		{
@@ -292,7 +292,7 @@ public class UGSLobbyManager : MonoBehaviour
 	 * host가 나가면 남아있는 player 중에서 host로 무작위 지정
 	 * 마지막 player가 나가면 lobby 자동으로 삭제됨
 	 */
-	public static async Task<(bool result, string reason)> RemovePlayer(string lobbyId, string playerId = "")
+	public static async Awaitable<(bool result, string reason)> RemovePlayer(string lobbyId, string playerId = "")
 	{
 		try
 		{
@@ -310,7 +310,7 @@ public class UGSLobbyManager : MonoBehaviour
 		}
 	}
 
-	//public static async Task MigrateHost(Lobby from, string to)
+	//public static async Awaitable MigrateHost(Lobby from, string to)
 	//{
 
 	//	try
@@ -327,12 +327,12 @@ public class UGSLobbyManager : MonoBehaviour
 	//	}
 	//}
 
-	public static async Task<Lobby> Reconnect(Lobby lobby)
+	public static async Awaitable<Lobby> Reconnect(Lobby lobby)
 	{
 		return await LobbyService.Instance.ReconnectToLobbyAsync(lobby.Id);
 	}
 
-	public static async Task<(bool result, List<string>)> GetJoinedLobby()
+	public static async Awaitable<(bool result, List<string>)> GetJoinedLobby()
 	{
 		try
 		{

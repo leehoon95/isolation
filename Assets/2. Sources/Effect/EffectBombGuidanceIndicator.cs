@@ -70,11 +70,12 @@ public class EffectGuidanceIndicator : PooledEffectBase, IEffectSetting
 		float t = 0f;
 		var currVelocity = Vector2.zero;
 		yield return null;
-		_ac.PlayAudio("metal-hit");
+		_ac.PlayAudio("metal-hit", transform.position);
 		while (t <= _aimingTime)
 		{
-			if (!_GP.IsPlayerSpawned)
+			if (!_GP.IsMyPlayerCharacterAlive)
 			{
+				GLogger.Log("IsMyPlayerCharacterAlive !!!");
 				ReleaseObject();
 				_rigidbody.linearVelocity = Vector2.zero;
 				yield break;

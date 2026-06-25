@@ -6,8 +6,4 @@ public class GameMa : MonoBehaviour
 	TCPClientSO _tcpClient;
 	PlayerInfoSO _playerInfo;
 
-	[SerializeField]
-	NetworkEventHandler _networkEventHandler;
-
-
 }

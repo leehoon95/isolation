@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
@@ -21,7 +22,7 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 
 	public event UnityAction<string> EnemySpawned;
 	public event UnityAction<string, Vector2> EnemyDespawned;
-	
+
 	EnemyPrefabWithDataHandler _spawnHandler;
 	Dictionary<ulong, IEnemyHandler> _activedEnemys;
 	string[] _weaponNames = new[] {
@@ -70,6 +71,9 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 			return;
 		}
 
+		EnemySpawned = null;
+		EnemyDespawned = null;
+
 		var items = _activedEnemys.Values.ToList();
 
 		foreach (var item in items)
@@ -80,6 +84,8 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 				item.NO.Despawn();
 			}
 		}
+
+		_activedEnemys.Clear();
 	}
 
 	void OnNetworkObjectDestroyed(NetworkObject networkObject)
@@ -100,15 +106,16 @@ public class EnemySpawner : NetworkBehaviour, IEnemySpawner
 	public void NotifyEnemyDespawned(IEnemyHandler ph)
 	{
 		EnemyDespawned?.Invoke(ph.PrefabId, ph.GO.transform.position);
-		if (Random.Range(0f, 100f) < _itemSpawnRate)
-		{
-			_itemSpawner.SpawnItemRpc(
-				ph.GO.transform.position,
-				Quaternion.identity,
-				new ItemInstantiateData()
-				{
-					ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 7)]
-				});
-		}
+		
+		//if (Random.Range(0f, 100f) < _itemSpawnRate)
+		//{
+		//	_itemSpawner.SpawnItemRpc(
+		//		ph.GO.transform.position,
+		//		Quaternion.identity,
+		//		new ItemInstantiateData()
+		//		{
+		//			ItemEffect = _weaponNames[UnityEngine.Random.Range(0, 7)]
+		//		});
+		//}
 	}
 }

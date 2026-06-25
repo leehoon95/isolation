@@ -8,6 +8,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Jobs;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 
@@ -70,19 +71,22 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	[SerializeField]
 	int _spawnEnemyPeriod;
 
-
+	NetworkEventHandler _networkEventHandler;
 	UILevelSO _uiso;
 	PlayerInfoSO _playerInfo;
 	GameResultSO _gameResult;
 	StaticObjectHandler _soh;
 	Dictionary<string, CinemachineCamera> _cameras = new();
-	bool _isPlayerSpawned;
+	bool _isMyPlayerCharacterAlive;
 	bool _playing;
 	int _enemyKilledCount;
 	int _levelProgress;
 	bool _firstQuestCompleted;
-	bool _levelCompleted;
 	bool _notFirstSpawn;
+	NetworkVariable<bool> _gameEnd = new NetworkVariable<bool>(
+		false,
+		readPerm: NetworkVariableReadPermission.Everyone,
+		writePerm: NetworkVariableWritePermission.Server);
 
 	string[] _weaponNames = new[] {
 		"bolt",
@@ -108,7 +112,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 		MaxHealthPoint = 80
 	};
 
-	public bool IsPlayerSpawned => _isPlayerSpawned;
+	public bool IsMyPlayerCharacterAlive => _isMyPlayerCharacterAlive;
 
 	void Awake()
 	{
@@ -124,17 +128,24 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			_gameResult = obj.AddComponent<GameResultSOHolder>().Data;
 			DontDestroyOnLoad(obj);
 		}
-
-		{
-			var obj = new GameObject("[Game Player]");
-			obj.AddComponent<GamePlayerSOHolder>();
-		}
 	}
 
 	void Start()
 	{
-		//GLogger.Log("gp start");
-		
+		_networkEventHandler = FindAnyObjectByType<NetworkEventHandler>();
+
+		if (_networkEventHandler == null)
+		{
+			GLogger.LogWarning("NetworkEventHandler is null");
+		}
+		else
+		{
+			_networkEventHandler.OnClientConnected += (id) => GLogger.LogWarning($"OnClientConnected {id}"); 
+			_networkEventHandler.OnClientDisconnected += (id) => GLogger.LogWarning($"OnClientDisconnected {id}"); 
+			_networkEventHandler.OnPeerConnected += (id) => GLogger.LogWarning($"OnPeerConnected {id}"); 
+			_networkEventHandler.OnPeerDisconnected += (id) => GLogger.LogWarning($"OnPeerDisconnected {id}");
+			_networkEventHandler.OnSceneEvent += (sceneEventType, id) => GLogger.LogWarning($"OnSceneEvent {id} {sceneEventType}");
+		}
 	}
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
@@ -147,7 +158,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	{
 		//GLogger.Log("gp OnNetworkSpawn");
 	}
-
 
 	void Init()
 	{
@@ -201,7 +211,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	IEnumerator EnemyTargetSetting()
 	{
 		var delay = new WaitForSeconds(1f);
-		var smallDelay = new WaitForSeconds(0.02f);
 		NativeArray<float3> playerPositions;
 		NativeArray<float3> enemyPositions;
 		NativeArray<int> nearestIndices; // enemy 가 target으로 지정하는
@@ -217,7 +226,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			var enemys = _enemySpawner.GetEnemys();
 			var playerCount = players.Count;
 			var enemyCount = enemys.Count;
-			//GLogger.Log($"p count {playerCount}");
+
 			if (playerCount == 0 || enemyCount == 0)
 			{ 
 				yield return delay;
@@ -276,15 +285,15 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 		SpawnEachPlayerRpc();
 
-		
+
 		yield return new WaitForSeconds(1);
 
 		ChangeCameraTargetToAimHelperRpc();
 
 		//yield return new WaitForSeconds(1000);
 
-		StartCoroutine(EnemyTargetSetting());
-		
+		var enemyTargetingCo = StartCoroutine(EnemyTargetSetting());
+
 		ShowNotification("quest-kill-enemy", _questEnemyCountToKill.ToString());
 
 		var firstRoomSpawnSpots = new Vector2[5]
@@ -319,11 +328,11 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 				t = 0f;
 			}
-				
+
 			t += 0.05f;
 			yield return delay;
 		}
-		
+
 
 		_soh.OpenDoor("FirstDoor");
 		ShowNotification("guide-hall-way");
@@ -359,16 +368,26 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			yield return hallWaySpawnDelay;
 		}
 
-		StopCoroutine(spawnBackupEnemyCo);
-		_levelCompleted = true;
+		_playing = false;
+
+		yield return enemyTargetingCo;
+
+		_gameEnd.Value = true;
+
+		//yield return new WaitForSeconds(1f);
+
 		_enemySpawner.DespawnAllEnemysRpc();
+		_playerSpawner.DespawnAllPlayersRpc();
+
 		ShowNotification("level-completed");
 
 		yield return new WaitForSeconds(3f);
 
-		_playerSpawner.DespawnAllPlayersRpc();
 		CloseCurtainRpc();
+
 		yield return new WaitForSeconds(2f);
+
+		_networkEventHandler?.ClearConnectionEventListner();
 		NetworkManager.SceneManager.LoadScene("GameResultScene", LoadSceneMode.Single);
 	}
 
@@ -399,6 +418,14 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 	void OnPlayerSpawned(IPlayerHandler ph)
 	{
+		if (_gameEnd.Value)
+		{
+			return;
+		}
+
+		/*
+		 * player character 생성시 소유권이 host에서 client로 변경되어 IsOwner는 사용하지 못함
+		 */
 		if (ph.SpawnClientId == NetworkManager.LocalClientId)
 		{
 			var cam = _cameras["PlayerCamera"];
@@ -406,15 +433,14 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			var lens = cam.Lens;
 			lens.OrthographicSize = 4f;
 			_uiso.ShowIndicator(true);
-			_isPlayerSpawned = true;
+			_isMyPlayerCharacterAlive = true;
+
 			if (!_notFirstSpawn)
 			{
-				GLogger.Log("ChangeCameraTargetToAimHelper first");
 				_notFirstSpawn = true;
 			}
 			else
 			{
-				GLogger.Log("ChangeCameraTargetToAimHelper second");
 				ChangeCameraTargetToAimHelper();
 			}
 		}
@@ -422,13 +448,16 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 
 	void OnPlayerDespawned(IPlayerHandler ph)
 	{
-		_isPlayerSpawned = false;
+		if (_gameEnd.Value)
+		{
+			return;
+		}
 
 		if (IsHost)
 		{
 			_gameResult.PlayerDeadCount++;
 		}
-		
+
 		if (ph.NO.IsOwner)
 		{
 			var cam = _cameras["PlayerCamera"];
@@ -436,18 +465,19 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			var lens = cam.Lens;
 			lens.OrthographicSize = 5f;
 			_uiso.ShowIndicator(false);
-			_isPlayerSpawned = true;
+			_isMyPlayerCharacterAlive = false;
 		}
 	}
 
 	void OnEnemyDespawned(string prefabId, Vector2 position)
 	{
-		_enemyKilledCount++;
-
-		if (IsHost && !_levelCompleted)
+		if (_gameEnd.Value)
 		{
-			_gameResult.EnemyKilledCount++;
+			return;
 		}
+
+		_enemyKilledCount++;
+		_gameResult.EnemyKilledCount++;
 
 		if (!_firstQuestCompleted)
 		{
@@ -481,7 +511,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			return;
 		}
 
-		GLogger.Log($"level switch {name} {triggered}");
+		//GLogger.Log($"level switch {name} {triggered}");
 		if (name.Contains("LS_"))
 		{
 			var s = name.Split('_');
@@ -528,6 +558,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	[Rpc(SendTo.Everyone)]
 	void CloseCurtainRpc()
 	{
+		GLogger.LogWarning("Close curtain");
 		_uiso.CloseCurtain();
 	}
 

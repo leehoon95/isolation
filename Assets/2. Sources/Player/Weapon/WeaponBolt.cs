@@ -73,7 +73,7 @@ public class WeaponBolt : MonoBehaviour, IWeaponInterface
 						Effect = CollisionEffect.Knockback,
 						EffectDuration = _knockbackDuration,
 						EffectIntensity = _knockbackIntensity,
-						Damage = _damage + (burst ? 2 : 0)
+						Damage = _damage + (burst ? 4 : 0)
 					},
 					EffectColor = PersonalColor,
 					LifeTime = 5f,

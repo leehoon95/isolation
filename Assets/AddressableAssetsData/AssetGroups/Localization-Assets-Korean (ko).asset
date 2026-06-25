@@ -14,13 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Localization-Assets-Korean (ko)
   m_GUID: 21760c27a3b043a4b8f32d43609d4534
-  m_SerializeEntries:
-  - m_GUID: 78869dad2d91e8746b1a3da5b7e4ad92
-    m_Address: flag_korea
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-ko
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 1db74cf829284d34997680b1e631b37b, type: 2}
   m_SchemaSet:

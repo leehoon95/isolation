@@ -92,7 +92,6 @@ public class PlayerSlotSynchronizer : NetworkBehaviour
 			GLogger.LogWarning("PlayerSlotSynchronizer.ReadyClient You are not host");
 			return;
 		}
-		GLogger.Log($"ReadyClientRpc {ready}");
 
 		var index = _clientIds.IndexOf(clientId);
 		var data = _slotSyncDatas[index];

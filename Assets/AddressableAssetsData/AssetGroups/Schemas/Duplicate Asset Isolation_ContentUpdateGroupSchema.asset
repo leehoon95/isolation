@@ -9,13 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 452636f833348964f8d241c76bda8fd0, type: 3}
-  m_Name: UserInfoSO
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: Duplicate Asset Isolation_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  _userNickname: 
-  _token: 0
-  _roomIndex: 0
-  _messageFromPreviousScene: 
-  _isHost: 0
-  _hostingSessionIndex: 0
-  _debugging: 0
+  m_Group: {fileID: 11400000, guid: 1fed7e37a3ef8f848ae5fe4d85031a10, type: 2}
+  m_StaticContent: 1

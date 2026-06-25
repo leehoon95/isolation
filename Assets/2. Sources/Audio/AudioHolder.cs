@@ -7,11 +7,6 @@ public interface IAudioPlayable
 {
 	IAudioHolderPool Pool { get; set; }
 	GameObject GO { get; }
-	public string AudioName { get; set; }
-	public long PlayTime { get; }
-
-	//void Play(AudioResource resource, float time);
-	//void Play(AudioClip clip);
 	void Play(AudioResource resource);
 }
 
@@ -20,12 +15,8 @@ public class AudioHolder : MonoBehaviour, IAudioPlayable
 	[SerializeField]
 	AudioSource _audioSource;
 
-	long _playTime;
-
 	public IAudioHolderPool Pool { get; set; }
 	public GameObject GO => gameObject;
-	public string AudioName { get; set; }
-	public long PlayTime => _playTime;
 
 	void Start()
 	{
@@ -45,7 +36,6 @@ public class AudioHolder : MonoBehaviour, IAudioPlayable
 
 	IEnumerator PlayAudio()
 	{
-		_playTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 		_audioSource.Play();
 		yield return null;
 		

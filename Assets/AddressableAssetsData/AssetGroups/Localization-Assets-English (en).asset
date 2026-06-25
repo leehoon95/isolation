@@ -14,13 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Localization-Assets-English (en)
   m_GUID: 483c513ceab74044a977a3ec51f8b6c6
-  m_SerializeEntries:
-  - m_GUID: a02330d0235be524b82d3e701fc157af
-    m_Address: flag_usa
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 1db74cf829284d34997680b1e631b37b, type: 2}
   m_SchemaSet:

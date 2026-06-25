@@ -2,13 +2,11 @@ using Google.Protobuf;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 /*
  * 특수한 예외를 제외하코 중요한 목적 코루틴의 동시 실행코드는 작성하지 말 것
@@ -37,7 +35,7 @@ public class LoginGameManager : MonoBehaviour
 	string _inputId;
 	string _inputPassword;
 	// 다수의 네트워크 작업을 동시에 진행하지 말 것
-	Coroutine _taskCo;
+	bool _isTasking;
 	PMResponseRegisterAccount _responseRegisterAccount;
 	LocalizationLoader _localizationLoader = new();
 	StringTable _localizedTable;
@@ -91,7 +89,7 @@ public class LoginGameManager : MonoBehaviour
 		}
 	}
 
-	void Start()
+	async void Start()
 	{
 		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
@@ -108,9 +106,10 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.OnRegister += OnRegister;
 		_uiso.OnChangeLocaliztion += ChangeLocalization;
 		_uiso.OnClearCache += ClearCache;
+		_uiso.OnGuestLogin += OnGuestLogin;
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
-		_taskCo = StartCoroutine(ReadyForLoginScene());
+		await ReadyForLoginScene();
 	}
 
 	void ChangeLocalization(int index)
@@ -132,6 +131,13 @@ public class LoginGameManager : MonoBehaviour
 		//}
 	}
 
+	void OnGuestLogin()
+	{
+		_playerInfo.IsGuestLogin = true;
+
+		LoadScene("LobbyScene");
+	}
+
 	void OnAudioDownloadable(long size)
 	{
 		_uiso.ShowAudioDownloadButton(size);
@@ -149,25 +155,22 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.SetAudioDownloadProgress($"{(progress * 100f).ToString("0.0")} %");
 	}
 
-	/*
-	 * 이벤트 메서드에서 실행하는 비동기 작업은 
-	 */
-	IEnumerator ReadyForLoginScene()
+	async Awaitable ReadyForLoginScene()
 	{
-		yield return LocalizationSettings.InitializationOperation;
+		await LocalizationSettings.InitializationOperation.Task;
 
-		/*
-		 * locale이 변경될 경우 table을 다시 로드할 것
-		 */
 		var selectedLocale = LocalizationSettings.SelectedLocale;
 		var op = LocalizationSettings.StringDatabase.GetTableAsync("DefaultStringTable", selectedLocale);
-		yield return op;
+		await op.Task;
+
 		_localizedTable = op.Result;
 
+		QualitySettings.vSyncCount = 1;
+
+		// 로컬 파일에 저장된 id, password를 불러온다
 		if (_saveAccount)
 		{
 			var t = LocalDataSettings.Instance.LoadAsync();
-			yield return new WaitUntil(() => t.IsCompleted);
 
 			var data = LocalDataSettings.Instance.Data;
 
@@ -178,31 +181,18 @@ public class LoginGameManager : MonoBehaviour
 			}
 		}
 
-		yield return StartCoroutine(ConnectToServerCoroutine());
-	}
-
-	IEnumerator ConnectToServerCoroutine()
-	{
-		yield return null;
+		await Task.Yield();
 
 		_uiso.SetInteractable(false);
-		var task = ConnectToServer();
-		yield return new WaitUntil(() => task.IsCompleted);
-
-		if (!task.Result)
+		var connected = await ConnectToLoginServer();
+		if (!connected)
 		{
 			OpenNetworkErrorDialog();
 		}
-		else
-		{
-			GLogger.Log("Connected to server");
-		}
-
 		_uiso.SetInteractable(true);
-		_taskCo = null;
 	}
 
-	async Task<bool> ConnectToServer()
+	async Awaitable<bool> ConnectToLoginServer()
 	{
 		if (_tcpClient.Connnected)
 		{
@@ -210,7 +200,11 @@ public class LoginGameManager : MonoBehaviour
 			return true;
 		}
 
-		return await _tcpClient.ConnectToServer();
+		_isTasking = true;
+		var result = await _tcpClient.ConnectToServer();
+		_isTasking = false;
+
+		return result;
 	}
 
 	void OpenNetworkErrorDialog()
@@ -224,24 +218,30 @@ public class LoginGameManager : MonoBehaviour
 			title,
 			content,
 			okButton,
-				() =>
+				async () =>
 				{
-					if (_taskCo != null)
+					if (_isTasking)
 					{
 						GLogger.LogWarning("OpenNetworkErrorDialog 다른 작업이 진행 중");
 						return;
 					}
 
 					_uiso.DialogManager.HideOkDialog();
-					_taskCo = StartCoroutine(ConnectToServerCoroutine());
+					_uiso.SetInteractable(false);
+					bool connected = await ConnectToLoginServer();
+					if (!connected)
+					{
+						OpenNetworkErrorDialog();
+					}
+					_uiso.SetInteractable(true);
 				}
 			);
 		_uiso.DialogManager.SetOnCancelDialog(() => _uiso.DialogManager.HideOkDialog());
 	}
 
-	void OnLogin(string id, string password)
+	async void OnLogin(string id, string password)
 	{
-		if (_taskCo != null)
+		if (_isTasking)
 		{
 			GLogger.LogWarning("OnLogin 다른 작업이 진행 중");
 			return;
@@ -249,9 +249,17 @@ public class LoginGameManager : MonoBehaviour
 
 		if (!_tcpClient.Connnected)
 		{
-			GLogger.LogWarning("OnLogin Not connected from server");
+			ShowNotification("retry-connect-server");
 
-			_taskCo = StartCoroutine(ConnectToServerCoroutine());
+			_uiso.SetInteractable(false);
+			var connected = await ConnectToLoginServer();
+			if (!connected)
+			{
+				OpenNetworkErrorDialog();
+			}
+			_uiso.SetInteractable(true);
+
+			return;
 		}
 
 		if (id == null || id.Length < 2)
@@ -270,10 +278,8 @@ public class LoginGameManager : MonoBehaviour
 
 		var data = msg.ToByteArray();
 
-		StartCoroutine(
-			LockInteractabilityUntilTaskComplete(
-				_tcpClient.SendDataAsync(
-					(int)ProtoAuthenticationMessage.RequestLogin, data)));
+		await _tcpClient.SendDataAsync(
+					(int)ProtoAuthenticationMessage.RequestLogin, data);
 	}
 
 	async void OnDownloadAudio()
@@ -287,9 +293,9 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.SetInteractable(true);
 	}
 
-	void OnRegister()
+	async void OnRegister()
 	{
-		if (_taskCo != null)
+		if (_isTasking)
 		{
 			ShowNotification("another-task-in-progress");
 			return;
@@ -299,13 +305,20 @@ public class LoginGameManager : MonoBehaviour
 		{
 			ShowNotification("retry-connect-server");
 
-			_taskCo = StartCoroutine(ConnectToServerCoroutine());
+			_uiso.SetInteractable(false);
+			var connected = await ConnectToLoginServer();
+			if (!connected)
+			{
+				OpenNetworkErrorDialog();
+			}
+			_uiso.SetInteractable(true);
+
 			return;
 		}
 
 		_uiso.DialogManager.SetOnCancelDialog(() =>
 		{
-			if (_taskCo != null)
+			if (_isTasking)
 			{
 				ShowNotification("another-task-in-progress");
 				return;
@@ -315,13 +328,14 @@ public class LoginGameManager : MonoBehaviour
 		});
 
 		_uiso.DialogManager.ShowAccountCreationDialog(
-			(application) =>
+			async (application) =>
 			{
-				if (_taskCo != null)
+				if (_isTasking)
 				{
 					ShowNotification("another-task-in-progress");
 					return;
 				}
+
 				GLogger.Log($"send account creation data {application.h} {application.s} {application.v}");
 				PMRequestRegisterAccount request = new()
 				{
@@ -334,29 +348,34 @@ public class LoginGameManager : MonoBehaviour
 				var data = request.ToByteArray();
 
 				_responseRegisterAccount = null;
-				_taskCo = StartCoroutine(
-					WaitForAccountCreationResponse(
-						_tcpClient.SendDataAsync(
-							(int)ProtoAuthenticationMessage.RequestRegisterAccount, data)));
+
+				_uiso.SetInteractable(false);
+				_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(true);
+				await _tcpClient.SendDataAsync(
+							(int)ProtoAuthenticationMessage.RequestRegisterAccount, data);
+
+				int receiveWaitingCount = 0;
+				while (_responseRegisterAccount == null)
+				{
+					await Task.Delay(50);
+					receiveWaitingCount++;
+
+					if (receiveWaitingCount == 60)
+					{
+						ShowNotification("session-no-response-from-host");
+						_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(false);
+						_uiso.SetInteractable(true);
+						return;
+					}
+				}
+
+				HandleAccountCreationResult(_responseRegisterAccount);
+				_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(false);
+				_uiso.DialogManager.HideAccountCreationDialog();
+				_uiso.SetInteractable(true);
 			});
 	}
 
-	IEnumerator WaitForAccountCreationResponse(Task dataTransferTask)
-	{
-		_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(true);
-		_uiso.SetInteractable(false);
-		yield return new WaitUntil(() => dataTransferTask.IsCompleted);
-		yield return new WaitUntil(() => _responseRegisterAccount != null);
-		HandleAccountCreationResult(_responseRegisterAccount);
-		_uiso.SetInteractable(true);
-		_responseRegisterAccount = null;
-		_taskCo = null;
-	}
-
-	/*
-	 * 네트워크 작업을 대기
-	 * 완료할 때 까지 ui를 잠금
-	 */
 	IEnumerator LockInteractabilityUntilTaskComplete(Task task)
 	{
 		_uiso.SetInteractable(false);
@@ -371,37 +390,14 @@ public class LoginGameManager : MonoBehaviour
 		_uiso.SetInteractable(true);
 	}
 
-	// test button
-	void OnDisconnect()
-	{
-		//_ns.CloseConnection();
-		_tcpClient.CloseConnection();
-	}
-
 	async Task OnTCPDataReceived(byte[] buffer, int length)
 	{
 		if (length == 0)
 		{
 			await Awaitable.MainThreadAsync();
 			var text = _localizedTable.GetEntry("network-disconnected-from-server")?.LocalizedValue;
-			//_uiso.ShowNotification(
-			//	LocalizationSettings.StringDatabase.GetLocalizedString(
-			//		"DefaultStringTable",
-			//		"network-disconnected-from-server",
-			//		LocalizationSettings.SelectedLocale));
+
 			_uiso.ShowNotification(text);
-
-			_uiso.DialogManager.HideAccountCreationDialog();
-			_uiso.DialogManager.HideYesNoDialog();
-			_uiso.DialogManager.HideOkDialog();
-
-			if (_taskCo != null)
-			{
-				GLogger.LogError("LoginGameManager.OnTCPDataReceived Disconnected from server. 다른 네트워크 작업 진행 중");
-				return;
-			}
-
-			_taskCo = StartCoroutine(ConnectToServerCoroutine());
 
 			return;
 		}
@@ -431,7 +427,7 @@ public class LoginGameManager : MonoBehaviour
 			if (msg.Result)
 			{
 				GLogger.Log("LOGIN SUCCESS");
-
+				
 				var data = LocalDataSettings.Instance.Data;
 				data.Id = _inputId;
 				data.Password = _inputPassword;
@@ -478,8 +474,6 @@ public class LoginGameManager : MonoBehaviour
 			}
 
 			_responseRegisterAccount = msg;
-			//await Awaitable.MainThreadAsync();
-			//StartCoroutine(ShowAccountCreationResultCo(msg));
 		}
 	}
 
@@ -492,30 +486,12 @@ public class LoginGameManager : MonoBehaviour
 
 		GLogger.Log($"message: {msg.Message} {msg.Result} {msg.ToString()}");
 
-		_uiso.DialogManager.SetAccountCreationDialogOkButtonWaiting(false);
-
 		if (msg.Result)
 		{
-			/*
-			 * Async 함수임에도 내부에서 get_isPlaying 사용으로 인해 메인 스레드에서 호출되어야 한다
-			 */
-			//var op = adb.GetLocalizedStringAsync(
-			//	"DefaultStringTable", "account-creation-successful", selectedLocale);
-			//yield return op;
-			//notify = op.Result;
-
 			notify = _localizedTable.GetEntry("account-creation-successful").LocalizedValue;
-
-			_uiso.DialogManager.HideAccountCreationDialog();
 		}
 		else
 		{
-			//GLogger.LogWarning($"Faield to create new account! {msg.Message}");
-			//var op = adb.GetLocalizedStringAsync(
-			//	"DefaultStringTable", "account-creation-failed", selectedLocale);
-			//yield return op;
-			//notify = op.Result;
-
 			notify = _localizedTable.GetEntry("account-creation-failed").LocalizedValue;
 			string key = "account-creation-failure-reason-unknown";
 
@@ -537,11 +513,6 @@ public class LoginGameManager : MonoBehaviour
 					key = "account-creation-failure-reason-unknown";
 					break;
 			}
-
-			//op = adb.GetLocalizedStringAsync(
-			//			"DefaultStringTable", key, selectedLocale);
-			//yield return op;
-			//reason = op.Result;
 
 			reason = _localizedTable.GetEntry(key).LocalizedValue;
 		}

@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -11,12 +7,11 @@ using UnityEngine.Audio;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.WSA;
 
 public class PathDefines
 {
-	// GCP VM 인스턴스(instance-20260324-084128) 외부 IP
-	public static string RemoteLoadPath = "http://34.11.242.48";
+	// GCP VM 인스턴스 IP
+	public static string RemoteLoadPath = "http://8.235.7.143";
 }
 
 public interface IAudioHolderPool
@@ -32,8 +27,6 @@ public interface IAudioContainer
 public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 {
 	[SerializeField]
-	string _downloadAddress;
-	[SerializeField]
 	GameObject _audioHolderPrefab;
 
 	public static AudioContainer Instance { get; private set; }
@@ -45,7 +38,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 	Dictionary<string, AudioResource> _audioResourcePool = new();
 	HashSet<IAudioPlayable> _playingHolderSet = new();
 	Dictionary<string, long> _playTimeCache = new();
-	List<AsyncOperationHandle> handles = new();
+	List<AsyncOperationHandle> _handles = new();
 
 	void Awake()
 	{
@@ -206,7 +199,7 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 			var loadAssetHandle = Addressables.LoadAssetAsync<AudioResource>(location);
 			await loadAssetHandle.Task;
 
-			handles.Add(loadAssetHandle);
+			_handles.Add(loadAssetHandle);
 			if (loadAssetHandle.Result != null)
 			{
 				_audioResourcePool[location.PrimaryKey] = loadAssetHandle.Result;
@@ -235,20 +228,19 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 
 		await Task.Yield();
 
-		foreach (var handle in handles)
+		foreach (var handle in _handles)
 		{
 			if (handle.IsValid())
 			{
 				Addressables.Release(handle);
 			}
 		}
-		handles.Clear();
+		_handles.Clear();
 
 		await Task.Yield();
 
 		var clearHandle = Addressables.ClearDependencyCacheAsync("Audio", true);
 		await clearHandle.Task;
-		Addressables.CleanBundleCache();
 	}
 
 	public void Release(IAudioPlayable ap)
@@ -270,8 +262,8 @@ public class AudioContainer : MonoBehaviour, IAudioHolderPool, IAudioContainer
 		if (_audioResourcePool.TryGetValue(key, out var ar))
 		{
 			var holder = _audioHolderPool.Get();
+			holder.GO.transform.position = position;
 			holder.Play(ar);
-			holder.AudioName = key;
 			_playTimeCache[key] = now;
 			_playingHolderSet.Add(holder);
 		}

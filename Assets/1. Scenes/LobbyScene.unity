@@ -7996,6 +7996,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -22.005
       objectReference: {fileID: 0}
+    - target: {fileID: 4082202075639442228, guid: 76f109b871674094795347a812470369, type: 3}
+      propertyPath: m_Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4082202075639442228, guid: 76f109b871674094795347a812470369, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2956092150486312218, guid: 7198657793ad4b94c9cc9a24625fdb14, type: 3}
     - target: {fileID: 7832927134525439191, guid: 76f109b871674094795347a812470369, type: 3}
       propertyPath: m_SizeDelta.x
       value: 88.01
@@ -8596,8 +8604,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6244376593600628318}
   m_HandleRect: {fileID: 1434942658629753368}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

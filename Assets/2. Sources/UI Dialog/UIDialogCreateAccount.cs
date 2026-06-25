@@ -67,6 +67,8 @@ public class UIDialogCreateAccount : UIBehaviour
 				= Color.HSVToRGB(_colorSlider.value / 255f, (value / 255f), 1f);
 		});
 
+		_personalColorIndicator.color = Color.HSVToRGB(127f / 255f, 192 / 255f, 1f);
+
 		_tooltip = Instantiate(_tooltipPrefab, transform).GetComponent<UITooltip>();
 
 		_ok.onClick.AddListener(() => {

@@ -69,7 +69,7 @@ public class EffectBurst : PooledEffectBase, IEffectSetting
 			yield return null;
 		}
 
-		gameObject.SetActive(false);
+		ReleaseObject();
 	}
 
 	public void SetEffectParameter(in EffectRpcParameter param)

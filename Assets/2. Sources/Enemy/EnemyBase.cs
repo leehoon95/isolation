@@ -64,18 +64,28 @@ public class EnemyBase : NetworkBehaviour, IEnemyHandler
 
 	public override void OnNetworkSpawn()
 	{
+		if (!IsHost)
+		{
+			return;
+		}	
+
 		Spawner.NotifyEnemySpawned(this);
 	}
 
 	public override void OnNetworkDespawn()
 	{
-		Spawner.NotifyEnemyDespawned(this);
-
 		if (_effectInProgress != null)
 		{
 			StopCoroutine(_effectInProgress);
 			_effectInProgress = null;
 		}
+
+		if (!IsHost)
+		{
+			return;
+		}
+
+		Spawner.NotifyEnemyDespawned(this);
 	}
 
 	protected void MoveToTarget(Vector2 targetPosition)

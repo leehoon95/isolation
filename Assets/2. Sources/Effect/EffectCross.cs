@@ -22,7 +22,7 @@ public class EffectCross : PooledEffectBase, IEffectSetting
 
 	void OnEnable()
 	{
-		_ac.PlayAudio("burning");
+		_ac.PlayAudio("burning", transform.position);
 		_animator.SetTrigger("On");
 		UpdateColor(_flameColor);
 	}

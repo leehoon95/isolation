@@ -26,7 +26,6 @@ public class RangedAttackerEnemy : EnemyBase, INetworkObjectCollision
 	long _lastFiredTime;
 	ProjectileRpcParameter _attackProjectileCache;
 
-
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();

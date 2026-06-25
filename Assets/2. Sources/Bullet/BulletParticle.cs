@@ -65,7 +65,8 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 
 	void FixedUpdate()
 	{
-		if (!IsIllusion && _hit)
+		//if (!IsIllusion && _hit)
+		if (_hit)
 		{
 			ReleaseObject();
 			return;
@@ -78,10 +79,10 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (IsIllusion)
-		{
-			return;
-		}
+		//if (IsIllusion)
+		//{
+		//	return;
+		//}
 
 		var ci = collision.GetComponentInParent<INetworkObjectCollision>();
 
@@ -100,11 +101,11 @@ public class BulletParticle : PooledProjectileBase, IProjectileSetting
 		_targetPosition = param.TartgetPosition;
 		EffectColor = param.EffectColor;
 
-		if (IsIllusion)
-		{
-			_collider.enabled = false;
-		}
-		else
+		//if (IsIllusion)
+		//{
+		//	_collider.enabled = false;
+		//}
+		//else
 		{
 			_collider.enabled = true;
 			_collisionEvent.Effect = param.CollisionEvent.Effect;

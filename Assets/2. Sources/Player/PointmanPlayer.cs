@@ -98,7 +98,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	public override void OnNetworkSpawn()
 	{
-		GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
+		//GLogger.Log($"pp OnNetworkSpawn owner id: {OwnerClientId}, isOwner: {IsOwner}");
 		Spawner.NotifyPlayerSpawned(this);
 		if (OwnerClientId == SpawnClientId)
 		{
@@ -113,11 +113,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	protected override void OnOwnershipChanged(ulong previous, ulong current)
 	{
-		GLogger.Log($"pp OnOwnershipChanged {previous} to {current}. IsOwner: {IsOwner}");
-		//if (IsOwner)
-		{
-			OnPlayerSpawned();
-		}
+		OnPlayerSpawned();
 	}
 
 	void Update()
@@ -182,7 +178,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 			var ce = _collisionEventList[0];
 			_collisionEventList.RemoveAt(0);
 			//GLogger.Log($"hit {ce.SenderId}/{ce.Effect}/{ce.Position}");
-			_ac.PlayAudio("hit-2");
+			_ac.PlayAudio("hit-2", transform.position);
 			if (_shield.Value > 0)
 			{
 				_shield.Value -= ce.Damage > 0 ? 1 : 0;
@@ -305,7 +301,7 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 	void OnPlayerSpawned()
 	{
-		GLogger.Log($"OnPlayerSpawned initialize {NetworkManager.LocalClientId}");
+		//GLogger.Log($"OnPlayerSpawned initialize {NetworkManager.LocalClientId}");
 		
 		_ac = AudioContainer.Instance;
 
@@ -508,11 +504,11 @@ public class PointmanPlayer : NetworkBehaviour, IPlayerHandler, INetworkObjectCo
 
 			if (_grabbedItem.ItemType == ItemType.Weapon)
 			{
-				_ac.PlayAudio("get-weapon");
+				_ac.PlayAudio("get-weapon", transform.position);
 			}
 			else
 			{
-				_ac.PlayAudio("chutter-click");
+				_ac.PlayAudio("chutter-click", transform.position);
 			}
 				
 			//GLogger.Log($"Use item at {index} {_grabbedItem.ItemEffect} onlyFront: {_grabbedItem.IsOnlyFront}");

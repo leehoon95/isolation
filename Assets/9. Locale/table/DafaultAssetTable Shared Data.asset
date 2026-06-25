@@ -14,14 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TableCollectionName: DafaultAssetTable
   m_TableCollectionNameGuidString: 6d06d592178f5c749a66cd57211a0fa3
-  m_Entries:
-  - m_Id: 171734609920
-    m_Key: flag-county
-    m_Metadata:
-      m_Items: []
+  m_Entries: []
   m_Metadata:
-    m_Items:
-    - rid: 5193247788120932450
+    m_Items: []
   m_KeyGenerator:
     rid: 5193247788120932449
   references:
@@ -31,13 +26,3 @@ MonoBehaviour:
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:
         m_CustomEpoch: 1765922497960
-    - rid: 5193247788120932450
-      type: {class: AssetTypeMetadata, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
-      data:
-        m_Entries:
-        - m_KeyId: 171734609920
-          m_TableCodes:
-          - ko
-          - en
-        m_TypeString: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
-          Culture=neutral, PublicKeyToken=null

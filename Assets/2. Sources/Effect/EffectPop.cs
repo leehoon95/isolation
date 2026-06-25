@@ -34,7 +34,7 @@ public class EffectPop : PooledEffectBase, IEffectSetting
 		var main = _particleSystem.main;
 		main.startColor = _effectColor;
 		_particleSystem.Play();
-		_ac.PlayAudio("hit-1");
+		_ac.PlayAudio("hit-1", transform.position);
 		yield return new WaitForSeconds(lifeTime);
 
 		ReleaseObject();

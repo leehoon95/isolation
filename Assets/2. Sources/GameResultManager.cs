@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameLesultManager : NetworkBehaviour
+public class GameResultManager : NetworkBehaviour
 {
 	UIGameResultSO _uiso;
 	GameResultSO _gameResult;
@@ -16,6 +15,15 @@ public class GameLesultManager : NetworkBehaviour
 		{
 			var obj = new GameObject("[UI Level Holder]");
 			obj.AddComponent<UIGameResultSOHolder>();
+		}
+	}
+
+	void Start()
+	{
+		var neh = FindAnyObjectByType<NetworkEventHandler>();
+		if (neh != null)
+		{
+			Destroy(neh);
 		}
 	}
 
@@ -31,7 +39,7 @@ public class GameLesultManager : NetworkBehaviour
 			GLogger.Log($"Game Result {_gameResult.EnemyKilledCount} {_gameResult.PlayerDeadCount}");
 		}
 
-		//StartCoroutine(WaitForLobbyButton());
+
 		if (NetworkManager.IsHost)
 		{
 			NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoadEventCompleted;
@@ -47,16 +55,6 @@ public class GameLesultManager : NetworkBehaviour
 	{
 		base.OnDestroy();
 		_uiso.ClearEvent();
-		//Destroy(_gameResult);
-
-		//if (NetworkManager.IsHost)
-		//{
-		//	NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoadEventCompleted;
-		//}
-		//else
-		//{
-		//	NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-		//}
 	}
 
 	void OnSceneLoadEventCompleted(
@@ -76,15 +74,17 @@ public class GameLesultManager : NetworkBehaviour
 	IEnumerator WaitForLobbyButton()
 	{
 		var delay1 = new WaitForSeconds(1f);
-		var delay3 = new WaitForSeconds(3f);
 		yield return null;
 
 		OpenCurtainRpc();
 		SetGameResultRpc(_gameResult.EnemyKilledCount);
 		
-		yield return delay3;
+		yield return delay1;
 
-		ShowExitToLobbyButtonAndShutdownRpc();
+		ReadyToLeaveRpc();
+		_uiso.ShowExitToLobbyButton();
+		NetworkManager.Shutdown();
+		
 	}
 
 	[Rpc(SendTo.Everyone)]
@@ -99,8 +99,8 @@ public class GameLesultManager : NetworkBehaviour
 		_uiso.SetGameResult(result);
 	}
 
-	[Rpc(SendTo.Everyone)]
-	void ShowExitToLobbyButtonAndShutdownRpc()
+	[Rpc(SendTo.NotMe)]
+	void ReadyToLeaveRpc()
 	{
 		_uiso.ShowExitToLobbyButton();
 		NetworkManager.Shutdown();

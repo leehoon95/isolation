@@ -21,15 +21,14 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 	[SerializeField]
 	PooledDynamicSpawner _pooledDynamicSpawner;
 
-	SpawnPlayerWithDataHandler _playerSpawnHandler;
-	SpawnPlayerDeadBodyWithDataHandler _playerDeadBodySpawnHandler;
-	// 생존 player 리스트를 외부에 전달하기 위함(host전용)
-	Dictionary<ulong, IPlayerHandler> _activedPlayer;
-	Dictionary<ulong, IPlayerDeadBodyHandler> _activedDeadBody;
-	IPlayerSpawnEventRaiserble _pser;
-
 	public event UnityAction<IPlayerHandler> PlayerSpawned;
 	public event UnityAction<IPlayerHandler> PlayerDespawned;
+
+	SpawnPlayerWithDataHandler _playerSpawnHandler;
+	SpawnPlayerDeadBodyWithDataHandler _playerDeadBodySpawnHandler;
+	// 생존 player 리스트를 외부에 전달 목적(host전용)
+	Dictionary<ulong, IPlayerHandler> _activedPlayer;
+	Dictionary<ulong, IPlayerDeadBodyHandler> _activedDeadBody;
 
 	protected override void OnNetworkPreSpawn(ref NetworkManager networkManager)
 	{
@@ -73,8 +72,6 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 			spawnPosition, 
 			rotation, 
 			data);
-
-		//_activedPlayer[pp.NO.NetworkObjectId] = pp;
 	}
 
 	[Rpc(SendTo.Server)]
@@ -86,23 +83,27 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 	[Rpc(SendTo.Server)]
 	public void DespawnAllPlayersRpc(RpcParams rpcParam = default)
 	{
-		_playerSpawnHandler.DesapwnAllPlayers();
+		if (_activedPlayer.Count == 0)
+		{
+			return;
+		}
+
+		PlayerSpawned = null;
+		PlayerDespawned = null;
+
+		var items = _activedPlayer.Values.ToList();
+
+		foreach (var item in items)
+		{
+			//GLogger.Log($"Despawn {item}");
+			if (item.NO.IsSpawned)
+			{
+				item.NO.Despawn();
+			}
+		}
+
+		_activedPlayer.Clear();
 	}
-
-	//[Rpc(SendTo.Server)]
-	//public void RevivePlayerRpc(
-	//	ulong ownerId, 
-	//	Vector2 spawnPosition, 
-	//	Quaternion rotation,
-	//	PlayerInstantiateData data,
-	//	RpcParams rpcParam = default)
-	//{
-	//	var pp = _playerSpawnHandler.InstantiateWithDataAndSpawn(
-	//		ownerId,
-	//		spawnPosition, rotation, data);
-
-	//	_activedPlayer[pp.NO.NetworkObjectId] = pp;
-	//}
 
 	[Rpc(SendTo.Server)]
 	public void SpawnPlayerDeadBodyRpc(
@@ -124,23 +125,13 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 		_activedDeadBody[db.NO.NetworkObjectId] = db;
 	}
 
-	//void OnPlayerObjectDestroyed(NetworkObject networkObject)
-	//{
-	//	_activedPlayer.Remove(networkObject.NetworkObjectId);
-	//}
-
-	//void DeadboyObjectDestroyed(NetworkObject networkObject)
-	//{
-	//	_activedDeadBody.Remove(networkObject.NetworkObjectId);
-	//}
-
 	public List<IPlayerHandler> GetPlayers()
 	{
 		return _activedPlayer.Values.ToList();
 	}
+
 	public IPlayerHandler GetPlayer(ulong id)
 	{
-		
 		if (_activedPlayer.TryGetValue(id, out var player))
 		{
 			return player;
@@ -151,17 +142,23 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 		}
 	}
 
+	public void ClearListner()
+	{
+		PlayerSpawned = null;
+		PlayerDespawned = null;
+	}
+
 	public void NotifyPlayerSpawned(IPlayerHandler ph)
 	{
 		_activedPlayer[ph.SpawnClientId] = ph;
 		PlayerSpawned?.Invoke(ph);
-		GLogger.Log($"NotifyPlayerSpawned {ph.SpawnClientId} count: {_activedPlayer.Count}");
+		//GLogger.Log($"NotifyPlayerSpawned {ph.SpawnClientId} count: {_activedPlayer.Count}");
 	}
 
 	public void NotifyPlayerDespawned(IPlayerHandler ph)
 	{
 		_activedPlayer.Remove(ph.SpawnClientId);
 		PlayerDespawned?.Invoke(ph);
-		GLogger.Log($"NotifyPlayerDespawned count: {_activedPlayer.Count}");
+		//GLogger.Log($"NotifyPlayerDespawned count: {ph.NO.IsOwner}");
 	}
 }

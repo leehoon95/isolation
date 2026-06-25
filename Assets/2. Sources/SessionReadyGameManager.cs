@@ -24,16 +24,10 @@ public class SessionGameReadyManager : MonoBehaviour
 	[SerializeField]
 	string _nextSceneName;
 
-#if UNITY_EDITOR
-	[SerializeField]
-	MPPMNGOTestSO _ngoTestSO;
-#endif
-
 	Coroutine _taskCo;
 	Coroutine _notifyCo;
 	Lobby _lobby;
 	ILobbyEvents _lobbyEvents;
-	uint _slotIndex;
 	bool _ready;
 	bool _connected;
 
@@ -53,22 +47,9 @@ public class SessionGameReadyManager : MonoBehaviour
 			var obj = new GameObject("[UI Session Holder]");
 			obj.AddComponent<UISessionSOHolder>();
 		}
-
-#if UNITY_EDITOR
-		if (_ngoTestSO.IsOn)
-		{
-			GLogger.LogWarning("=== START NGO TEST ===");
-
-			var obj = new GameObject("[Player Info Holder]");
-			var piHolder = obj.AddComponent<PlayerInfoSOHolder>();
-			DontDestroyOnLoad(obj);
-			
-			return;
-		}
-#endif
 	}
 
-	void Start()
+	async void Start()
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_uiso = FindAnyObjectByType<UISessionSOHolder>().Data;
@@ -86,14 +67,6 @@ public class SessionGameReadyManager : MonoBehaviour
 		_networkEventHandler.OnPeerDisconnected += OnPeerDisconnected;
 		_networkEventHandler.OnSceneEvent += OnSceneEvent;
 
-#if UNITY_EDITOR
-		if (_ngoTestSO.IsOn)
-		{
-			StartCoroutine(StartNGOTestClient());
-			return;
-		}
-#endif
-
 		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
 		_sessionParameter = FindAnyObjectByType<SessionParameterSOHolder>().Data;
 		if (_sessionParameter == null)
@@ -104,19 +77,20 @@ public class SessionGameReadyManager : MonoBehaviour
 		if (_sessionParameter.LobbyName != null)
 		{
 			// start as host
-			StartCoroutine(StartHostCo());
+			await StartHost();
 			_uiso.SessionCommunication.SetReadyButtonText("START GAME");
 			_uiso.SessionCommunication.SetReadyButtonHighlight(true);
 		}
 		else
 		{
 			// start as peer
-			StartCoroutine(StartClientCo());
+			//StartCoroutine(StartClientCo());
+			await StartClient();
 			_uiso.SessionCommunication.SetReadyButtonText("READY");
 			_uiso.SessionCommunication.SetReadyButtonHighlight(false);
 		}
 
-		StartCoroutine(ConnectionWatchDog());
+		//StartCoroutine(ConnectionWatchDog());
 	}
 
 #if UNITY_EDITOR
@@ -138,94 +112,83 @@ public class SessionGameReadyManager : MonoBehaviour
 	}
 #endif
 
-	IEnumerator ConnectionWatchDog()
+	//IEnumerator ConnectionWatchDog()
+	//{
+	//	yield return null;
+	//	var delay = new WaitForSeconds(1f);
+	//	int count = 10;
+	//	while (count > 0)
+	//	{
+	//		yield return delay;
+
+	//		if (_connected)
+	//		{
+	//			yield break;
+	//		}
+
+	//		count--;
+	//	}
+
+	//	if (_lobby != null)
+	//	{
+	//		var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
+	//		yield return new WaitUntil(() => task.IsCompleted);
+	//	}
+
+	//	ShowNotification("session-no-response-from-host");
+	//	yield return new WaitForSeconds(3f);
+	//	ShowNotification("session-no-response-from-host-guide");
+	//}
+
+	async Awaitable StartHost()
 	{
-		yield return null;
-		var delay = new WaitForSeconds(1f);
-		int count = 10;
-		while (count > 0)
-		{
-			yield return delay;
+		await Task.Yield();
 
-			if (_connected)
-			{
-				yield break;
-			}
-
-			count--;
-		}
-
-		if (_lobby != null)
-		{
-			var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
-			yield return new WaitUntil(() => task.IsCompleted);
-		}
-
-		ShowNotification("session-no-response-from-host");
-		yield return new WaitForSeconds(3f);
-		ShowNotification("session-no-response-from-host-guide");
-	}
-
-	IEnumerator StartHostCo()
-	{
-		yield return null;
 		_uiso.SetInteractable(false);
 
-		var taskRelay = UGSRelayManager.StartHostAndGetJoinCode(
+		(var resultRealy, var joincode) = await UGSRelayManager.StartHostAndGetJoinCode(
 			_sessionParameter.MaxPlayers - 1, "dtls");
-		yield return new WaitUntil(() => taskRelay.IsCompleted);
 
-		(var resultRelay, var joincode) = taskRelay.Result;
-
-		if (!resultRelay)
+		if (!resultRealy)
 		{
 			GLogger.LogError("Failed to start Host");
-			OnLeave();
-			yield break;
+			await OnLeaveFromThisSession();
+			return;
 		}
 
-		//var callbacks = new LobbyEventCallbacks();
-		//callbacks.LobbyChanged += OnLobbyChanged;
-		//callbacks.KickedFromLobby += OnKickedFromLobby;
-		//callbacks.LobbyEventConnectionStateChanged += OnLobbyEventConnectionStateChanged;
-
-		var taskLobby = UGSLobbyManager.CreateLobby(
+		(var resultLobby, var lobby, var lobbyEvent) = await UGSLobbyManager.CreateLobby(
 			_sessionParameter.LobbyName,
 			_sessionParameter.MaxPlayers,
 			joincode,
 			null);
-		yield return new WaitUntil(() => taskLobby.IsCompleted);
-
-		(var resultLobby, var lobby, var lobbyEvent) = taskLobby.Result;
 
 		if (resultLobby == false)
 		{
 			GLogger.LogError("StartHost Failed to create lobby");
-			OnLeave();
-			yield break;
+			await OnLeaveFromThisSession();
+			return;
 		}
-		
+
 		_lobby = lobby;
 		_lobbyEvents = lobbyEvent;
-		
+
 		_uiso.SetInteractable(true);
 		StartCoroutine(HeartbeatLobby(lobby.Id));
 
 		GLogger.Log($"StartHost Lobby creation is successful! host id:{lobby.HostId} lobby id: {lobby.Id}");
 	}
 
-	IEnumerator StartClientCo()
+	async Awaitable StartClient()
 	{
-		yield return null;
+		await Task.Yield();
 		_uiso.SetInteractable(false);
 
-		var task = UGSLobbyManager.GetLobbyById(_sessionParameter.LobbyId);
-		yield return new WaitUntil(() => task.IsCompleted);
-
-		var lobby = task.Result;
+		var lobby = await UGSLobbyManager.GetLobbyById(_sessionParameter.LobbyId);
 		if (lobby == null)
 		{
 			GLogger.LogError($"StartClientCo Faield to get lobby by id({_sessionParameter.LobbyId})");
+			await OnLeaveFromThisSession();
+			return;
 		}
 
 		_lobby = lobby;
@@ -233,16 +196,15 @@ public class SessionGameReadyManager : MonoBehaviour
 		var isPlaying = lobby.Data["Playing"].Value;
 		var relayJoincode = lobby.Data["RelayJoinCode"].Value;
 
-		GLogger.Log($"Lobby Data {isPlaying} {relayJoincode}");
+		//GLogger.Log($"Lobby Data {isPlaying} {relayJoincode}");
 
-		var task2 = UGSRelayManager.StartClient(relayJoincode, "dtls");
-		yield return new WaitUntil(() => task2.IsCompleted);
-		
-		if (!task2.Result)
+		var result = await UGSRelayManager.StartClient(relayJoincode, "dtls");
+
+		if (!result)
 		{
 			GLogger.LogError("StartClientCo Failed to start client");
-			OnLeave();
-			yield break;
+			await OnLeaveFromThisSession();
+			return;
 		}
 
 		_uiso.SetInteractable(true);
@@ -252,37 +214,15 @@ public class SessionGameReadyManager : MonoBehaviour
 	{
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
-#if UNITY_EDITOR
-			if (_ngoTestSO.IsOn)
-			{
-				_playerInfo.Nickname = $"{clientId}_client";
-
-				switch (clientId)
-				{
-					case 0: _playerInfo.PersonalColor = new Color(0.0f, 0.5f, 1f); break;
-					case 1: _playerInfo.PersonalColor = Color.yellow; break;
-					case 2: _playerInfo.PersonalColor = new Color(0f, 0.5f, 1f); break;
-					case 3: _playerInfo.PersonalColor = Color.magenta; break;
-				}
-			}
-#endif
-			_networkEventHandler.SetSceneEventListner();
 			_connected = true;
 			_playerSlotSync.AddClientRpc(clientId, _playerInfo.Nickname, _playerInfo.PersonalColor);
 		}
 	}
 
-	void OnClientDisconnected(ulong clientId)
+	async void OnClientDisconnected(ulong clientId)
 	{
-		GLogger.Log($"OnClientDisconnected {clientId}");
-#if UNITY_EDITOR
-		if (_ngoTestSO.IsOn)
-		{
-			return;
-		}
-#endif
-			// 접속한 client만 호출한다
-			if (NetworkManager.Singleton.IsHost)
+		// 접속한 client만 호출한다
+		if (NetworkManager.Singleton.IsHost)
 		{
 			_playerSlotSync.RemoveClientRpc(clientId);
 		}
@@ -290,7 +230,7 @@ public class SessionGameReadyManager : MonoBehaviour
 		// client가 나가기를 눌렀거나 host와 연결이 끊어짐
 		if (clientId == NetworkManager.Singleton.LocalClientId)
 		{
-			OnLeave();
+			await OnLeaveFromThisSession();
 		}
 	}
 
@@ -302,7 +242,6 @@ public class SessionGameReadyManager : MonoBehaviour
 
 	void OnSceneEvent(SceneEventType eventType, ulong clientId)
 	{
-		GLogger.Log($"SceneEvent {eventType} {clientId}");
 		switch (eventType)
 		{
 			case SceneEventType.Unload:
@@ -438,18 +377,16 @@ public class SessionGameReadyManager : MonoBehaviour
 		}
 	}
 
-	void OnLeave()
+	async void OnLeave()
 	{
-		GLogger.Log("OnLeave");
-		StartCoroutine(LockInteractabilityUntilTaskComplete(LeaveFromThisSessionCo()));
+		await OnLeaveFromThisSession();
 	}
 
-	IEnumerator LeaveFromThisSessionCo()
+	async Awaitable OnLeaveFromThisSession()
 	{
 		if (_lobbyEvents != null)
 		{
-			var task = _lobbyEvents.UnsubscribeAsync();
-			yield return new WaitUntil(() => task.IsCompleted);
+			await _lobbyEvents.UnsubscribeAsync();
 		}
 
 		if (_lobby != null)
@@ -457,13 +394,11 @@ public class SessionGameReadyManager : MonoBehaviour
 			if (NetworkManager.Singleton.IsHost)
 			{
 				GLogger.LogWarning($"Delete Lobby {_lobby.Id}");
-				var task = UGSLobbyManager.DeleteLobby(_lobby.Id);
-				yield return new WaitUntil(() => task.IsCompleted);
+				await UGSLobbyManager.DeleteLobby(_lobby.Id);
 			}
 			else
 			{
-				var task = UGSLobbyManager.RemovePlayer(_lobby.Id);
-				yield return new WaitUntil(() => task.IsCompleted);
+				await UGSLobbyManager.RemovePlayer(_lobby.Id);
 			}
 		}
 
@@ -495,13 +430,6 @@ public class SessionGameReadyManager : MonoBehaviour
 	{
 		_uiso.ClearEvent();
 		_networkEventHandler.ClearConnectionEventListner();
-
-#if UNITY_EDITOR
-		if (_ngoTestSO.IsOn)
-		{
-			return;
-		}
-#endif
 
 		_tcpClient.OnReceived -= OnTCPDataReceived;
 	}

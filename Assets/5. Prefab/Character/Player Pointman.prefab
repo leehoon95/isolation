@@ -191,8 +191,8 @@ MonoBehaviour:
   _hand: {fileID: 6180052288741268153}
   _cameraTarget: {fileID: 2912710630573480638}
   _sortingGroup: {fileID: 6134883239674151307}
-  _speedNormal: 3
-  _speedBursted: 4.2
+  _speedNormal: 4
+  _speedBursted: 5
   _invincible: 1
   _maxHealth: 4
 --- !u!50 &3971261526755865604
@@ -353,12 +353,9 @@ MonoBehaviour:
   - Name: missile
     Sprite: {fileID: 303495759, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
     Prefab: {fileID: 1310412030759554652, guid: 5a30d9b5062e3bb4ebc440f427d14f64, type: 3}
-  - Name: laserLeft
+  - Name: laser
     Sprite: {fileID: 1618803103, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
     Prefab: {fileID: 1324608297078827869, guid: 0bd3ebb4e43fdc346883e1dab1e2d276, type: 3}
-  - Name: laserRight
-    Sprite: {fileID: 1618803103, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}
-    Prefab: {fileID: 3769147872407034348, guid: 4a79d73b8f6c6b2438db39cee50e6e5a, type: 3}
   _frontWeaponConfig:
   - Name: shield
     Sprite: {fileID: -1575523158, guid: 22d4284f06ce3cc4286b3367efd58113, type: 3}

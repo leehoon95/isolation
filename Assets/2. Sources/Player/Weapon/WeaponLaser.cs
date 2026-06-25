@@ -33,6 +33,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 	[SerializeField]
 	List<EffectLaserHandler> _laserHandlers;
 
+	bool _isRightWeapon;
 	int _maxLaserStreamCount;
 	int _enemyTriggerLayer;
 	List<Collider2D> _results = new();
@@ -48,14 +49,22 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 	public string ProjectileName { get; set; }
 	public IPooledDynamicSpawner IPDS { get; set; }
 	public Color PersonalColor { get; set; }
-	public bool IsRightWeapon { get; set; }
+	public bool IsRightWeapon 
+	{
+		get => _isRightWeapon;
+		set
+		{
+			_isRightWeapon = value;
+			_collider.transform.localPosition = new Vector3(0f, 0.5f - (value ? 1f : 0f), 0f);
+		}
+	}
 	public Vector2 TargetPosition { get; set; }
 	public Transform Muzzle { get; set; }
 	public ulong ClientId { get; set; }
 	public string WeaponName => "laser";
 	public GameObject GO => gameObject;
 
-	public ILaserFiringRpc WCR { get; set; }
+	public IWeaponRpcProxy WeaponRpcProxy { get; set; }
 
 	void Start()
 	{
@@ -94,7 +103,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 			}
 		}
 		IPDS = null;
-		WCR = null;
+		WeaponRpcProxy = null;
 	}
 
 	public void Trigger(bool on)
@@ -150,7 +159,7 @@ public class WeaponLaser : MonoBehaviour, IWeaponInterface
 
 		float hitInterval = (_totalFiringInterval / hitCount) / 1000f;
 
-		WCR.FireLaserFromOtherClinent(IsRightWeapon, lpd, _buff);
+		WeaponRpcProxy.SynchronizeLaser(IsRightWeapon, lpd, _buff);
 		FireLaserStream(lpd, _buff);
 
 		bool fire = false;

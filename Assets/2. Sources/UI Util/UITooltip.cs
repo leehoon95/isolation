@@ -51,7 +51,6 @@ public class UITooltip : UIBehaviour
 		Vector3 pos,
 		AnchorPreset ap)
 	{
-		Debug.Log("ShowingCoroutine");
 		var op = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(
 			tableName,
 			key,

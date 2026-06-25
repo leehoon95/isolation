@@ -43,6 +43,8 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 		_readyButton.onClick.AddListener(() => { _ac.PlayAudio("chutter-click"); _uiso.RaiseOnClickReady(); });
 		_leaveButton.onClick.AddListener(() => { _ac.PlayAudio("click-mouse"); _uiso.RaiseOnClickLeave(); });
+
+		SetReadyButtonHighlight(false);
 	}
 
 	void OnMessageSubmitted(string message)
@@ -90,7 +92,6 @@ public class UISessionCommunication : UIBehaviour, IUISessionCommunication
 
 	public void SetReadyButtonHighlight(bool bright)
 	{
-		GLogger.Log($"SetReadyButtonHighlight {bright}");
 		if (bright)
 		{
 			var c = new Color(0f, 218f / 255f, 1f);

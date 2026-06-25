@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NetworkEventHandler : MonoBehaviour
@@ -15,11 +16,16 @@ public class NetworkEventHandler : MonoBehaviour
 	{
 		DontDestroyOnLoad(gameObject);
 		NetworkManager.Singleton.OnConnectionEvent += OnConnectionEvent;
+		NetworkManager.Singleton.OnPreShutdown += OnPreShutdown;
 	}
 
-	public void SetSceneEventListner()
+	void OnPreShutdown()
 	{
-		NetworkManager.Singleton.SceneManager.OnSceneEvent += SceneEventListner;
+		GLogger.LogWarning("OnPreShutdown");
+		NetworkManager.Singleton.SceneManager.OnSceneEvent -= SceneEventListner;
+		NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
+		NetworkManager.Singleton.OnPreShutdown -= OnPreShutdown;
+		ClearConnectionEventListner();
 	}
 
 	public void ClearConnectionEventListner()
@@ -36,15 +42,25 @@ public class NetworkEventHandler : MonoBehaviour
 		switch (eventData.EventType)
 		{
 			case ConnectionEvent.ClientConnected: // This event is set on the client-side of the newly connected client and on the server-side.
+				GLogger.LogWarning($"ClientConnected {eventData.ClientId}");
+
+				if (eventData.ClientId == nm.LocalClientId)
+				{
+					NetworkManager.Singleton.SceneManager.OnSceneEvent += SceneEventListner;
+				}
+			
 				OnClientConnected?.Invoke(eventData.ClientId);
 				break;
 			case ConnectionEvent.ClientDisconnected: // This event is set on the client-side of the client that disconnected client and on the server-side.
+				GLogger.LogWarning($"ClientDisconnected {eventData.ClientId}");
 				OnClientDisconnected?.Invoke(eventData.ClientId);
 				break;
 			case ConnectionEvent.PeerConnected: // This event is set on clients that are already connected to the session.
+				GLogger.LogWarning($"PeerConnected {eventData.ClientId}");
 				OnPeerConnected?.Invoke(eventData.ClientId);
 				break;
 			case ConnectionEvent.PeerDisconnected: // This event is set on clients that are already connected to the session.
+				GLogger.LogWarning($"PeerDisconnected {eventData.ClientId}");
 				OnPeerDisconnected?.Invoke(eventData.ClientId);
 				break;
 		}

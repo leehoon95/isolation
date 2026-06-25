@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -12,12 +14,13 @@ public class WeaponConfig
 	public GameObject Prefab;
 }
 
-public interface ILaserFiringRpc
+
+public interface IWeaponRpcProxy
 {
-	public void FireLaserFromOtherClinent(bool isRightWeapon, LaserPointData[] lpd, FixedString32Bytes buffName);
+	public void SynchronizeLaser(bool isRightWeapon, in LaserPointData[] lpd, in FixedString32Bytes buffName);
 }
 
-public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
+public class WeaponContainer : NetworkBehaviour, IWeaponRpcProxy
 {
 	[SerializeField]
 	List<WeaponConfig> _weaponConfig;
@@ -102,7 +105,7 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 
 	void SetWeaponSprite(int position, string weaponName)
 	{
-		GLogger.Log($"SetWeaponSprite({PersonalColor}) {position} {weaponName}");
+		//GLogger.Log($"SetWeaponSprite({PersonalColor}) {position} {weaponName}");
 		switch (position)
 		{
 			case 0:
@@ -151,17 +154,17 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 			return;
 		}
 
-		if (weaponName == "laser")
-		{
-			if (position == 0)
-			{
-				weaponName = "laserRight";
-			}
-			else if (position == 2)
-			{
-				weaponName = "laserLeft";
-			}
-		}
+		//if (weaponName == "laser")
+		//{
+		//	if (position == 0)
+		//	{
+		//		weaponName = "laserRight";
+		//	}
+		//	else if (position == 2)
+		//	{
+		//		weaponName = "laserLeft";
+		//	}
+		//}
 
 		SetWeaponSprite(position, weaponName);
 
@@ -179,7 +182,7 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 		if (weaponName.Contains("laser"))
 		{
 			var wl = obj.GetComponent<WeaponLaser>();
-			wl.WCR = this;
+			wl.WeaponRpcProxy = this;
 		}
 		
 		wi = obj.GetComponent<IWeaponInterface>();
@@ -241,8 +244,7 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 		}
 	}
 
-	// laser weapon만 사용가능함
-	public void FireLaserFromOtherClinent(bool isRightWeapon, LaserPointData[] lpd, FixedString32Bytes buffName)
+	public void SynchronizeLaser(bool isRightWeapon, in LaserPointData[] lpd, in FixedString32Bytes buffName)
 	{
 		ShowLaserStreamRpc(isRightWeapon, lpd, buffName);
 	}
@@ -281,26 +283,5 @@ public class WeaponContainer : NetworkBehaviour, ILaserFiringRpc
 	{
 		_leftWeapon?.Stop();
 		_rightWeapon?.Stop();
-	}
-
-	IWeaponInterface GetWeapon(string weaponName, int position)
-	{
-		switch (weaponName)
-		{
-			case "bolt": return new WeaponBolt();
-			case "missile": return new WeaponMissile();
-			case "laser":
-				if (position == 0)
-				{
-					return new WeaponLaser();
-				}
-				else if (position == 2)
-				{
-					return new WeaponLaser();
-				}
-
-				return null;
-			default: return null;
-		}
 	}
 }

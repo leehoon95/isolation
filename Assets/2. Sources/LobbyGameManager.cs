@@ -18,7 +18,7 @@ public class LobbyGameManager : MonoBehaviour
 	DateTime _lastRefreshTime = DateTime.MinValue;
 	//bool _refreshing;
 
-	Coroutine _taskCo;
+	bool _isTasking;
 	Coroutine _notifyCo;
 	bool _playerDataReceived;
 
@@ -32,20 +32,19 @@ public class LobbyGameManager : MonoBehaviour
 
 		// lobby를 시작했을 때 로비생성에 관여하는 SO는 있으면 안 됨
 		var lobbyInfoSO = FindAnyObjectByType<SessionParameterSOHolder>();
-		Destroy(lobbyInfoSO);
+		if (lobbyInfoSO != null)
+		{
+			Destroy(lobbyInfoSO);
+		}
 
-		var nho = FindAnyObjectByType<NetworkEventHandler>();
-		Destroy(nho);
-
-		//if (FindAnyObjectByType<PlayerInfoSOHolder>() == null)
-		//{
-		//	var obj = new GameObject("[Player Info Holder]");
-		//	obj.AddComponent<PlayerInfoSOHolder>();
-		//	DontDestroyOnLoad(obj);
-		//}
+		var neh = FindAnyObjectByType<NetworkEventHandler>();
+		if (neh != null)
+		{
+			Destroy(neh);
+		}
 	}
 
-	void Start()
+	async void Start()
 	{
 		_playerInfo = FindAnyObjectByType<PlayerInfoSOHolder>().Data;
 		_tcpClient = FindAnyObjectByType<TCPClientSOHolder>().Data;
@@ -69,45 +68,89 @@ public class LobbyGameManager : MonoBehaviour
 
 		_tcpClient.OnReceived += OnTCPDataReceived;
 
-		_taskCo = StartCoroutine(WaitForLobbyReady());
+		if (_playerInfo.IsGuestLogin)
+		{
+			await EnterLobbyAsGuest();
+		}
+		else
+		{
+			await WaitForLobbyReady();
+		}
 	}
 
 	/*
 	 * 1. player data를 수신할 때까지 UI잠그고 대기
 	 * 2. 로비 리스트 갱신
 	 */
-	IEnumerator WaitForLobbyReady()
+	async Awaitable WaitForLobbyReady()
 	{
-		/*
-		 * Start에 호출되는 메서드이므로 다른 오브젝트 초기화를 위해 한 프레임 대기
-		 * ui 초기화가 끝나지 않은 경우 있음
-		 */
-		yield return null;
-
+		await Task.Yield();
+		GLogger.Log("WaitForLobbyReady");
 		_uiso.SetInteractable(false);
 
-		var t = RequestPlayerData();
-		yield return new WaitUntil(() => t.IsCompleted);
-		yield return new WaitUntil(() => _playerDataReceived);
-
-		GLogger.Log($"Received player data {_playerInfo.Nickname} {_playerInfo.PersonalColor}");
-
-		_uiso.SetPlayerLabel(_playerInfo.Nickname, _playerInfo.PersonalColor);
-
-		var t2 = UpdateLobbyList();
-		yield return new WaitUntil(() => t2.IsCompleted);
-
-		_uiso.SetInteractable(true);
-		_taskCo = null;
-	}
-
-	async Task RequestPlayerData()
-	{
 		if (!UGSManager.IsInitialized())
 		{
 			await UGSManager.InitServices();
 		}
 
+		await RequestPlayerData();
+
+		int receiveWaitingCount = 0;
+		while (!_playerDataReceived)
+		{
+			await Task.Delay(50);
+			receiveWaitingCount++;
+			if (receiveWaitingCount == 60)
+			{
+				await SendLogoutMessage();
+
+				LoadScene("LoginScene");
+				return;
+			}
+		}
+
+		GLogger.Log($"Received player data {_playerInfo.Nickname} {_playerInfo.PersonalColor}");
+
+		_uiso.SetPlayerLabel(_playerInfo.Nickname, _playerInfo.PersonalColor);
+
+		await UpdateLobbyList();
+
+		_uiso.SetInteractable(true);
+	}
+
+	async Awaitable EnterLobbyAsGuest()
+	{
+		await Task.Yield();
+
+		if (!UGSManager.IsInitialized())
+		{
+			await UGSManager.InitServices();
+		}
+
+		_uiso.SetInteractable(false);
+
+		int h = UnityEngine.Random.Range(0, 255);
+		int s = UnityEngine.Random.Range(192, 255);
+		_playerInfo.Nickname = $"Guest_{UnityEngine.Random.Range(0, 9999):D5}";
+		_playerInfo.PersonalColor = Color.HSVToRGB(
+			h / 255f, s / 255f, 1f);
+
+		UGSLobbyManager.nickname = _playerInfo.Nickname;
+		UGSLobbyManager.PersonalColor = $"{h}/{s}/255";
+		_playerDataReceived = true;
+
+		GLogger.Log($"Enter lobby as guest {UGSLobbyManager.nickname} {UGSLobbyManager.PersonalColor}");
+
+		_uiso.SetPlayerLabel(_playerInfo.Nickname, _playerInfo.PersonalColor);
+
+		await UpdateLobbyList();
+		//yield return new WaitUntil(() => t2.IsCompleted);
+
+		_uiso.SetInteractable(true);
+	}
+
+	async Awaitable RequestPlayerData()
+	{
 		PMRequestPlayerData request = new()
 		{
 			Message = "hello"
@@ -122,11 +165,11 @@ public class LobbyGameManager : MonoBehaviour
 	/*
 	 * 먼저 서버에서 ResponsePlayerData 응답을 받고 호출할 것
 	 */
-	async Task UpdateLobbyList()
+	async Awaitable UpdateLobbyList()
 	{
 		if (!_playerDataReceived)
 		{
-			GLogger.LogWarning("LobbyGameManager.GetLobbyList 플레이어 데이터 수신 전");
+			GLogger.LogWarning("플레이어 프로필을 수신하지 못 함");
 			return;
 		}
 
@@ -142,7 +185,7 @@ public class LobbyGameManager : MonoBehaviour
 
 		if (list != null)
 		{
-			GLogger.Log($"GetLobbyList lobby count: {list.Count}");
+			//GLogger.Log($"GetLobbyList lobby count: {list.Count}");
 
 			if (list.Count == 0)
 			{
@@ -185,57 +228,43 @@ public class LobbyGameManager : MonoBehaviour
 		_lastRefreshTime = DateTime.Now;
 	}
 
-	/*
-	 * 네트워크 작업을 대기
-	 * 완료할 때 까지 ui를 잠금
-	 */
-	IEnumerator LockInteractabilityUntilTaskComplete(Task task)
+	async void OnClickRefresh()
 	{
-		_uiso.SetInteractable(false);
-
-		yield return new WaitUntil(() => task.IsCompleted);
-
-		_uiso.SetInteractable(true);
-		_taskCo = null;
-	}
-
-	IEnumerator LockInteractabilityUntilTaskComplete(IEnumerator co)
-	{
-		_uiso.SetInteractable(false);
-		yield return co;
-		_uiso.SetInteractable(true);
-	}
-
-	void OnClickRefresh()
-	{
-		if (_taskCo != null)
+		if (_isTasking)
 		{
 			return;
 		}
 
-		_taskCo = StartCoroutine(LockInteractabilityUntilTaskComplete(UpdateLobbyList()));
+		_isTasking = true;
+		_uiso.SetInteractable(false);
+
+		await UpdateLobbyList();
+
+		_isTasking = false;
+		_uiso.SetInteractable(true);
 	}
 
-	void OnClickLobby(string lobbyId)
+	async void OnClickLobby(string lobbyId)
 	{
-		if (_taskCo != null)
+		if (_isTasking)
 		{
-			GLogger.LogWarning("LobbyGameManager.OnClickLobby 다른 작업 처리 중");
 			return;
 		}
 
-		_taskCo = StartCoroutine(AttemptToEnterLobby(lobbyId));
+		_isTasking = true;
+		_uiso.SetInteractable(false);
+
+		await AttemptToEnterLobby(lobbyId);
+		
+		_isTasking = false;
+		_uiso.SetInteractable(true);
 
 		return;
-		////
-		//_playerInfo.LobbyIdForEntry = lobbyId;
-
-		//LoadScene("NGOTestScene");
 	}
 
 	void OnClickCreateLobby()
 	{
-		if (_taskCo != null)
+		if (_isTasking)
 		{
 			GLogger.LogWarning("LobbyGameManager.OnClickCreateLobby 다른 작업이 진행 중");
 			return;
@@ -250,25 +279,21 @@ public class LobbyGameManager : MonoBehaviour
 			$"{_playerInfo.Nickname} {DateTime.Now.ToString()}",
 			(lobbyName, lobbyPassword) =>
 		{
-			print($"OnCreateRoom {lobbyName} {lobbyPassword}");
-
-			if (_taskCo != null)
+			if (_isTasking)
 			{
-				GLogger.LogWarning("LobbyGameManager.OnClickCreateLobby");
+				GLogger.LogWarning("LobbyCreationDialog 다른 작업이 진행 중");
 				return;
 			}
 
-			_taskCo = StartCoroutine(CreateLobbyAsHostAndEnter(lobbyName, lobbyPassword));
+			CreateLobbyAndEnter(lobbyName, lobbyPassword);
 		});
 	}
 
-	// client 자격으로 session 진입
-	IEnumerator AttemptToEnterLobby(string lobbyId)
+	async Awaitable AttemptToEnterLobby(string lobbyId)
 	{
-		var taskJoinLobby = UGSLobbyManager.JoinLobbyById(lobbyId, null);
-		yield return new WaitUntil(() => taskJoinLobby.IsCompleted);
+		_isTasking = true;
 
-		(var lobby, var reason ) = taskJoinLobby.Result;
+		(var lobby, var reason) = await UGSLobbyManager.JoinLobbyById(lobbyId, null);
 		if (lobby == null)
 		{
 			if (reason == "lobbyFull")
@@ -279,8 +304,6 @@ public class LobbyGameManager : MonoBehaviour
 			{
 				ShowNotification("lobby-entry-error-unknown");
 			}
-
-			yield break;
 		}
 		else
 		{
@@ -297,22 +320,25 @@ public class LobbyGameManager : MonoBehaviour
 
 			LoadScene("SessionReadyScene");
 		}
+
+		_isTasking = false;
 	}
 
+
 	// host 자격으로 session 진입
-	IEnumerator CreateLobbyAsHostAndEnter(string lobbyName, string lobbyPassword)
+	void CreateLobbyAndEnter(string lobbyName, string lobbyPassword)
 	{
 		if (lobbyName == null)
 		{
-			GLogger.LogError("CreateLobbyAsHostAndEnter lobbyName is null");
-			yield break;
+			GLogger.LogError("CreateLobbyAndEnter lobbyName is null");
+			return;
 		}
 
 		if (lobbyName.Length < 1)
 		{
 			ShowNotification("lobby-error-name-<2");
 
-			yield break;
+			return;
 		}
 
 		var obj = new GameObject("[Session Parameter]");
@@ -325,27 +351,31 @@ public class LobbyGameManager : MonoBehaviour
 		gp.MaxPlayers = 4;
 
 		LoadScene("SessionReadyScene");
-		_taskCo = null;
 	}
 
-	void OnClickExit()
+	async void OnClickExit()
 	{
-		if (_taskCo != null)
+		if (_isTasking)
 		{
-			StopCoroutine(_taskCo);
+			return;
 		}
 
-		StartCoroutine(LockInteractabilityUntilTaskComplete(ExitFromLobby()));
+		_isTasking = true;
+		_uiso.SetInteractable(false);
+
+		if (!_playerInfo.IsGuestLogin)
+		{
+			await SendLogoutMessage();
+		}
+
+		LoadScene("LoginScene");
 	}
 
-	IEnumerator ExitFromLobby()
+	async Awaitable SendLogoutMessage()
 	{
 		PMRequestLogout message = new();
 		var data = message.ToByteArray();
-		var task = _tcpClient.SendDataAsync((int)ProtoAuthenticationMessage.RequestLogout, data);
-		yield return new WaitUntil(() => task.IsCompleted);
-
-		LoadScene("LoginScene");
+		await _tcpClient.SendDataAsync((int)ProtoAuthenticationMessage.RequestLogout, data);
 	}
 
 	async Task OnTCPDataReceived(byte[] buffer, int length)
@@ -395,11 +425,6 @@ public class LobbyGameManager : MonoBehaviour
 
 	void LoadScene(string sceneName)
 	{
-		if (_taskCo != null)
-		{
-			StopCoroutine(_taskCo);	
-		}
-
 		_uiso.ClearEvent();
 		_tcpClient.OnReceived -= OnTCPDataReceived;
 		SceneManager.LoadScene(sceneName);

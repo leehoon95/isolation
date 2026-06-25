@@ -4176,7 +4176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PresetAsset: {fileID: 0}
   m_PresetReference:
-    rid: 4438870468064444416
+    rid: 2222763185893539987
   m_Scenario:
     rid: -2
   m_IsScenarioSettingsFolded: 0
@@ -4186,7 +4186,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 4438870468064444416
+    - rid: 2222763185893539987
       type: {class: NetworkSimulatorPreset, ns: Unity.Multiplayer.Tools.NetworkSimulator.Runtime, asm: Unity.Multiplayer.Tools.NetworkSimulator.Runtime}
       data:
         <Name>k__BackingField: None
@@ -8103,7 +8103,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1966273180
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8465,9 +8465,9 @@ MonoBehaviour:
     Camera: {fileID: 2107633737}
   - CameraName: TestCamera
     Camera: {fileID: 569900077}
-  _automaticClient: 1
-  _questEnemyCountToKill: 20
-  _spawnEnemyPeriod: 60
+  _automaticClient: 0
+  _questEnemyCountToKill: 10
+  _spawnEnemyPeriod: 15
 --- !u!4 &2101628029
 Transform:
   m_ObjectHideFlags: 0

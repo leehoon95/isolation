@@ -37,6 +37,7 @@ public class UILoginSO : ScriptableObject
 	public event Action OnRegister;
 	public event Action<int> OnChangeLocaliztion;
 	public event Action OnClearCache;
+	public event Action OnGuestLogin;
 
 	// test
 	public event Action OnTest_1;
@@ -59,6 +60,8 @@ public class UILoginSO : ScriptableObject
 		=> OnChangeLocaliztion?.Invoke(index);
 	public void RaiseClearCache()
 		=> OnClearCache?.Invoke();
+	public void RaiseGuestLogin()
+		=> OnGuestLogin?.Invoke();
 	public void RaiseTestEvent_1() 
 		=> OnTest_1?.Invoke();
 	public void RaiseTestEvent_2() 

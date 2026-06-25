@@ -61,7 +61,7 @@ public class EffectNoise : PooledEffectBase, IEffectSetting
 		main.startLifetime = _particleLifeTime;
 		main.startColor = _areaColor;
 		_particleSystem.Play();
-		_ac.PlayAudio("arc-explosion");
+		_ac.PlayAudio("arc-explosion", transform.position);
 		while (time < endTime)
 		{
 			_spriteRenderer.GetPropertyBlock(_materialPropertyBlock);

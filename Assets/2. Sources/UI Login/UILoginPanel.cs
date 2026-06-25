@@ -38,6 +38,8 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 	Button _englishButton;
 	[SerializeField]
 	Button _clearCacheButton;
+	[SerializeField]
+	Button _guestLogin;
 
 	// test ui
 	[SerializeField]
@@ -86,6 +88,12 @@ public class UILoginPanel : UIBehaviour, IUILoginPannel
 		_clearCacheButton.onClick.AddListener(() =>
 		{
 			_uiso.RaiseClearCache();
+		});
+
+		_guestLogin.onClick.AddListener(() =>
+		{
+			_audioContainer.PlayAudio("click-mouse");
+			_uiso.RaiseGuestLogin();
 		});
 
 		//test
