@@ -9,12 +9,12 @@ public struct TargetSearchJob : IJobParallelFor
 {
 	[ReadOnly] public NativeArray<float3> EnemyPositions;
 	[ReadOnly] public NativeArray<float3> PlayerPositions;
-	public NativeArray<int> NearestTargetIndices;
+	public NativeArray<int> NearestPlayerIndices;
 
 	public void Execute(int index)
 	{
 		var minDistanceSqr = float.MaxValue;
-		int nearestIndex = -1;
+		int nearestPlayerIndex = -1;
 
 		for (int i = 0; i < PlayerPositions.Length; i++)
 		{
@@ -23,10 +23,10 @@ public struct TargetSearchJob : IJobParallelFor
 			if (distanceSq < minDistanceSqr)
 			{
 				minDistanceSqr = distanceSq;
-				nearestIndex = i;
+				nearestPlayerIndex = i;
 			}
 		}
 
-		NearestTargetIndices[index] = nearestIndex;
+		NearestPlayerIndices[index] = nearestPlayerIndex;
 	}
 }

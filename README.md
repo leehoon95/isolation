@@ -10,6 +10,10 @@
 |플랫폼|Windows|
 |사용 기술 및 패키지|Unity NGO, Relay, Lobby, Addressables, UI Soft Mask, NavMeshPlus|
 
+### 사전 준비
+1. [isolation_pb](https://github.com/leehoon95/isolation_pb)를 최상위 경로에서 clone
+2. cs.bat 실행
+
 ### 참고 소스 코드와 기능
 * Player 스포너: NetworkPrefabInstanceHandlerWithData를 이용한 Player 스폰  
     [PlayerSpawner.cs](./Assets/2.%20Sources/Spawner/PlayerSpawner.cs)  
@@ -32,7 +36,7 @@
 * 잡시스템: Enemy의 타겟 추적 코드에 잡시스템과 버스트 컴파일 사용  
     [TargetSearchJob.cs](./Assets/2.%20Sources/TargetSearchJob.cs)  
 
-* Weapon 시스템: Projectile 발사와 레이저 동기화  
+* Weapon 시스템: Weapon 교체와 레이저 동기화  
     [WeaponContainer.cs](./Assets/2.%20Sources/Player/Weapon/WeaponContainer.cs)  
     [WeaponLaser.cs](./Assets/2.%20Sources/Player/Weapon/WeaponLaser.cs)  
 

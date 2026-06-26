@@ -227,7 +227,7 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 			{
 				EnemyPositions = enemyPositions,
 				PlayerPositions = playerPositions,
-				NearestTargetIndices = nearestIndices
+				NearestPlayerIndices = nearestIndices
 			};
 
 			var handle = job.Schedule(enemyCount, 64);

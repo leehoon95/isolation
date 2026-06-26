@@ -18,9 +18,11 @@ public class LoginGameManager : MonoBehaviour
 	[SerializeField]
 	string _serverAddress;
 	[SerializeField]
+	int _serverPort;
+	[SerializeField]
 	string _debuggingServerAddress;
 	[SerializeField]
-	int _port;
+	int _debuggingServerPort;
 	[SerializeField]
 	bool _connectDevelopmentSever;
 	[SerializeField]
@@ -50,13 +52,14 @@ public class LoginGameManager : MonoBehaviour
 			if (_connectDevelopmentSever)
 			{
 				holder.Data.ServerAddress = _debuggingServerAddress;
+				holder.Data.Port = _debuggingServerPort;
 			}
 			else
 			{
 				holder.Data.ServerAddress = _serverAddress;
+				holder.Data.Port = _serverPort;
 			}
 				
-			holder.Data.Port = _port;
 			DontDestroyOnLoad(obj);
 		}
 

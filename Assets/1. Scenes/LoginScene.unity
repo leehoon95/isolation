@@ -1945,9 +1945,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sdl: {fileID: 196883693}
-  _serverAddress: 8.235.7.143
+  _serverAddress: 3.27.195.54
+  _serverPort: 51010
   _debuggingServerAddress: 172.24.107.87
-  _port: 51010
+  _debuggingServerPort: 51010
   _connectDevelopmentSever: 0
   _audioContainer: {fileID: 1323045691}
   _saveAccount: 0
@@ -4724,7 +4725,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 190
+  m_fontSize: 191.25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
