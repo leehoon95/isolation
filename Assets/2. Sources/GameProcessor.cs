@@ -12,32 +12,7 @@ using UnityEngine.Jobs;
 using UnityEngine.Localization.Settings;
 using UnityEngine.SceneManagement;
 
-[BurstCompile]
-public struct TargetSearchJob : IJobParallelFor
-{
-	[ReadOnly] public NativeArray<float3> EnemyPositions;
-	[ReadOnly] public NativeArray<float3> PlayerPositions;
-	public NativeArray<int> NearestTargetIndices;
 
-	public void Execute(int index)
-	{
-		var enemyPosition = EnemyPositions[index];
-		var minDistanceSqr = float.MaxValue;
-		int nearestIndex = -1;
-
-		for (int i = 0; i < PlayerPositions.Length; i++)
-		{
-			var distanceSq = math.distancesq(enemyPosition, PlayerPositions[i]);
-			if (distanceSq < minDistanceSqr)
-			{
-				minDistanceSqr = distanceSq;
-				nearestIndex = i;
-			}
-		}
-
-		NearestTargetIndices[index] = nearestIndex;
-	}
-}
 
 [Serializable]
 public struct CameraConfig

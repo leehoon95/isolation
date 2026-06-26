@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 4b15ef540cb7d2e4dbd97cddc1c8429c
   m_currentHash:
     serializedVersion: 2
-    Hash: 5608a15b19670078e22818f136f5b7e6
+    Hash: 8435c267d329e5b90ed0438504155f92
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 1
   m_BundleLocalCatalog: 0
@@ -69,7 +69,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 235f5da1a5b32134ca792f45bb59abe7, type: 2}
   - {fileID: 11400000, guid: 856dd70df1acaee47b6095282c16d8b4, type: 2}
   - {fileID: 11400000, guid: fddccc1e33b15084a91db1139024a01b, type: 2}
-  - {fileID: 11400000, guid: 1fed7e37a3ef8f848ae5fe4d85031a10, type: 2}
   - {fileID: 11400000, guid: 7af5060e1f86d5f4bb1670579750df3b, type: 2}
   - {fileID: 11400000, guid: 41402e116ebc9ca468ec165965cd18b3, type: 2}
   - {fileID: 11400000, guid: d2f23290e26c4154280924b41ff39913, type: 2}
@@ -96,12 +95,12 @@ MonoBehaviour:
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
     - m_InheritedParent: 
       m_Id: 9525766f6b4ff6c43ae1e44e25832174
-      m_ProfileName: Development
+      m_ProfileName: Local
       m_Values:
       - m_Id: 2cdd90b5005e6e04787dd3ee368ccdcc
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 43cae97530c0802438ac75847df94227
-        m_Value: 'ServerData/[BuildTarget]'
+        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: 52338d74ff3d9574fb4510ea05a50006
         m_Value: 'ServerData/[BuildTarget]'
       - m_Id: 6539878fc29905e4383399f57c01dd4d
@@ -115,7 +114,7 @@ MonoBehaviour:
       - m_Id: 2cdd90b5005e6e04787dd3ee368ccdcc
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 43cae97530c0802438ac75847df94227
-        m_Value: '[PathDefines.RemoteLoadPath]/[BuildTarget]'
+        m_Value: '[RemoteUpdatePathDefines.RemoteUpdatePath]/[BuildTarget]'
       - m_Id: 52338d74ff3d9574fb4510ea05a50006
         m_Value: 'ServerData/[BuildTarget]'
       - m_Id: 6539878fc29905e4383399f57c01dd4d

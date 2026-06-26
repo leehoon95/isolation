@@ -183,12 +183,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - Audio
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 826fd435729b0854d9bc9385a4ad5427
-    m_Address: coin
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Audio
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 910a182c9ae9883409910b59645e461e
     m_Address: toygun
     m_ReadOnly: 0

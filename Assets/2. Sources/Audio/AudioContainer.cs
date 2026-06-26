@@ -8,12 +8,6 @@ using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class PathDefines
-{
-	// GCP VM 인스턴스 IP
-	public static string RemoteLoadPath = "http://8.235.7.143";
-}
-
 public interface IAudioHolderPool
 {
 	void Release(IAudioPlayable ap);
