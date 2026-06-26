@@ -48,10 +48,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 
 		if (networkManager.IsHost)
 		{
-			
 			_activedDeadBody = new();
-			//_playerSpawnHandler.PlayerObjectInstantiated += OnPlayerObjectInstantiated;
-			//_playerSpawnHandler.PlayerObjectDestroyed += OnPlayerObjectDestroyed;
 		}
 	}
 
@@ -95,7 +92,6 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerSpawner
 
 		foreach (var item in items)
 		{
-			//GLogger.Log($"Despawn {item}");
 			if (item.NO.IsSpawned)
 			{
 				item.NO.Despawn();

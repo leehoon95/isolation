@@ -45,7 +45,6 @@ public class WeaponContainer : NetworkBehaviour, IWeaponRpcProxy
 
 	Dictionary<string, WeaponConfig> _weaponConfigCache = new();
 	Dictionary<string, Sprite> _sprites = new();
-	//Dictionary<string, IWeaponInterface> _weaponCache = new();
 	IWeaponInterface _leftWeapon;
 	IWeaponInterface _rightWeapon;
 	IWeaponInterface _frontWeapon;
@@ -105,7 +104,6 @@ public class WeaponContainer : NetworkBehaviour, IWeaponRpcProxy
 
 	void SetWeaponSprite(int position, string weaponName)
 	{
-		//GLogger.Log($"SetWeaponSprite({PersonalColor}) {position} {weaponName}");
 		switch (position)
 		{
 			case 0:
@@ -153,18 +151,6 @@ public class WeaponContainer : NetworkBehaviour, IWeaponRpcProxy
 			GLogger.Log($"Unknown weapon position {position}");
 			return;
 		}
-
-		//if (weaponName == "laser")
-		//{
-		//	if (position == 0)
-		//	{
-		//		weaponName = "laserRight";
-		//	}
-		//	else if (position == 2)
-		//	{
-		//		weaponName = "laserLeft";
-		//	}
-		//}
 
 		SetWeaponSprite(position, weaponName);
 

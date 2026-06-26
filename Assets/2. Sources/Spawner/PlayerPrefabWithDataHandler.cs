@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public struct PlayerInstantiateData : INetworkSerializable
 {
@@ -57,7 +55,7 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		Vector3 position, Quaternion rotation,
 		PlayerInstantiateData instantiationData)
 	{
-		GLogger.Log($"Spawn Player {ownerClientId}");
+		//GLogger.Log($"Spawn Player {ownerClientId}");
 		var instance = GetPrefabInstance(ownerClientId);
 		_networkManager.PrefabHandler.SetInstantiationData(instance.NO, instantiationData);
 		instance.GO.transform.position = position;
@@ -75,8 +73,6 @@ public class SpawnPlayerWithDataHandler : NetworkPrefabInstanceHandlerWithData<P
 		//instance.NO.SpawnWithOwnership(ownerClientId, true);
 		instance.NO.Spawn(true);
 		instance.NO.ChangeOwnership(ownerClientId);
-		//instance.GO.transform.position = position;
-		//GLogger.Log($"Spawn Player2 {instance.GO.transform.position}");
 
 		return instance;
 	}
