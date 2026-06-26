@@ -32,9 +32,9 @@
 * 잡시스템: Enemy의 타겟 추적 코드에 잡시스템과 버스트 컴파일 사용  
     [TargetSearchJob.cs](./Assets/2.%20Sources/TargetSearchJob.cs)  
 
-* Weapon 시스템: Projectile 발사와 레이저 동기화
-    [WeaponContainer.cs](./Assets/2.%20Sources/Player/Weapon/WeaponContainer.cs)
-    [WeaponLaser.cs](./Assets/2.%20Sources/Player/Weapon/WeaponLaser.cs)
+* Weapon 시스템: Projectile 발사와 레이저 동기화  
+    [WeaponContainer.cs](./Assets/2.%20Sources/Player/Weapon/WeaponContainer.cs)  
+    [WeaponLaser.cs](./Assets/2.%20Sources/Player/Weapon/WeaponLaser.cs)  
 
 ### 오디오 소스 출처
 [pixabay](https://pixabay.com/ko/sound-effects/)
