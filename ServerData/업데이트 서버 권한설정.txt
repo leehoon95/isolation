@@ -1,5 +1,5 @@
 # Windows->Ubuntu ssh 프로토콜을 사용하여 네트워크로 파일이나 폴더를 전송하는 명령어
-# scp -r -i gcp_key StandaloneWindows64 ganghoon95@34.11.242.48:/var/www/uploads
+# scp -r -i gcp_key StandaloneWindows64 ganghoon95@(server address):/var/www/uploads
 # -i: ssh 접속을 위한 private key
 # -r: 디렉토리 포함하고 하위 파일까지 전부 복사
 # -p: 포트 번호
@@ -33,7 +33,7 @@ sudo systemctl reload nginx
 sudo tail -f /var/log/nginx/error.log
 
 # /etc/nginx/sites-available/default 파일 수정
-# 업데이트 서버와 다운로드 컨텐츠 주소: http://34.11.242.48/StandaloneWindows64
+# 업데이트 서버와 다운로드 컨텐츠 주소: http://(server address)/StandaloneWindows64
 # 게임은 /var/www/downloads/StandaloneWindows64 경로에 있는 어드레서블 카탈로그와 번들을 다운로드함
 server {
         listen 80 default_server;
