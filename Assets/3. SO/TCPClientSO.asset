@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3242b73d85195904cbab290f841f8626, type: 3}
   m_Name: TCPClientSO
   m_EditorClassIdentifier: 
-  ServerAddress: 34.11.242.48
+  ServerAddress: 54.116.117.9
   Port: 51010

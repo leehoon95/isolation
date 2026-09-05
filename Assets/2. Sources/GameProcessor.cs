@@ -250,7 +250,6 @@ public class GameProcessor : NetworkBehaviour, IGameProjcessorInterface
 	{
 		yield return null;
 
-
 		_itemSpawner.SpawnFieldItems();
 		OpenCurtainRpc();
 
